@@ -1,0 +1,6 @@
+@Eventa.Server_HostAddress = http://localhost:5196
+
+GET {{Eventa.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
