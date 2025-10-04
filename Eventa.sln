@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11005.162 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eventa.client", "eventa.client\eventa.client.esproj", "{12D0966A-E997-A6F7-352A-1D4AB24756D2}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Eventa.Client", "eventa.client\Eventa.Client.esproj", "{12D0966A-E997-A6F7-352A-1D4AB24756D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Server", "Eventa.Server\Eventa.Server.csproj", "{9B51F9AF-B94B-476A-948F-81FBEB20E262}"
 EndProject
