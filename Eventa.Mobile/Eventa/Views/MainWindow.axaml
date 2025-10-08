@@ -7,8 +7,8 @@
     xmlns:views="clr-namespace:Eventa.Views"
     xmlns:vm="using:Eventa.ViewModels"
     Title="Eventa"
-    Width="800"
-    Height="450"
+    Width="400"
+    Height="800"
     Icon="/Assets/avalonia-logo.ico"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

@@ -4,7 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     RequestedThemeVariant="Light">
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources
+                    x:Key="Light"
+                    Accent="#FF8181"
+                    ErrorText="Red"
+                    RegionColor="White" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
     </Application.Styles>
     <Application.Resources>
         <FontFamily x:Key="JustAnotherHand">avares://Eventa/Assets/Fonts/JustAnotherHand#Just Another Hand</FontFamily>
