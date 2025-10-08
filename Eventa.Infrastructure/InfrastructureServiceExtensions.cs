@@ -14,7 +14,12 @@ namespace Eventa.Infrastructure
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 8;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             return services;
