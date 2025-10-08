@@ -21,10 +21,7 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow();
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView();
-        }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform) singleViewPlatform.MainView = new MainView();
         base.OnFrameworkInitializationCompleted();
     }
 

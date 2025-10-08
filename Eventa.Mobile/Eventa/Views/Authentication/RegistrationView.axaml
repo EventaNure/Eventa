@@ -1,0 +1,192 @@
+<UserControl
+    x:Class="Eventa.Views.Authentication.RegistrationView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#E0E0E0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="#FFB5B5" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </UserControl.Styles>
+    <Border>
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                <GradientStop Offset="0" Color="#FCE487" />
+                <GradientStop Offset="1" Color="#F9AAA9" />
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <!--  Main Content  -->
+        <ScrollViewer>
+            <Grid
+                Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RowDefinitions="auto, *">
+                <!--  Logo/Title  -->
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,20,0,20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource JustAnotherHand}"
+                    FontSize="80"
+                    Foreground="#FF9999"
+                    Text="EVENTA" />
+
+                <!--  Registration Form Card  -->
+                <Border
+                    Grid.Row="1"
+                    Padding="30"
+                    Background="White"
+                    BoxShadow="0 4 20 0 #30000000"
+                    CornerRadius="12">
+
+                    <Grid RowDefinitions="auto, *, auto, auto">
+                        <!--  Form Title  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Margin="0,-10,0,20"
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource Kadwa}"
+                            FontSize="24"
+                            Foreground="#FF9999"
+                            Text="Registration Form" />
+
+                        <Grid Grid.Row="1" RowDefinitions="auto, auto, auto, auto">
+                            <!--  Username Field  -->
+                            <StackPanel Grid.Row="0">
+                                <TextBox Name="UsernameTextBox" Watermark="Username" />
+                                <TextBlock
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Email Field  -->
+                            <StackPanel Grid.Row="1">
+                                <TextBox Name="EmailTextBox" Watermark="Email" />
+                                <TextBlock
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Password Field  -->
+                            <StackPanel Grid.Row="2">
+                                <TextBox
+                                    Name="PasswordTextBox"
+                                    PasswordChar="●"
+                                    Watermark="Password" />
+                                <TextBlock
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Confirm Password Field  -->
+                            <StackPanel Grid.Row="3">
+                                <TextBox
+                                    Name="ConfirmPasswordTextBox"
+                                    PasswordChar="●"
+                                    Watermark="Confirm Password" />
+                                <TextBlock
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!--  Continue Button  -->
+                        <Button
+                            Name="ContinueButton"
+                            Grid.Row="2"
+                            Margin="20,20,20,20"
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="Transparent"
+                            BorderBrush="#FFB5B5"
+                            BorderThickness="2"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            FontFamily="{StaticResource Kadwa}"
+                            FontSize="16"
+                            Foreground="#FFB5B5">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#FCE0E0" />
+                                </Style>
+                            </Button.Styles>
+                            <Button.Content>
+                                <TextBlock Margin="0,4,0,0" Text="Continue" />
+                            </Button.Content>
+                        </Button>
+
+                        <!--  Login Link  -->
+                        <Grid
+                            Grid.Row="3"
+                            Margin="0,0,0,-20"
+                            HorizontalAlignment="Center"
+                            RowDefinitions="*, *">
+                            <TextBlock
+                                Grid.Row="0"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="13"
+                                Foreground="#666666"
+                                Text="Already have an account?" />
+                            <TextBlock
+                                Name="LoginLink"
+                                Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Cursor="Hand"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="13"
+                                Foreground="#FF9999"
+                                Text="Login here...">
+                                <TextBlock.Styles>
+                                    <Style Selector="TextBlock:pointerover">
+                                        <Setter Property="TextDecorations" Value="Underline" />
+                                    </Style>
+                                </TextBlock.Styles>
+                            </TextBlock>
+                        </Grid>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </ScrollViewer>
+    </Border>
+
+</UserControl>

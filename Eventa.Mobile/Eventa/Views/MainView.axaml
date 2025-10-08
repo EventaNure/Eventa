@@ -12,8 +12,5 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <TextBlock
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Text="{Binding Greeting}" />
+    <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
 </UserControl>

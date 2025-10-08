@@ -2,8 +2,12 @@
     x:Class="Eventa.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    RequestedThemeVariant="Default">
+    RequestedThemeVariant="Light">
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+    <Application.Resources>
+        <FontFamily x:Key="JustAnotherHand">avares://Eventa/Assets/Fonts/JustAnotherHand#Just Another Hand</FontFamily>
+        <FontFamily x:Key="Kadwa">avares://Eventa/Assets/Fonts/Kadwa#Kadwa</FontFamily>
+    </Application.Resources>
 </Application>
