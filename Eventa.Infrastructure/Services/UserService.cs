@@ -17,7 +17,7 @@ namespace Eventa.Infrastructure.Services
             _signInManager = signInManager;
         }
 
-        public async Task<Result<EmailConfirmationDto>> Register(RegisterUserDto dto)
+        public async Task<Result<EmailConfirmationDto>> RegisterAsync(RegisterUserDto dto)
         {
             var user = new ApplicationUser
             {

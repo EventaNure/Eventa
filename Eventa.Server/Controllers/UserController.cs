@@ -27,7 +27,7 @@ namespace Eventa.Server.Controllers
                 return BadRequest();
             }
 
-            var registerResult = await _userService.Register(_mapper.Map<RegisterUserDto>(request));
+            var registerResult = await _userService.RegisterAsync(_mapper.Map<RegisterUserDto>(request));
 
             if (!registerResult.IsSuccess)
             {
