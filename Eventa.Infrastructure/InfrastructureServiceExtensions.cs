@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Eventa.Infrastructure
 {
@@ -22,6 +23,15 @@ namespace Eventa.Infrastructure
                 options.Password.RequiredLength = 8;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthentication()
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+
+                    };
+                });
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
 
