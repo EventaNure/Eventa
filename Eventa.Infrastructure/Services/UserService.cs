@@ -19,11 +19,14 @@ namespace Eventa.Infrastructure.Services
 
         public async Task<Result<EmailConfirmationDto>> RegisterAsync(RegisterUserDto dto)
         {
+            Random random = new Random();
+            var code = random.Next(1000000).ToString("D6");
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 Name = dto.Name,
+                VerificationCode = code
             };
             var result = await _userManager.CreateAsync(user, dto.Password);
 
@@ -37,12 +40,10 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(new Error("Failed to register user").WithMetadata("Code", "RegistrationFailed"));
             }
 
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
             return Result.Ok(new EmailConfirmationDto
             {
                 UserId = user.Id,
-                Code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code))
+                Code = code
             });
         }
 
@@ -53,13 +54,21 @@ namespace Eventa.Infrastructure.Services
             {
                 return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
             }
-            var result = await _userManager.ConfirmEmailAsync(user, 
-                Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(dto.Code)));
-            if (!result.Succeeded)
+
+            if (user.EmailConfirmed)
+            {
+                return Result.Fail(new Error("Email already confirmed").WithMetadata("Code", "EmailAlreadyConfirmed"));
+            }
+
+            if (user.VerificationCode != dto.Code)
             {
                 return Result.Fail(new Error("Token incorrect").WithMetadata("Code", "TokenIncorrect"));
             }
+
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
             await _signInManager.SignInAsync(user, true);
+
             return Result.Ok();
         }
     }
