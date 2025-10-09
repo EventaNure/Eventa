@@ -1,13 +1,13 @@
 <UserControl
-    x:Class="Eventa.Views.Authentication.RegistrationView"
+    x:Class="Eventa.Views.Authentication.LoginView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
-    x:DataType="vm:RegistrationViewModel"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:DataType="vm:LoginViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
         <Style Selector="TextBox">
@@ -60,7 +60,7 @@
                     BoxShadow="0 4 20 0 #30000000"
                     CornerRadius="12">
 
-                    <Grid Width="250" RowDefinitions="auto, *, auto, auto">
+                    <Grid RowDefinitions="auto, *, auto, auto">
                         <!--  Form Title  -->
                         <TextBlock
                             Grid.Row="0"
@@ -69,26 +69,14 @@
                             FontFamily="{StaticResource Kadwa}"
                             FontSize="24"
                             Foreground="#FF9999"
-                            Text="Registration Form" />
+                            Text="Log In" />
 
-                        <Grid Grid.Row="1" RowDefinitions="auto, auto, auto, auto, auto">
-                            <!--  Username Field  -->
-                            <StackPanel Grid.Row="0">
-                                <TextBox
-                                    Name="UsernameTextBox"
-                                    TextInputOptions.ContentType="Name"
-                                    Watermark="Username" />
-                                <TextBlock
-                                    Margin="0,-60,10,15"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Foreground="#FF9999"
-                                    Text="*" />
-                            </StackPanel>
-
+                        <Grid
+                            Grid.Row="1"
+                            Width="250"
+                            RowDefinitions="auto, auto, auto">
                             <!--  Email Field  -->
-                            <StackPanel Grid.Row="1">
+                            <StackPanel Grid.Row="0">
                                 <TextBox
                                     Name="EmailTextBox"
                                     TextInputOptions.ContentType="Email"
@@ -103,7 +91,7 @@
                             </StackPanel>
 
                             <!--  Password Field  -->
-                            <StackPanel Grid.Row="2">
+                            <StackPanel Grid.Row="1">
                                 <TextBox
                                     Name="PasswordTextBox"
                                     PasswordChar="●"
@@ -118,29 +106,37 @@
                                     Text="*" />
                             </StackPanel>
 
-                            <!--  Confirm Password Field  -->
-                            <StackPanel Grid.Row="3">
-                                <TextBox
-                                    Name="ConfirmPasswordTextBox"
-                                    PasswordChar="●"
-                                    TextInputOptions.ContentType="Password"
-                                    Watermark="Confirm Password" />
-                                <TextBlock
-                                    Margin="0,-60,10,15"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Foreground="#FF9999"
-                                    Text="*" />
-                            </StackPanel>
-
-                            <!--  Organization Field  -->
-                            <StackPanel Grid.Row="4">
-                                <TextBox
-                                    Name="OrganizationTextBox"
-                                    TextInputOptions.ContentType="Name"
-                                    Watermark="Organization name" />
-                            </StackPanel>
+                            <!--  Forgot password button  -->
+                            <HyperlinkButton
+                                Name="ForgotPasswordLink"
+                                Grid.Row="2"
+                                Margin="0,-10,0,0"
+                                HorizontalAlignment="Center"
+                                Cursor="Hand"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="13"
+                                Foreground="#747474">
+                                <HyperlinkButton.Styles>
+                                    <Style Selector="HyperlinkButton">
+                                        <Setter Property="TextBlock.TextDecorations" />
+                                    </Style>
+                                    <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    </Style>
+                                    <Style Selector="HyperlinkButton:pressed /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    </Style>
+                                </HyperlinkButton.Styles>
+                                <HyperlinkButton.Content>
+                                    <TextBlock Text="Forgot your password?" />
+                                </HyperlinkButton.Content>
+                            </HyperlinkButton>
                         </Grid>
 
                         <!--  Continue Button  -->
@@ -177,7 +173,7 @@
                             </Button.Content>
                         </Button>
 
-                        <!--  Login Link  -->
+                        <!--  Register Link  -->
                         <Grid
                             Grid.Row="3"
                             Margin="0,0,0,-20"
@@ -188,12 +184,12 @@
                                 FontFamily="{StaticResource Kadwa}"
                                 FontSize="13"
                                 Foreground="#666666"
-                                Text="Already have an account?" />
+                                Text="Don't have an account?" />
                             <HyperlinkButton
-                                Name="LoginLink"
+                                Name="RegisterLink"
                                 Grid.Row="1"
                                 HorizontalAlignment="Center"
-                                Command="{Binding LoginLinkCommand}"
+                                Command="{Binding RegistrationLinkCommand}"
                                 Cursor="Hand"
                                 FontFamily="{StaticResource Kadwa}"
                                 FontSize="13"
@@ -216,7 +212,7 @@
                                     </Style>
                                 </HyperlinkButton.Styles>
                                 <HyperlinkButton.Content>
-                                    <TextBlock Text="Login here..." />
+                                    <TextBlock Text="Register here..." />
                                 </HyperlinkButton.Content>
                             </HyperlinkButton>
                         </Grid>

@@ -15,7 +15,7 @@ public partial class MainView : UserControl
         DataContext = mainViewModel;
         InitializeComponent();
         Instance = this;
-        ChangePage(new RegistrationView());
+        ChangePage(RegistrationView.Instance);
     }
 
     public void ChangePage(UserControl newPage)
