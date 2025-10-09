@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Eventa.Infrastructure.Options;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,8 @@ namespace Eventa.Infrastructure
                 options.Password.RequiredLength = 8;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
 
             return services;
         }
