@@ -17,7 +17,7 @@ namespace Eventa.Infrastructure.Services
             _signInManager = signInManager;
         }
 
-        public async Task<Result<EmailConfirmationDto>> Register(RegisterUserDto dto)
+        public async Task<Result<EmailConfirmationDto>> RegisterAsync(RegisterUserDto dto)
         {
             var user = new ApplicationUser
             {
@@ -39,11 +39,28 @@ namespace Eventa.Infrastructure.Services
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            return new EmailConfirmationDto
+            return Result.Ok(new EmailConfirmationDto
             {
                 UserId = user.Id,
                 Code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code))
-            };
+            });
+        }
+
+        public async Task<Result> ConfirmEmailAsync(EmailConfirmationDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(dto.UserId);
+            if (user == null)
+            {
+                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, 
+                Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(dto.Code)));
+            if (!result.Succeeded)
+            {
+                return Result.Fail(new Error("Token incorrect").WithMetadata("Code", "TokenIncorrect"));
+            }
+            await _signInManager.SignInAsync(user, true);
+            return Result.Ok();
         }
     }
 }
