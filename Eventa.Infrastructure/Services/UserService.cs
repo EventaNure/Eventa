@@ -39,11 +39,11 @@ namespace Eventa.Infrastructure.Services
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            return new EmailConfirmationDto
+            return Result.Ok(new EmailConfirmationDto
             {
                 UserId = user.Id,
                 Code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code))
-            };
+            });
         }
 
         public async Task<Result> ConfirmEmailAsync(EmailConfirmationDto dto)
