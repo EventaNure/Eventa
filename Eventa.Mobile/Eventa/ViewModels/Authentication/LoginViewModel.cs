@@ -5,11 +5,11 @@ using Eventa.Views.Authentication;
 
 namespace Eventa.ViewModels.Authentication;
 
-public partial class RegistrationViewModel : ObservableObject
+public partial class LoginViewModel : ObservableObject
 {
     [RelayCommand]
-    private void LoginLink()
+    private void RegistrationLink()
     {
-        MainView.Instance.ChangePage(LoginView.Instance);
+        MainView.Instance.ChangePage(RegistrationView.Instance);
     }
 }

@@ -2,7 +2,9 @@
   <Folder Name="/Solution Items/">
     <File Path="Directory.Packages.props" />
   </Folder>
-  <Project Path="Eventa.Android/Eventa.Android.csproj" />
+  <Project Path="Eventa.Android/Eventa.Android.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
   <Project Path="Eventa.Desktop/Eventa.Desktop.csproj" />
   <Project Path="Eventa/Eventa.csproj" />
 </Solution>
