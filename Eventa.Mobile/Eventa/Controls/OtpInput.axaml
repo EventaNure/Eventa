@@ -1,0 +1,103 @@
+<UserControl
+    x:Class="Eventa.Controls.OtpInput"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="MinWidth" Value="44" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBox:pointerover/template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#FFB5B5" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector="TextBox:focus/template/ Border#PART_BorderElement">
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+    </UserControl.Styles>
+    <Border
+        HorizontalAlignment="Center"
+        BorderBrush="#E0E0E0"
+        BorderThickness="2"
+        CornerRadius="12">
+        <Grid ColumnDefinitions="*, Auto, *, Auto, *, Auto, *, Auto, *, Auto, *">
+            <TextBox
+                Name="Code1"
+                Grid.Column="0"
+                CornerRadius="10,0,0,10"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+            <Rectangle
+                Grid.Column="1"
+                Width="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="#EBEBEB" />
+            <TextBox
+                Name="Code2"
+                Grid.Column="2"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+            <Rectangle
+                Grid.Column="3"
+                Width="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="#EBEBEB" />
+            <TextBox
+                Name="Code3"
+                Grid.Column="4"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+            <Rectangle
+                Grid.Column="5"
+                Width="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="#EBEBEB" />
+            <TextBox
+                Name="Code4"
+                Grid.Column="6"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+            <Rectangle
+                Grid.Column="7"
+                Width="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="#EBEBEB" />
+            <TextBox
+                Name="Code5"
+                Grid.Column="8"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+            <Rectangle
+                Grid.Column="9"
+                Width="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="#EBEBEB" />
+            <TextBox
+                Name="Code6"
+                Grid.Column="10"
+                CornerRadius="0,10,10,0"
+                FontSize="20"
+                MaxLength="1"
+                TextAlignment="Center" />
+        </Grid>
+    </Border>
+</UserControl>

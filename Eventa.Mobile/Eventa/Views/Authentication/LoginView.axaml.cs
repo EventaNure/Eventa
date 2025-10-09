@@ -22,4 +22,18 @@ public partial class LoginView : UserControl
         DataContext = loginViewModel;
         InitializeComponent();
     }
+
+
+    private void TextBoxRequired_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is not TextBox textBox) return;
+
+        TextBlock? requiredIndicator = textBox.Name switch
+        {
+            "EmailTextBox" => EmailRequired,
+            "PasswordTextBox" => PasswordRequired,
+            _ => null
+        };
+        requiredIndicator?.Text = string.IsNullOrWhiteSpace(textBox.Text) ? "*" : string.Empty;
+    }
 }

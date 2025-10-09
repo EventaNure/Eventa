@@ -22,4 +22,19 @@ public partial class RegistrationView : UserControl
         DataContext = registrationViewModel;
         InitializeComponent();
     }
+
+    private void TextBoxRequired_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (sender is not TextBox textBox) return;
+
+        TextBlock? requiredIndicator = textBox.Name switch
+        {
+            "UserNameTextBox" => UserNameRequired,
+            "EmailTextBox" => EmailRequired,
+            "PasswordTextBox" => PasswordRequired,
+            "ConfirmPasswordTextBox" => ConfirmPasswordRequired,
+            _ => null
+        };
+        requiredIndicator?.Text = string.IsNullOrWhiteSpace(textBox.Text) ? "*" : string.Empty;
+    }
 }

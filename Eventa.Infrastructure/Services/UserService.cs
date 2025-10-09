@@ -20,7 +20,7 @@ namespace Eventa.Infrastructure.Services
 
         public async Task<Result<EmailConfirmationDto>> RegisterAsync(RegisterUserDto dto)
         {
-            Random random = new Random();
+            Random random = new();
             var code = random.Next(1000000).ToString("D6");
             var user = new ApplicationUser
             {

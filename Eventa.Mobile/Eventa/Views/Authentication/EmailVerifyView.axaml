@@ -1,28 +1,29 @@
 <UserControl
-    x:Class="Eventa.Views.Authentication.LoginView"
+    x:Class="Eventa.Views.Authentication.EmailVerifyView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Eventa.Controls;assembly=Eventa"
     xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
     d:DesignHeight="750"
     d:DesignWidth="800"
-    x:DataType="vm:LoginViewModel"
+    x:DataType="vm:EmailVerifyViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
         <Style Selector="TextBox">
-            <Setter Property="Margin" Value="0,0,0,15" />
-            <Setter Property="Padding" Value="12,10" />
-            <Setter Property="FontSize" Value="14" />
             <Setter Property="Background" Value="White" />
-            <Setter Property="BorderBrush" Value="#E0E0E0" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="MinWidth" Value="44" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
             <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
         <Style Selector="TextBox:focus">
-            <Setter Property="BorderBrush" Value="#FFB5B5" />
+            <Setter Property="BorderBrush" Value="#ff0000" />
         </Style>
         <Style Selector="TextBlock">
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -55,106 +56,84 @@
                 Foreground="#FF9999"
                 Text="EVENTA" />
 
-            <!--  Registration Form Card  -->
+            <!--  Verification Form Card  -->
             <Border
                 Grid.Row="1"
-                Padding="30"
+                Width="350"
+                Padding="20"
                 Background="White"
                 BoxShadow="0 4 20 0 #30000000"
                 CornerRadius="12">
 
-                <Grid RowDefinitions="auto, *, auto, auto, auto">
+                <Grid RowDefinitions="auto, auto, auto, auto, auto, auto, auto, auto, auto">
                     <!--  Form Title  -->
                     <TextBlock
                         Grid.Row="0"
-                        Margin="0,-10,0,20"
+                        Margin="0,0,0,10"
                         HorizontalAlignment="Center"
                         FontFamily="{StaticResource Kadwa}"
                         FontSize="24"
                         Foreground="#FF9999"
-                        Text="Log In" />
+                        Text="Verify Your Email" />
 
-                    <Grid
+                    <!--  Separator Line  -->
+                    <Border
                         Grid.Row="1"
-                        Width="250"
-                        RowDefinitions="auto, auto, auto">
-                        <!--  Email Field  -->
-                        <StackPanel Grid.Row="0">
-                            <TextBox
-                                Name="EmailTextBox"
-                                Text="{Binding Email, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Email"
-                                Watermark="Email" />
-                            <TextBlock
-                                Name="EmailRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
+                        Height="1"
+                        Margin="60,0,60,20"
+                        Background="#E0E0E0" />
 
-                        <!--  Password Field  -->
-                        <StackPanel Grid.Row="1">
-                            <TextBox
-                                Name="PasswordTextBox"
-                                PasswordChar="●"
-                                Text="{Binding Password, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Password"
-                                Watermark="Password" />
-                            <TextBlock
-                                Name="PasswordRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
+                    <!--  Description Text  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Margin="0,0,0,5"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="14"
+                        Foreground="#333333"
+                        Text="A verification code has been sent to"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
 
-                        <!--  Forgot password button  -->
-                        <HyperlinkButton
-                            Name="ForgotPasswordLink"
-                            Grid.Row="2"
-                            Margin="0,-10,0,0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding ForgotPasswordLinkCommand}"
-                            Cursor="Hand"
-                            FontFamily="{StaticResource Kadwa}"
-                            FontSize="13"
-                            Foreground="#747474">
-                            <HyperlinkButton.Styles>
-                                <Style Selector="HyperlinkButton">
-                                    <Setter Property="TextBlock.TextDecorations" />
-                                </Style>
-                                <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="#FF8181" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
-                                </Style>
-                                <Style Selector="HyperlinkButton:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="#FF8181" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
-                                </Style>
-                            </HyperlinkButton.Styles>
-                            <HyperlinkButton.Content>
-                                <TextBlock Text="Forgot your password?" />
-                            </HyperlinkButton.Content>
-                        </HyperlinkButton>
-                    </Grid>
+                    <!--  Email Display  -->
+                    <TextBlock
+                        Name="EmailDisplay"
+                        Grid.Row="3"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="14"
+                        Foreground="#FF9999"
+                        Text="{Binding Email}"
+                        TextAlignment="Center" />
+
+                    <!--  Instruction Text  -->
+                    <TextBlock
+                        Grid.Row="4"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="13"
+                        Foreground="#666666"
+                        LineHeight="20"
+                        Text="Please check your inbox and enter the verification code below to verify your email address"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+
+                    <!--  Verification Code Input  -->
+                    <controls:OtpInput
+                        Grid.Row="5"
+                        Margin="0,0,0,30"
+                        Code="{Binding Code, Mode=TwoWay}" />
 
                     <!--  Error Text  -->
                     <ScrollViewer
-                        Grid.Row="2"
+                        Grid.Row="6"
                         MaxWidth="200"
                         MaxHeight="100">
                         <TextBlock
+                            Grid.Row="6"
+                            Margin="20,0,20,0"
                             FontFamily="{StaticResource Kadwa}"
                             Foreground="#FF8181"
                             IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
@@ -163,10 +142,10 @@
                             TextWrapping="WrapWithOverflow" />
                     </ScrollViewer>
 
-                    <!--  Continue Button  -->
+                    <!--  Verify Button  -->
                     <Button
-                        Name="ContinueButton"
-                        Grid.Row="3"
+                        Name="VerifyButton"
+                        Grid.Row="7"
                         Margin="20,20,20,20"
                         Padding="0"
                         HorizontalAlignment="Stretch"
@@ -175,7 +154,7 @@
                         Background="Transparent"
                         BorderBrush="#FFB5B5"
                         BorderThickness="2"
-                        Command="{Binding LoginCommand}"
+                        Command="{Binding VerifyEmailCommand}"
                         CornerRadius="8"
                         Cursor="Hand"
                         FontFamily="{StaticResource Kadwa}"
@@ -194,27 +173,18 @@
                             </Style>
                         </Button.Styles>
                         <Button.Content>
-                            <TextBlock Margin="0,4,0,0" Text="Continue" />
+                            <TextBlock Margin="0,4,0,0" Text="Verify" />
                         </Button.Content>
                     </Button>
-
-                    <!--  Register Link  -->
-                    <Grid
-                        Grid.Row="4"
-                        Margin="0,0,0,-20"
+                    <!--  Action Links  -->
+                    <StackPanel
+                        Grid.Row="8"
                         HorizontalAlignment="Center"
-                        RowDefinitions="*, *">
-                        <TextBlock
-                            Grid.Row="0"
-                            FontFamily="{StaticResource Kadwa}"
-                            FontSize="13"
-                            Foreground="#666666"
-                            Text="Don't have an account?" />
+                        Spacing="5">
                         <HyperlinkButton
-                            Name="RegisterLink"
-                            Grid.Row="1"
+                            Name="ChangeEmailLink"
                             HorizontalAlignment="Center"
-                            Command="{Binding RegistrationLinkCommand}"
+                            Command="{Binding ChangeEmailCommand}"
                             Cursor="Hand"
                             FontFamily="{StaticResource Kadwa}"
                             FontSize="13"
@@ -237,10 +207,40 @@
                                 </Style>
                             </HyperlinkButton.Styles>
                             <HyperlinkButton.Content>
-                                <TextBlock Text="Register here..." />
+                                <TextBlock Text="Change email" />
                             </HyperlinkButton.Content>
                         </HyperlinkButton>
-                    </Grid>
+
+                        <HyperlinkButton
+                            Name="ResendCodeLink"
+                            HorizontalAlignment="Center"
+                            Command="{Binding ResendCodeCommand}"
+                            Cursor="Hand"
+                            FontFamily="{StaticResource Kadwa}"
+                            FontSize="13"
+                            Foreground="#FF9999">
+                            <HyperlinkButton.Styles>
+                                <Style Selector="HyperlinkButton">
+                                    <Setter Property="TextBlock.TextDecorations" />
+                                </Style>
+                                <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="#FF8181" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                </Style>
+                                <Style Selector="HyperlinkButton:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="#FF8181" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                </Style>
+                            </HyperlinkButton.Styles>
+                            <HyperlinkButton.Content>
+                                <TextBlock Text="Resend code" />
+                            </HyperlinkButton.Content>
+                        </HyperlinkButton>
+                    </StackPanel>
 
                 </Grid>
             </Border>

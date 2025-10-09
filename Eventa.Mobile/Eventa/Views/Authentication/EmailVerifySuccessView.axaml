@@ -1,0 +1,156 @@
+<UserControl
+    x:Class="Eventa.Views.Authentication.EmailVerifySuccessView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:EmailVerifySuccessViewModel"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </UserControl.Styles>
+    <Border>
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                <GradientStop Offset="0" Color="#FCE487" />
+                <GradientStop Offset="1" Color="#F9AAA9" />
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <!--  Main Content  -->
+        <Grid
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            RowDefinitions="auto, *">
+            <!--  Logo/Title  -->
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource JustAnotherHand}"
+                FontSize="80"
+                Foreground="#FF9999"
+                Text="EVENTA" />
+
+            <!--  Success Card  -->
+            <Border
+                Grid.Row="1"
+                Width="350"
+                Padding="40,30"
+                Background="White"
+                BoxShadow="0 4 20 0 #30000000"
+                CornerRadius="12">
+
+                <Grid RowDefinitions="auto, auto, auto, auto, auto, auto">
+                    <!--  Title  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="24"
+                        Foreground="#FF9999"
+                        Text="Verify Your Email" />
+
+                    <!--  Separator Line  -->
+                    <Border
+                        Grid.Row="1"
+                        Height="1"
+                        Margin="40,0,40,40"
+                        Background="#E0E0E0" />
+
+                    <!--  Success Icon  -->
+                    <Viewbox
+                        Grid.Row="2"
+                        Width="100"
+                        Height="100"
+                        Margin="0,0,0,30">
+                        <Canvas Width="100" Height="100">
+                            <!--  Circle  -->
+                            <Ellipse
+                                Width="100"
+                                Height="100"
+                                Fill="Transparent"
+                                Stroke="#FF9999"
+                                StrokeThickness="3" />
+                            <PathIcon
+                                Canvas.Left="30"
+                                Canvas.Top="35"
+                                Width="40"
+                                Height="30"
+                                Data="M1827.701 303.065 698.835 1431.801 92.299 825.266 0 917.564 698.835 1616.4 1919.869 395.234z"
+                                Foreground="#FF9999" />
+                        </Canvas>
+                    </Viewbox>
+
+                    <!--  Success Title  -->
+                    <TextBlock
+                        Grid.Row="3"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="#333333"
+                        Text="Email Verified" />
+
+                    <!--  Success Message  -->
+                    <TextBlock
+                        Grid.Row="4"
+                        Margin="0,0,0,30"
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="14"
+                        Foreground="#666666"
+                        LineHeight="20"
+                        Text="Your email address was successfully verified"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+
+                    <!--  Continue Button  -->
+                    <Button
+                        Name="ContinueButton"
+                        Grid.Row="5"
+                        Margin="20,0,20,0"
+                        Padding="0,12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="#FFB5B5"
+                        BorderThickness="2"
+                        Command="{Binding GoToLoginCommand}"
+                        CornerRadius="8"
+                        Cursor="Hand"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="16"
+                        Foreground="#FF8181">
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#FCE0E0" />
+                                <Setter Property="Foreground" Value="#FF8181" />
+                                <Setter Property="BorderBrush" Value="#FFB5B5" />
+                            </Style>
+                            <Style Selector="Button:pressed /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#FCE0E0" />
+                                <Setter Property="Foreground" Value="#FF8181" />
+                                <Setter Property="BorderBrush" Value="#FFB5B5" />
+                            </Style>
+                        </Button.Styles>
+                        <Button.Content>
+                            <TextBlock Text="Continue" />
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+
+</UserControl>

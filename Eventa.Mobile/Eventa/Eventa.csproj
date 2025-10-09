@@ -23,6 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Authentication\EmailVerifySuccessView.axaml.cs">
+      <DependentUpon>EmailVerifySuccessView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Authentication\EmailVerifyView.axaml.cs">
+      <DependentUpon>EmailVerifyView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Authentication\LoginView.axaml.cs">
       <DependentUpon>LoginView.axaml</DependentUpon>
     </Compile>

@@ -16,6 +16,8 @@ public partial class MainView : UserControl
         InitializeComponent();
         Instance = this;
         ChangePage(RegistrationView.Instance);
+        // ChangePage(EmailVerifyView.Instance);
+        // ChangePage(EmailVerifySuccessView.Instance);
     }
 
     public void ChangePage(UserControl newPage)

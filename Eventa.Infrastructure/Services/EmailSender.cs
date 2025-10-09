@@ -15,7 +15,7 @@ namespace Eventa.Infrastructure.Services
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            MimeMessage message = new MimeMessage();
+            MimeMessage message = new();
 
             message.From.Add(new MailboxAddress("Eventa", _options.Email));
 
@@ -28,13 +28,11 @@ namespace Eventa.Infrastructure.Services
                 Text = htmlMessage
             };
 
-            using (SmtpClient smtp = new SmtpClient())
-            {
-                await smtp.ConnectAsync(_options.Host, _options.Port, MailKit.Security.SecureSocketOptions.StartTls);
-                await smtp.AuthenticateAsync(_options.Email, _options.Password);
-                await smtp.SendAsync(message);
-                await smtp.DisconnectAsync(true);
-            }
+            using SmtpClient smtp = new();
+            await smtp.ConnectAsync(_options.Host, _options.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_options.Email, _options.Password);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
         }
     }
 }
