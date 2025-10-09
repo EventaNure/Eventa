@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Eventa.Infrastructure\Eventa.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ResponseModels\" />
-  </ItemGroup>
-
 </Project>

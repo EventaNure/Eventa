@@ -2,6 +2,7 @@
 using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
+using Eventa.Server.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers
@@ -31,15 +32,38 @@ namespace Eventa.Server.Controllers
 
             if (!registerResult.IsSuccess)
             {
-                if (registerResult.Errors.Any(e => (string)e.Metadata["Code"] == "DuplicateUserName"))
+                if (registerResult.Errors.Any(e => (string)e.Metadata["Code"] == "DuplicateEmail"))
                 {
-                    return Conflict();
+                    return Conflict(new {message = "Email already exists"});
                 }
 
+                return BadRequest(new {message = "Failed to register user" });
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(EmailConfirmationResponseModel request)
+        {
+            if (!ModelState.IsValid)
+            {
                 return BadRequest();
             }
 
-            return Ok(registerResult.Value);
+            var confirmEmailResult = await _userService.ConfirmEmailAsync(_mapper.Map<EmailConfirmationDto>(request));
+
+            if (!confirmEmailResult.IsSuccess)
+            {
+                if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "UserNotFound"))
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                return BadRequest(new { message = "Token incorrect" });
+            }
+
+            return Ok(new { message = "Your email successful confirmed" });
         }
     }
 }

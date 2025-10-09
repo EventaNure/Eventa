@@ -10,7 +10,7 @@ namespace Eventa.Server.RequestModels
 
         [Required]
         [StringLength(128, MinimumLength = 8)]
-        [RegularExpression("^(?=.*[a-z])(?=.*[A-Z]).*$")]
+        [RegularExpression("^(?=.*[a-z])(?=.*[A-Z]).*$", ErrorMessage = "Password must have at least one lowercase and one upperrcase letter")]
         public string Password { get; set; } = string.Empty;
 
         [Required]
