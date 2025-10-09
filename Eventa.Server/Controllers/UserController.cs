@@ -3,6 +3,7 @@ using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers
@@ -12,11 +13,13 @@ namespace Eventa.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IEmailSender emailSender, IMapper mapper)
         {
             _userService = userService;
+            _emailSender = emailSender;
             _mapper = mapper;
         }
 
@@ -40,11 +43,16 @@ namespace Eventa.Server.Controllers
                 return BadRequest(new {message = "Failed to register user" });
             }
 
-            return Ok();
+            await _emailSender.SendEmailAsync(
+                request.Email, 
+                "Registration confirmation", 
+                $"Confirm email to register in Eventa. Confirmation code: {registerResult.Value.Code}");
+
+            return Ok(_mapper.Map<RegisterResponseModel>(registerResult.Value));
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(EmailConfirmationResponseModel request)
+        public async Task<IActionResult> ConfirmEmail(EmailConfirmationRequestModel request)
         {
             if (!ModelState.IsValid)
             {
@@ -58,6 +66,11 @@ namespace Eventa.Server.Controllers
                 if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "UserNotFound"))
                 {
                     return NotFound(new { message = "User not found" });
+                }
+
+                if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "EmailAlreadyConfirmed"))
+                {
+                    return BadRequest(new { message = "Email already confirmed" });
                 }
 
                 return BadRequest(new { message = "Token incorrect" });
