@@ -78,5 +78,23 @@ namespace Eventa.Server.Controllers
 
             return Ok(new { message = "Your email successful confirmed" });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequestModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var loginResultResult = await _userService.LoginAsync(_mapper.Map<LoginUserDto>(request));
+
+            if (!loginResultResult.IsSuccess)
+            {
+                return BadRequest(new { message = "Email or password incorrect" });
+            }
+
+            return Ok();
+        }
     }
 }

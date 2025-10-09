@@ -2,6 +2,7 @@
 using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using FluentResults;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -68,6 +69,22 @@ namespace Eventa.Infrastructure.Services
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
             await _signInManager.SignInAsync(user, true);
+
+            return Result.Ok();
+        }
+
+        public async Task<Result> LoginAsync(LoginUserDto dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+            {
+                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+            }
+            var result = await _signInManager.PasswordSignInAsync(user, dto.Password, true, false);
+            if (!result.Succeeded)
+            {
+                return Result.Fail(new Error("Login or password incorrect").WithMetadata("Code", "LoginFailed"));
+            }
 
             return Result.Ok();
         }
