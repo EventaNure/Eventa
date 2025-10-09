@@ -12,6 +12,7 @@ namespace Eventa.Server.Profiles
             CreateMap<EmailConfirmationDto, EmailConfirmationRequestModel>();
             CreateMap<EmailConfirmationRequestModel, EmailConfirmationDto>();
             CreateMap<EmailConfirmationDto, RegisterResponseModel>();
+            CreateMap<LoginRequestModel, LoginUserDto>();
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Eventa.Server.Controllers
                 return BadRequest(new { message = "Token incorrect" });
             }
 
-            return Ok(new { message = "Your email successful confirmed" });
+            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken" });
         }
 
         [HttpPost("login")]
@@ -94,7 +94,7 @@ namespace Eventa.Server.Controllers
                 return BadRequest(new { message = "Email or password incorrect" });
             }
 
-            return Ok();
+            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken"});
         }
     }
 }
