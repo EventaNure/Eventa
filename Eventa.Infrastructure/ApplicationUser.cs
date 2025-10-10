@@ -10,5 +10,8 @@ namespace Eventa.Infrastructure
 
         [StringLength(6, MinimumLength = 6)]
         public string? VerificationCode { get; set; } = string.Empty;
+
+        [StringLength(32, MinimumLength = 3)]
+        public string? Organization { get; set; }
     }
 }

@@ -8,7 +8,8 @@ namespace Eventa.Server.Profiles
     public class UserProfile : Profile
     {
         public UserProfile() {
-            CreateMap<RegisterRequestModel, RegisterUserDto>();
+            CreateMap<RegisterUserRequestModel, RegisterUserDto>();
+            CreateMap<RegisterOrganizerRequestModel, RegisterOrganizerDto>();
             CreateMap<ConfirmEmailDto, EmailConfirmationRequestModel>();
             CreateMap<EmailConfirmationRequestModel, ConfirmEmailDto>();
             CreateMap<ConfirmEmailDto, RegisterResponseModel>();

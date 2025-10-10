@@ -7,7 +7,8 @@ namespace Eventa.Application.Services
     {
         Task<Result> ConfirmEmailAsync(ConfirmEmailDto dto);
         Task<Result<LoginResultDto>> LoginAsync(LoginUserDto dto);
-        Task<Result<RegisterResultDto>> RegisterAsync(RegisterUserDto dto);
+        Task<Result<RegisterResultDto>> RegisterOrganizerAsync(RegisterOrganizerDto dto);
+        Task<Result<RegisterResultDto>> RegisterUserAsync(RegisterUserDto dto);
         Task<Result> ResendRegistrationEmailAsync(string userId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Eventa.Infrastructure.Options;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace Eventa.Infrastructure
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 8;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()

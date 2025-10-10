@@ -1,8 +1,10 @@
-﻿using Eventa.Application.DTOs;
+﻿using Eventa.Application.Common;
+using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Eventa.Infrastructure.Services
 {
@@ -19,7 +21,7 @@ namespace Eventa.Infrastructure.Services
             _emailSender = emailSender;
         }
 
-        public async Task<Result<RegisterResultDto>> RegisterAsync(RegisterUserDto dto)
+        public async Task<Result<RegisterResultDto>> RegisterUserAsync(RegisterUserDto dto)
         {
             var code = GenerateVerificationCode();
             var user = new ApplicationUser
@@ -29,7 +31,32 @@ namespace Eventa.Infrastructure.Services
                 Name = dto.Name,
                 VerificationCode = code
             };
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            return await RegisterAsync(user, dto.Password);
+        }
+
+        public async Task<Result<RegisterResultDto>> RegisterOrganizerAsync(RegisterOrganizerDto dto)
+        {
+            var code = GenerateVerificationCode();
+            var user = new ApplicationUser
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                Name = dto.Name,
+                VerificationCode = code,
+                Organization = dto.Organization
+            };
+            var result = await RegisterAsync(user, dto.Password);
+            if (result.IsSuccess)
+            {
+                await _userManager.AddToRoleAsync(user, Roles.OrganizerRole);
+            }
+
+            return result;
+        }
+
+        private async Task<Result<RegisterResultDto>> RegisterAsync(ApplicationUser user, string password)
+        {
+            var result = await _userManager.CreateAsync(user, password);
 
             if (!result.Succeeded)
             {
@@ -41,7 +68,7 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(new Error("Failed to register user").WithMetadata("Code", "RegistrationFailed"));
             }
 
-            await SendRegistrationEmailAsync(dto.Email, code);
+            await SendRegistrationEmailAsync(user.Email!, user.VerificationCode!);
 
             return Result.Ok(new RegisterResultDto
             {

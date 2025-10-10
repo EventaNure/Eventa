@@ -20,15 +20,38 @@ namespace Eventa.Server.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequestModel request)
+        [HttpPost("register-user")]
+        public async Task<IActionResult> RegisterUser(RegisterUserRequestModel request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var registerResult = await _userService.RegisterAsync(_mapper.Map<RegisterUserDto>(request));
+            var registerResult = await _userService.RegisterUserAsync(_mapper.Map<RegisterUserDto>(request));
+
+            if (!registerResult.IsSuccess)
+            {
+                if (registerResult.Errors.Any(e => (string)e.Metadata["Code"] == "DuplicateEmail"))
+                {
+                    return Conflict(registerResult.Errors[0]);
+                }
+
+                return BadRequest(registerResult.Errors[0]);
+            }
+
+            return Ok(_mapper.Map<RegisterResponseModel>(registerResult.Value));
+        }
+
+        [HttpPost("register-organizer")]
+        public async Task<IActionResult> RegisterOrganizer(RegisterOrganizerRequestModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var registerResult = await _userService.RegisterOrganizerAsync(_mapper.Map<RegisterOrganizerDto>(request));
 
             if (!registerResult.IsSuccess)
             {
