@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Eventa.Models;
+namespace Eventa.Models.Authentication;
 
 public class RegisterRequestModel
 {
@@ -16,6 +16,6 @@ public class RegisterRequestModel
     [JsonPropertyName("confirmPassword")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
-    [JsonPropertyName("organizationName")]
+    [JsonPropertyName("organization")]
     public string? OrganizationName { get; set; }
 }

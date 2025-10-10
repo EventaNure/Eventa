@@ -177,18 +177,4 @@ public partial class OtpInput : UserControl
         }
         _codeBoxes[0].Focus();
     }
-
-    public void SetCode(string code)
-    {
-        if (string.IsNullOrEmpty(code))
-        {
-            Clear();
-            return;
-        }
-
-        for (int i = 0; i < _codeBoxes.Count && i < code.Length; i++)
-        {
-            _codeBoxes[i].Text = code[i].ToString();
-        }
-    }
 }

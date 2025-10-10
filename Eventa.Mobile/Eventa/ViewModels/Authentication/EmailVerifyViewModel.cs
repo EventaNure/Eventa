@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Eventa.Models;
+using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views;
 using Eventa.Views.Authentication;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Eventa.ViewModels.Authentication;
@@ -15,48 +16,49 @@ public partial class EmailVerifyViewModel : ObservableObject
 
     [ObservableProperty]
     private string _email = string.Empty;
+
     [ObservableProperty]
     private string _code = string.Empty;
+
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
     private IAsyncRelayCommand? _verifyEmailCommand;
+
     [ObservableProperty]
     private IAsyncRelayCommand? _resendCodeCommand;
 
-    private string UserId = string.Empty;
+    private string _userId = string.Empty;
+    private string _password = string.Empty;
 
     public EmailVerifyViewModel()
     {
-        _verifyEmailCommand = new AsyncRelayCommand(VerifyEmail);
-        _resendCodeCommand = new AsyncRelayCommand(ResendCode);
         _apiService = new ApiService();
+        _verifyEmailCommand = new AsyncRelayCommand(VerifyEmailAsync);
+        _resendCodeCommand = new AsyncRelayCommand(ResendCodeAsync);
     }
 
-    private async Task VerifyEmail()
+    private async Task VerifyEmailAsync()
     {
-        if (Code.Length < 6)
-        {
-            ErrorMessage = "Please enter a valid 6-digit code.";
+        if (!ValidateCode())
             return;
-        }
+
+        ErrorMessage = string.Empty;
 
         try
         {
-            var emailConfirmationRequestModel = new EmailConfirmationRequestModel
+            var emailConfirmation = new EmailConfirmationRequestModel
             {
-                UserId = UserId,
+                UserId = _userId,
                 Code = Code
             };
 
-            // Call API
-            var (success, message) = await _apiService.ConfirmEmailAsync(emailConfirmationRequestModel);
+            var (success, message) = await _apiService.ConfirmEmailAsync(emailConfirmation);
 
             if (success)
             {
-                // EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email);
-                MainView.Instance.ChangePage(EmailVerifySuccessView.Instance);
+                await AttemptLoginAsync();
             }
             else
             {
@@ -69,11 +71,27 @@ public partial class EmailVerifyViewModel : ObservableObject
         }
     }
 
-    private async Task ResendCode()
+    private async Task ResendCodeAsync()
     {
-        ErrorMessage = "In development";
-        await Task.Delay(1000);
         ErrorMessage = string.Empty;
+
+        try
+        {
+            var resendRequest = new ResendEmailConfirmationRequestModel
+            {
+                UserId = _userId
+            };
+
+            var (success, message) = await _apiService.ResendConfirmEmailAsync(resendRequest);
+
+            ErrorMessage = success
+                ? "The new code has been sent to your email!"
+                : message;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -82,17 +100,75 @@ public partial class EmailVerifyViewModel : ObservableObject
         MainView.Instance.ChangePage(RegistrationView.Instance);
     }
 
-    public void InsertFormData(string email, string userId)
+    private bool ValidateCode()
+    {
+        if (Code.Length != 6)
+        {
+            ErrorMessage = "Please enter a valid 6-digit code.";
+            return false;
+        }
+        return true;
+    }
+
+    private async Task AttemptLoginAsync()
+    {
+        try
+        {
+            var loginRequest = new LoginRequestModel
+            {
+                Email = Email,
+                Password = _password
+            };
+
+            var (success, message, data) = await _apiService.LoginAsync(loginRequest);
+
+            if (!success || data is not JsonElement json)
+            {
+                ErrorMessage = message;
+                return;
+            }
+
+            var loginResponse = json.Deserialize<LoginResponseModel>();
+            if (loginResponse == null)
+            {
+                ErrorMessage = "Failed to process login response.";
+                return;
+            }
+
+            NavigateAfterLogin(loginResponse);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred during login: {ex.Message}";
+        }
+    }
+
+    private void NavigateAfterLogin(LoginResponseModel loginResponse)
+    {
+        if (loginResponse.EmailConfirmed)
+        {
+            EmailVerifySuccessView.Instance.emailVerifySuccessViewModel.InsertFormData(loginResponse);
+            MainView.Instance.ChangePage(EmailVerifySuccessView.Instance);
+        }
+        else
+        {
+            MainView.Instance.ChangePage(EmailVerifyView.Instance);
+        }
+    }
+
+    public void InsertFormData(string email, string password, string userId)
     {
         Email = email;
-        UserId = userId;
+        _password = password;
+        _userId = userId;
     }
 
     public void ResetForm()
     {
         Email = string.Empty;
         Code = string.Empty;
+        _password = string.Empty;
+        _userId = string.Empty;
         ErrorMessage = string.Empty;
-        UserId = string.Empty;
     }
 }
