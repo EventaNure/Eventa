@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eventa.Application\Eventa.Application.csproj" />
-    <ProjectReference Include="..\eventa.client\Eventa.Client.esproj">
+    <ProjectReference Include="..\Eventa.Client\Eventa.Client.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\Eventa.Infrastructure\Eventa.Infrastructure.csproj" />

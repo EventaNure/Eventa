@@ -3,7 +3,6 @@ using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers
@@ -13,13 +12,11 @@ namespace Eventa.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IEmailSender emailSender, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
-            _emailSender = emailSender;
             _mapper = mapper;
         }
 
@@ -37,16 +34,11 @@ namespace Eventa.Server.Controllers
             {
                 if (registerResult.Errors.Any(e => (string)e.Metadata["Code"] == "DuplicateEmail"))
                 {
-                    return Conflict(new {message = "Email already exists"});
+                    return Conflict(registerResult.Errors[0]);
                 }
 
-                return BadRequest(new {message = "Failed to register user" });
+                return BadRequest(registerResult.Errors[0]);
             }
-
-            await _emailSender.SendEmailAsync(
-                request.Email, 
-                "Registration confirmation", 
-                $"Confirm email to register in Eventa. Confirmation code: {registerResult.Value.Code}");
 
             return Ok(_mapper.Map<RegisterResponseModel>(registerResult.Value));
         }
@@ -59,24 +51,37 @@ namespace Eventa.Server.Controllers
                 return BadRequest();
             }
 
-            var confirmEmailResult = await _userService.ConfirmEmailAsync(_mapper.Map<EmailConfirmationDto>(request));
+            var confirmEmailResult = await _userService.ConfirmEmailAsync(_mapper.Map<ConfirmEmailDto>(request));
 
             if (!confirmEmailResult.IsSuccess)
             {
                 if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "UserNotFound"))
                 {
-                    return NotFound(new { message = "User not found" });
+                    return NotFound(confirmEmailResult.Errors[0]);
                 }
 
-                if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "EmailAlreadyConfirmed"))
-                {
-                    return BadRequest(new { message = "Email already confirmed" });
-                }
-
-                return BadRequest(new { message = "Token incorrect" });
+                return BadRequest(confirmEmailResult.Errors[0]);
             }
 
-            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken" });
+            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken", EmailConfirmed = true });
+        }
+
+        [HttpPost("resend-confirm-email")]
+        public async Task<IActionResult> ResendConfirmEmail(ResendEmailConfirmationRequestModel request)
+        {
+            var confirmEmailResult = await _userService.ResendRegistrationEmailAsync(request.UserId);
+
+            if (!confirmEmailResult.IsSuccess)
+            {
+                if (confirmEmailResult.Errors.Any(e => (string)e.Metadata["Code"] == "UserNotFound"))
+                {
+                    return NotFound(confirmEmailResult.Errors[0]);
+                }
+
+                return BadRequest(confirmEmailResult.Errors[0]);
+            }
+
+            return Ok();
         }
 
         [HttpPost("login")]
@@ -87,14 +92,25 @@ namespace Eventa.Server.Controllers
                 return BadRequest();
             }
 
-            var loginResultResult = await _userService.LoginAsync(_mapper.Map<LoginUserDto>(request));
+            var loginResult = await _userService.LoginAsync(_mapper.Map<LoginUserDto>(request));
 
-            if (!loginResultResult.IsSuccess)
+            if (!loginResult.IsSuccess)
             {
-                return BadRequest(new { message = "Email or password incorrect" });
+                if (loginResult.Errors.Any(e => (string)e.Metadata["Code"] == "UserNotFound"))
+                {
+                    return NotFound(loginResult.Errors[0]);
+                }
+
+                return BadRequest(loginResult.Errors[0]);
             }
 
-            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken"});
+            string? jwtToken = null;
+            if (loginResult.Value.EmailConfirmed)
+            {
+                jwtToken = "This is test jwtToken";
+            }
+
+            return Ok(new SignInResponseModel { JwtToken = jwtToken, EmailConfirmed = loginResult.Value.EmailConfirmed, UserId = loginResult.Value.UserId });
         }
     }
 }

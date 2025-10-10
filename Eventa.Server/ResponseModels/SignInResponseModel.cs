@@ -2,6 +2,10 @@
 {
     public class SignInResponseModel
     {
-        public string JwtToken { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+
+        public string? JwtToken { get; set; }
+
+        public bool EmailConfirmed { get; set; }
     }
 }

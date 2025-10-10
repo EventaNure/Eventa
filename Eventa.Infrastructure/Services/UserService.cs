@@ -1,10 +1,8 @@
-﻿using System.Text;
-using Eventa.Application.DTOs;
+﻿using Eventa.Application.DTOs;
 using Eventa.Application.Services;
 using FluentResults;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Eventa.Infrastructure.Services
 {
@@ -12,16 +10,18 @@ namespace Eventa.Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailSender _emailSender;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) {
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
         }
 
-        public async Task<Result<EmailConfirmationDto>> RegisterAsync(RegisterUserDto dto)
+        public async Task<Result<RegisterResultDto>> RegisterAsync(RegisterUserDto dto)
         {
-            Random random = new();
-            var code = random.Next(1000000).ToString("D6");
+            var code = GenerateVerificationCode();
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
@@ -41,14 +41,33 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(new Error("Failed to register user").WithMetadata("Code", "RegistrationFailed"));
             }
 
-            return Result.Ok(new EmailConfirmationDto
+            await SendRegistrationEmailAsync(dto.Email, code);
+
+            return Result.Ok(new RegisterResultDto
             {
-                UserId = user.Id,
-                Code = code
+                UserId = user.Id
             });
         }
 
-        public async Task<Result> ConfirmEmailAsync(EmailConfirmationDto dto)
+        public async Task<Result> ResendRegistrationEmailAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+            }
+
+            var code = GenerateVerificationCode();
+            user.VerificationCode = code;
+            await _userManager.UpdateAsync(user);
+
+            await SendRegistrationEmailAsync(user.Email!, code);
+
+            return Result.Ok();
+
+        }
+
+        public async Task<Result> ConfirmEmailAsync(ConfirmEmailDto dto)
         {
             var user = await _userManager.FindByIdAsync(dto.UserId);
             if (user == null)
@@ -73,7 +92,7 @@ namespace Eventa.Infrastructure.Services
             return Result.Ok();
         }
 
-        public async Task<Result> LoginAsync(LoginUserDto dto)
+        public async Task<Result<LoginResultDto>> LoginAsync(LoginUserDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
@@ -83,10 +102,35 @@ namespace Eventa.Infrastructure.Services
             var result = await _signInManager.PasswordSignInAsync(user, dto.Password, true, false);
             if (!result.Succeeded)
             {
-                return Result.Fail(new Error("Login or password incorrect").WithMetadata("Code", "LoginFailed"));
+                if (user.EmailConfirmed)
+                {
+                    return Result.Fail(new Error("Login or password incorrect").WithMetadata("Code", "LoginFailed"));
+                }
+
+                var code = GenerateVerificationCode();
+                user.VerificationCode = code;
+                await _userManager.UpdateAsync(user);
+
+                await SendRegistrationEmailAsync(dto.Email, code);
+
+                return Result.Ok(new LoginResultDto { UserId = user.Id, EmailConfirmed = false });
             }
 
-            return Result.Ok();
+            return Result.Ok(new LoginResultDto { UserId = user.Id, EmailConfirmed = true});
+        }
+
+        private string GenerateVerificationCode()
+        {
+            Random random = new();
+            return random.Next(1000000).ToString("D6");
+        }
+
+        private async Task SendRegistrationEmailAsync(string email, string code)
+        {
+            await _emailSender.SendEmailAsync(
+                email,
+                "Registration confirmation",
+                $"Confirm email to register in Eventa. Confirmation code: {code}");
         }
     }
 }
