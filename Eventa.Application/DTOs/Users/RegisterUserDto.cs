@@ -1,4 +1,4 @@
-﻿namespace Eventa.Application.DTOs
+﻿namespace Eventa.Application.DTOs.Users
 {
     public class RegisterUserDto
     {

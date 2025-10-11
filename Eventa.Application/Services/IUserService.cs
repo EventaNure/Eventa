@@ -1,4 +1,4 @@
-﻿using Eventa.Application.DTOs;
+﻿using Eventa.Application.DTOs.Users;
 using FluentResults;
 
 namespace Eventa.Application.Services

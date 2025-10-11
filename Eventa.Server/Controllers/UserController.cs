@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Eventa.Application.DTOs;
+using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;

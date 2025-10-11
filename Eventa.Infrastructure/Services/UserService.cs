@@ -1,5 +1,5 @@
 ﻿using Eventa.Application.Common;
-using Eventa.Application.DTOs;
+using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
