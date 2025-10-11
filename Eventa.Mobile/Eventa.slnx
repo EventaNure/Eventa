@@ -2,6 +2,12 @@
   <Folder Name="/Solution Items/">
     <File Path="Directory.Packages.props" />
   </Folder>
+  <Project Path="../Eventa.Application/Eventa.Application.csproj" />
+  <Project Path="../Eventa.Client/Eventa.Client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="../Eventa.Domain/Eventa.Domain.csproj" />
   <Project Path="../Eventa.Infrastructure/Eventa.Infrastructure.csproj" />
   <Project Path="../Eventa.Server/Eventa.Server.csproj" />
   <Project Path="Eventa.Android/Eventa.Android.csproj">

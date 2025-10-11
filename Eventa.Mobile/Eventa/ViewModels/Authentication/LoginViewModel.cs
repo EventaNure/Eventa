@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Eventa.Models;
+using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views;
 using Eventa.Views.Authentication;
@@ -53,10 +53,22 @@ public partial class LoginViewModel : ObservableObject
 
             if (success && data is JsonElement json)
             {
-                ErrorMessage = "Successfully logged in!";
-                EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
-                RegistrationView.Instance.registrationViewModel.ResetForm();
-                // LoginView.Instance.loginViewModel.ResetForm();
+                LoginResponseModel loginResponse = json.Deserialize<LoginResponseModel>()!;
+                if (loginResponse.EmailConfirmed)
+                {
+                    ErrorMessage = "Successfully logged in!";
+                    EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
+                    RegistrationView.Instance.registrationViewModel.ResetForm();
+                    LoginView.Instance.loginViewModel.ResetForm();
+
+                    MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
+                    MainView.Instance.ChangePage(MainPageView.Instance);
+                }
+                else
+                {
+                    EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, loginResponse.UserId);
+                    MainView.Instance.ChangePage(EmailVerifyView.Instance);
+                }
             }
             else
             {

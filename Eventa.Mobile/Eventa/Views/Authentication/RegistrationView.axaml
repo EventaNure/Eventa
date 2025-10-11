@@ -150,7 +150,7 @@
                         </StackPanel>
 
                         <!--  Organization Field  -->
-                        <StackPanel Grid.Row="4" IsVisible="False">
+                        <StackPanel Grid.Row="4">
                             <TextBox
                                 Name="OrganizationTextBox"
                                 Text="{Binding OrganizationName, Mode=TwoWay}"

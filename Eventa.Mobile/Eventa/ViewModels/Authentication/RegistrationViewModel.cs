@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Eventa.Models;
+using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views;
 using Eventa.Views.Authentication;
@@ -28,8 +28,6 @@ public partial class RegistrationViewModel : ObservableObject
     private string _errorMessage = string.Empty;
     [ObservableProperty]
     private IAsyncRelayCommand? _registerCommand;
-    [ObservableProperty]
-    private bool _isOrganization = false;
 
 
     public RegistrationViewModel()
@@ -40,6 +38,7 @@ public partial class RegistrationViewModel : ObservableObject
 
     private async Task Register()
     {
+        IsOrganization = !string.IsNullOrWhiteSpace(OrganizationName);
         if (IsOrganization)
         {
             if (string.IsNullOrWhiteSpace(UserName) ||
@@ -89,7 +88,7 @@ public partial class RegistrationViewModel : ObservableObject
             if (success && data is JsonElement json)
             {
                 string userId = json.GetProperty("userId").GetString() ?? string.Empty;
-                EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, userId);
+                EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, userId);
                 MainView.Instance.ChangePage(EmailVerifyView.Instance);
             }
             else
