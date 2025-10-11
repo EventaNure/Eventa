@@ -16,74 +16,50 @@ public partial class RegistrationViewModel : ObservableObject
 
     [ObservableProperty]
     private string _userName = string.Empty;
+
     [ObservableProperty]
     private string _email = string.Empty;
+
     [ObservableProperty]
     private string _password = string.Empty;
+
     [ObservableProperty]
     private string _confirmPassword = string.Empty;
+
     [ObservableProperty]
     private string _organizationName = string.Empty;
+
     [ObservableProperty]
     private string _errorMessage = string.Empty;
+
     [ObservableProperty]
     private IAsyncRelayCommand? _registerCommand;
-
 
     public RegistrationViewModel()
     {
         _apiService = new ApiService();
-        _registerCommand = new AsyncRelayCommand(Register);
+        _registerCommand = new AsyncRelayCommand(RegisterAsync);
     }
 
-    private async Task Register()
+    private async Task RegisterAsync()
     {
-        IsOrganization = !string.IsNullOrWhiteSpace(OrganizationName);
-        if (IsOrganization)
-        {
-            if (string.IsNullOrWhiteSpace(UserName) ||
-                string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(Password) ||
-                string.IsNullOrWhiteSpace(ConfirmPassword) ||
-                string.IsNullOrWhiteSpace(OrganizationName))
-            {
-                ErrorMessage = "All fields are required!";
-                return;
-            }
-        }
-        else
-        {
-            if (string.IsNullOrWhiteSpace(UserName) ||
-                string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(Password) ||
-                string.IsNullOrWhiteSpace(ConfirmPassword))
-            {
-                ErrorMessage = "All fields are required!";
-                return;
-            }
-        }
-
-        if (ConfirmPassword != Password)
-        {
-            ErrorMessage = "Passwords must match!";
+        if (!ValidateInput())
             return;
-        }
 
         ErrorMessage = string.Empty;
 
         try
         {
-            var registerRequestModel = new RegisterRequestModel
+            var registerRequest = new RegisterRequestModel
             {
                 UserName = UserName,
                 Email = Email,
                 Password = Password,
                 ConfirmPassword = ConfirmPassword,
-                OrganizationName = IsOrganization ? OrganizationName : null
+                OrganizationName = string.IsNullOrWhiteSpace(OrganizationName) ? null : OrganizationName
             };
 
-            // Call API
-            var (success, message, data) = await _apiService.RegisterAsync(registerRequestModel);
+            var (success, message, data) = await _apiService.RegisterAsync(registerRequest);
 
             if (success && data is JsonElement json)
             {
@@ -102,12 +78,31 @@ public partial class RegistrationViewModel : ObservableObject
         }
     }
 
+    private bool ValidateInput()
+    {
+        if (string.IsNullOrWhiteSpace(UserName) ||
+            string.IsNullOrWhiteSpace(Email) ||
+            string.IsNullOrWhiteSpace(Password) ||
+            string.IsNullOrWhiteSpace(ConfirmPassword))
+        {
+            ErrorMessage = "All fields are required!";
+            return false;
+        }
+
+        if (ConfirmPassword != Password)
+        {
+            ErrorMessage = "Passwords must match!";
+            return false;
+        }
+
+        return true;
+    }
+
     [RelayCommand]
     private void LoginLink()
     {
         MainView.Instance.ChangePage(LoginView.Instance);
     }
-
 
     public void ResetForm()
     {
@@ -117,7 +112,5 @@ public partial class RegistrationViewModel : ObservableObject
         ConfirmPassword = string.Empty;
         OrganizationName = string.Empty;
         ErrorMessage = string.Empty;
-        IsOrganization = false;
     }
-
 }
