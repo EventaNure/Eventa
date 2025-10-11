@@ -1,5 +1,4 @@
 ﻿using Eventa.Converters;
-using Eventa.Models;
 using Eventa.Models.Authentication;
 using System;
 using System.Net.Http;
@@ -14,6 +13,7 @@ public class ApiService
     private readonly HttpClient _httpClient;
     private const string BaseUrlDesktop = "https://localhost:7293"; // For Desktop
     private const string BaseUrlAndroid = "https://10.0.2.2:7293"; // For Android Emulator
+
     public ApiService()
     {
         var handler = new HttpClientHandler

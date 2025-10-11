@@ -62,7 +62,7 @@ public partial class EmailVerifyViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = message;
+                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
             }
         }
         catch (Exception ex)
@@ -86,7 +86,7 @@ public partial class EmailVerifyViewModel : ObservableObject
 
             ErrorMessage = success
                 ? "The new code has been sent to your email!"
-                : message;
+                : ErrorMessageMapper.MapErrorMessage(message);
         }
         catch (Exception ex)
         {
@@ -124,7 +124,7 @@ public partial class EmailVerifyViewModel : ObservableObject
 
             if (!success || data is not JsonElement json)
             {
-                ErrorMessage = message;
+                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
                 return;
             }
 

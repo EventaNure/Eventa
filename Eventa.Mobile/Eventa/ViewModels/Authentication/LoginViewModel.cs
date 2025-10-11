@@ -72,7 +72,7 @@ public partial class LoginViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = message;
+                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
             }
         }
         catch (Exception ex)

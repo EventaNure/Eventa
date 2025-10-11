@@ -4,7 +4,6 @@ using Eventa.Application.Services;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Eventa.Infrastructure.Services
 {

@@ -1,5 +1,4 @@
 ﻿using Eventa.Application.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eventa.Infrastructure.Repositories
 {
