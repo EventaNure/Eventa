@@ -5,6 +5,7 @@ namespace Eventa.Server.RequestModels
     public class RegisterOrganizerRequestModel
     {
         [Required]
+        [EmailAddress]
         [StringLength(254, MinimumLength = 5)]
         public string Email { get; set; } = string.Empty;
 
