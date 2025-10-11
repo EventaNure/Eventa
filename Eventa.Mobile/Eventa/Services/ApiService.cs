@@ -1,4 +1,5 @@
-﻿using Eventa.Models;
+﻿using Eventa.Converters;
+using Eventa.Models;
 using Eventa.Models.Authentication;
 using System;
 using System.Net.Http;
@@ -17,7 +18,6 @@ public class ApiService
     {
         var handler = new HttpClientHandler
         {
-            // Accept self-signed certificates for local development
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
         };
 
@@ -34,10 +34,9 @@ public class ApiService
     {
         try
         {
-            string query = "";
-
-            if (string.IsNullOrEmpty(model.OrganizationName)) query = "/api/User/register-user";
-            else query = "/api/User/register-organizer";
+            string query = string.IsNullOrEmpty(model.OrganizationName)
+                ? "/api/User/register-user"
+                : "/api/User/register-organizer";
 
             var response = await _httpClient.PostAsJsonAsync(query, model);
 
@@ -47,8 +46,8 @@ public class ApiService
                 return (true, "Registration successful. Please check your email for verification code.", result);
             }
 
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return (false, $"Registration failed: {errorContent}", null);
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
         }
         catch (HttpRequestException ex)
         {
@@ -71,8 +70,8 @@ public class ApiService
                 return (true, "Email confirmed successfully!");
             }
 
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return (false, $"Confirmation failed: {errorContent}");
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
         }
         catch (HttpRequestException ex)
         {
@@ -92,11 +91,11 @@ public class ApiService
 
             if (response.IsSuccessStatusCode)
             {
-                return (true, "Email confirmed successfully!");
+                return (true, "Confirmation email resent successfully!");
             }
 
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return (false, $"Confirmation failed: {errorContent}");
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
         }
         catch (HttpRequestException ex)
         {
@@ -120,8 +119,8 @@ public class ApiService
                 return (true, "Login successful!", result);
             }
 
-            var errorContent = await response.Content.ReadAsStringAsync();
-            return (false, $"Login failed: {errorContent}", null);
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
         }
         catch (HttpRequestException ex)
         {
