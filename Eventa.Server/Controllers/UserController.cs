@@ -13,11 +13,13 @@ namespace Eventa.Server.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper, IJwtTokenService jwtTokenService)
         {
             _userService = userService;
             _mapper = mapper;
+            _jwtTokenService = jwtTokenService;
         }
 
         [HttpPost("register-user")]
@@ -86,7 +88,14 @@ namespace Eventa.Server.Controllers
                 return BadRequest(confirmEmailResult.Errors[0]);
             }
 
-            return Ok(new SignInResponseModel { JwtToken = "This is test jwtToken", EmailConfirmed = true });
+            return Ok(new SignInResponseModel { 
+                JwtToken = _jwtTokenService.GenerateToken(
+                    request.UserId, 
+                    confirmEmailResult.Value.Role
+                ), 
+                EmailConfirmed = true,
+                UserId = request.UserId
+            });
         }
 
         [HttpPost("resend-confirm-email")]
@@ -130,7 +139,10 @@ namespace Eventa.Server.Controllers
             string? jwtToken = null;
             if (loginResult.Value.EmailConfirmed)
             {
-                jwtToken = "This is test jwtToken";
+                jwtToken = _jwtTokenService.GenerateToken(
+                    loginResult.Value.UserId,
+                    loginResult.Value.Role
+                );
             }
 
             return Ok(new SignInResponseModel { JwtToken = jwtToken, EmailConfirmed = loginResult.Value.EmailConfirmed, UserId = loginResult.Value.UserId });

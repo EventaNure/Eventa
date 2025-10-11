@@ -31,7 +31,7 @@ namespace Eventa.Infrastructure.Services
                 Name = dto.Name,
                 VerificationCode = code
             };
-            return await RegisterAsync(user, dto.Password);
+            return await RegisterAsync(user, dto.Password, Roles.UserRole);
         }
 
         public async Task<Result<RegisterResultDto>> RegisterOrganizerAsync(RegisterOrganizerDto dto)
@@ -45,16 +45,10 @@ namespace Eventa.Infrastructure.Services
                 VerificationCode = code,
                 Organization = dto.Organization
             };
-            var result = await RegisterAsync(user, dto.Password);
-            if (result.IsSuccess)
-            {
-                await _userManager.AddToRoleAsync(user, Roles.OrganizerRole);
-            }
-
-            return result;
+            return await RegisterAsync(user, dto.Password, Roles.OrganizerRole);
         }
 
-        private async Task<Result<RegisterResultDto>> RegisterAsync(ApplicationUser user, string password)
+        private async Task<Result<RegisterResultDto>> RegisterAsync(ApplicationUser user, string password, string role)
         {
             var result = await _userManager.CreateAsync(user, password);
 
@@ -68,6 +62,8 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(new Error("Failed to register user").WithMetadata("Code", "RegistrationFailed"));
             }
 
+            await _userManager.AddToRoleAsync(user, role);
+            
             await SendRegistrationEmailAsync(user.Email!, user.VerificationCode!);
 
             return Result.Ok(new RegisterResultDto
@@ -94,7 +90,7 @@ namespace Eventa.Infrastructure.Services
 
         }
 
-        public async Task<Result> ConfirmEmailAsync(ConfirmEmailDto dto)
+        public async Task<Result<ConfirmEmailResultDto>> ConfirmEmailAsync(ConfirmEmailDto dto)
         {
             var user = await _userManager.FindByIdAsync(dto.UserId);
             if (user == null)
@@ -116,7 +112,10 @@ namespace Eventa.Infrastructure.Services
             await _userManager.UpdateAsync(user);
             await _signInManager.SignInAsync(user, true);
 
-            return Result.Ok();
+            return Result.Ok(new ConfirmEmailResultDto
+            {
+                Role = (await _userManager.GetRolesAsync(user)).First()
+            });
         }
 
         public async Task<Result<LoginResultDto>> LoginAsync(LoginUserDto dto)
@@ -127,6 +126,7 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
             }
             var result = await _signInManager.PasswordSignInAsync(user, dto.Password, true, false);
+            bool emailConfirmed = true;
             if (!result.Succeeded)
             {
                 if (user.EmailConfirmed)
@@ -140,10 +140,14 @@ namespace Eventa.Infrastructure.Services
 
                 await SendRegistrationEmailAsync(dto.Email, code);
 
-                return Result.Ok(new LoginResultDto { UserId = user.Id, EmailConfirmed = false });
+                emailConfirmed = false;
             }
 
-            return Result.Ok(new LoginResultDto { UserId = user.Id, EmailConfirmed = true});
+            return Result.Ok(new LoginResultDto { 
+                UserId = user.Id, 
+                EmailConfirmed = emailConfirmed, 
+                Role = (await _userManager.GetRolesAsync(user)).First() 
+            });
         }
 
         private string GenerateVerificationCode()

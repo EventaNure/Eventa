@@ -11,6 +11,7 @@ namespace Eventa.Infrastructure
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddAutoMapper((e) => { }, AppDomain.CurrentDomain.GetAssemblies());
             return services;
         }

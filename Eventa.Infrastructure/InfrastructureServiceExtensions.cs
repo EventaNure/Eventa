@@ -1,4 +1,5 @@
-﻿using Eventa.Infrastructure.Options;
+﻿using System.Text;
+using Eventa.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,16 +27,24 @@ namespace Eventa.Infrastructure
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            var token = configuration.GetSection("Jwt:Key").Value ?? throw new InvalidOperationException("Jwt key not fond");
+            var issuer = configuration.GetSection("Jwt:Issuer").Value ?? throw new InvalidOperationException("Issuer not found");
+            var audience = configuration.GetSection("Jwt:Audience").Value ?? throw new InvalidOperationException("Audience not found");
+
             services.AddAuthentication()
                 .AddJwtBearer(opt =>
                 {
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
-
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
+                        ValidIssuer = issuer,
+                        ValidAudience = audience
                     };
                 });
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
+            services.Configure<JwtTokenOptions>(configuration.GetSection("Jwt"));
 
             return services;
         }
