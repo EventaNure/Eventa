@@ -22,7 +22,7 @@ namespace Eventa.Infrastructure.Repositories
             return (IRepository<T>)_repositories[type];
         }
 
-        public void CommitAsync() => _dbContext.SaveChangesAsync();
+        public async Task CommitAsync() => await _dbContext.SaveChangesAsync();
 
         public void Dispose()
         {

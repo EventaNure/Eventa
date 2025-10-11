@@ -6,6 +6,6 @@
 
         public string Name { get; set; } = string.Empty;
 
-        public IEnumerable<EventTag> EventTags { get; set; } = [];
+        public ICollection<EventTag> EventTags { get; set; } = [];
     }
 }

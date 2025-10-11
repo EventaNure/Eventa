@@ -4,10 +4,10 @@
     {
         public int EventId { get; set; }
 
-        public Event Event { get; set; } = new Event();
+        public Event Event { get; set; } = default!;
 
         public int TagId { get; set; }
 
-        public Tag Tag { get; set; } = new Tag();
+        public Tag Tag { get; set; } = default!;
     }
 }

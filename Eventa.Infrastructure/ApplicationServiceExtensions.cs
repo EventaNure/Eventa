@@ -1,4 +1,7 @@
-﻿using Eventa.Application.Services;
+﻿using Eventa.Application.Repositories;
+using Eventa.Application.Services;
+using Eventa.Application.Services.Events;
+using Eventa.Infrastructure.Repositories;
 using Eventa.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +13,8 @@ namespace Eventa.Infrastructure
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddAutoMapper((e) => { }, AppDomain.CurrentDomain.GetAssemblies());

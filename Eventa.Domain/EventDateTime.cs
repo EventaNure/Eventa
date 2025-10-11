@@ -4,7 +4,9 @@
     {
         public int Id { get; set; }
 
-        public Event Event { get; set; } = new Event();
+        public int EventId { get; set; }
+
+        public Event Event { get; set; } = default!;
 
         public DateTime StartDateTime { get; set; }
     }

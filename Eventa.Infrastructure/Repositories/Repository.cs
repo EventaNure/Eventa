@@ -16,6 +16,8 @@ namespace Eventa.Infrastructure.Repositories
 
         public void Add(T entity) => _dbSet.Add(entity);
 
+        public void AddRange(IEnumerable<T> entities) => _dbSet.AddRange(entities);
+
         public void Remove(T entity) => _dbSet.Remove(entity);
 
         public void GetAsync(params object[] keyValues) => _dbSet.FindAsync(keyValues);
