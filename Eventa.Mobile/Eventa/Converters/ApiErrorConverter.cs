@@ -18,9 +18,10 @@ public class ApiErrorConverter
             var jsonDoc = JsonDocument.Parse(errorContent);
             var root = jsonDoc.RootElement;
 
-            if (root.TryGetProperty("message", out var messageProperty))
+            if (root.TryGetProperty("metadata", out var metadata) &&
+                metadata.TryGetProperty("Code", out var codeProperty))
             {
-                return messageProperty.GetString() ?? "An error occurred.";
+                return codeProperty.GetString() ?? "An error occurred.";
             }
 
             if (root.TryGetProperty("errors", out var errorsProperty))
@@ -48,11 +49,6 @@ public class ApiErrorConverter
                 {
                     return string.Join(" ", errorMessages);
                 }
-            }
-
-            if (root.TryGetProperty("title", out var titleProperty))
-            {
-                return titleProperty.GetString() ?? "An error occurred.";
             }
 
             return "An error occurred while processing your request.";

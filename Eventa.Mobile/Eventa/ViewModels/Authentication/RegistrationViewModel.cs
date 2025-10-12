@@ -69,7 +69,7 @@ public partial class RegistrationViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = message;
+                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
             }
         }
         catch (Exception ex)
