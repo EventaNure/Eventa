@@ -1,11 +1,9 @@
 ﻿using Eventa.Application.DTOs.Events;
-using FluentResults;
 
-namespace Eventa.Application.Services.Events
+namespace Eventa.Application.Repositories
 {
-    public interface IEventService
+    public interface IEventRepository
     {
-        Task<Result<int>> CreateEventAsync(CreateEventDto dto);
         Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize);
         Task<List<EventListItemDto>> GetEventsByTagsAsync(int pageNumber, int pageSize, List<int> tagIds);
     }

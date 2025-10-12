@@ -4,5 +4,7 @@
     {
         Task CommitAsync();
         IRepository<T> GetDbSet<T>() where T : class;
+        IEventRepository GetEventRepository();
+        ITagRepository GetTagRepository();
     }
 }

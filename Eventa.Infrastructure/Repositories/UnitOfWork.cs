@@ -23,6 +23,10 @@ namespace Eventa.Infrastructure.Repositories
             return (IRepository<T>)_repositories[type];
         }
 
+        public IEventRepository GetEventRepository() => new EventRepository(_dbContext);
+
+        public ITagRepository GetTagRepository() => new TagRepository(_dbContext);
+
         public async Task CommitAsync() => await _dbContext.SaveChangesAsync();
 
         public void Dispose()

@@ -1,13 +1,11 @@
 ﻿namespace Eventa.Domain
 {
-    public class Tag
+    public class Place
     {
         public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
-        public bool IsMain { get; set; }
-
-        public ICollection<EventTag> EventTags { get; set; } = [];
+        public string Address { get; set; } = string.Empty;
     }
 }

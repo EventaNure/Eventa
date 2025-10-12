@@ -5,13 +5,13 @@ namespace Eventa.Infrastructure
 {
     public class ApplicationUser : IdentityUser
     {
-        [StringLength(32, MinimumLength = 3)]
+        [MaxLength(32)]
         public string Name { get; set; } = string.Empty;
 
-        [StringLength(6, MinimumLength = 6)]
+        [MaxLength(6)]
         public string? VerificationCode { get; set; } = string.Empty;
 
-        [StringLength(32, MinimumLength = 3)]
+        [MaxLength(100)]
         public string? Organization { get; set; }
     }
 }

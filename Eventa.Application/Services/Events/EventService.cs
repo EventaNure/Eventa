@@ -24,5 +24,16 @@ namespace Eventa.Application.Services.Events
             await _unitOfWork.CommitAsync();
             return eventEntity.Id;
         }
+
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize)
+        {
+            var eventRepository = _unitOfWork.GetEventRepository();
+            return await eventRepository.GetEventsAsync(pageNumber, pageSize);
+        }
+        public async Task<List<EventListItemDto>> GetEventsByTagsAsync(int pageNumber, int pageSize, List<int> tagIds)
+        {
+            var eventRepository = _unitOfWork.GetEventRepository();
+            return await eventRepository.GetEventsByTagsAsync(pageNumber, pageSize, tagIds);
+        }
     }
 }

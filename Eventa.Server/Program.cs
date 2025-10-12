@@ -15,6 +15,12 @@ builder.Services
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await DbInitializer.Initialize(context);
+}
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

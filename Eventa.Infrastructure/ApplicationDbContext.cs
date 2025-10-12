@@ -45,5 +45,7 @@ namespace Eventa.Infrastructure
         public DbSet<EventTag> EventTags { get; set; }
 
         public DbSet<EventDateTime> EventDateTimes { get; set; }
+
+        public DbSet<Place> Places { get; set; }
     }
 }

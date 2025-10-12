@@ -18,6 +18,10 @@ namespace Eventa.Domain
 
         public ICollection<EventDateTime> EventDateTimes { get; set; } = [];
 
-        public int OrganizerId { get; set; }
+        public string OrganizerId { get; set; } = string.Empty;
+
+        public Place Place { get; set; } = default!;
+
+        public int PlaceId { get; set; }
     }
 }
