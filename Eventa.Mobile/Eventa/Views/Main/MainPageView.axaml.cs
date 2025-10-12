@@ -1,7 +1,8 @@
 using Avalonia.Controls;
 using Eventa.ViewModels;
+using Eventa.ViewModels.Main;
 
-namespace Eventa.Views;
+namespace Eventa.Views.Main;
 
 public partial class MainPageView : UserControl
 {

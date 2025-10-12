@@ -1,8 +1,7 @@
 using Avalonia.Controls;
-using Eventa.ViewModels;
-using Eventa.Views.Authentication;
+using Eventa.ViewModels.Main;
 
-namespace Eventa.Views;
+namespace Eventa.Views.Main;
 
 public partial class MainView : UserControl
 {
@@ -15,7 +14,8 @@ public partial class MainView : UserControl
         DataContext = mainViewModel;
         InitializeComponent();
         Instance = this;
-        ChangePage(RegistrationView.Instance);
+        ChangePage(MainPageView.Instance);
+        // ChangePage(RegistrationView.Instance);
         // ChangePage(EmailVerifyView.Instance);
         // ChangePage(EmailVerifySuccessView.Instance);
     }

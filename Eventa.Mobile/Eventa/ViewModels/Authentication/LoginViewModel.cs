@@ -4,6 +4,7 @@ using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views;
 using Eventa.Views.Authentication;
+using Eventa.Views.Main;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;

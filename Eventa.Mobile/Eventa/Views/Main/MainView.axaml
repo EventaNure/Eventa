@@ -1,10 +1,10 @@
 <UserControl
-    x:Class="Eventa.Views.MainView"
+    x:Class="Eventa.Views.Main.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:Eventa.ViewModels"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Main"
     d:DesignHeight="750"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
@@ -12,7 +12,5 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <ScrollViewer HorizontalScrollBarVisibility="Hidden">
-        <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
-    </ScrollViewer>
+    <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
 </UserControl>

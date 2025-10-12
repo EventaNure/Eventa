@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Eventa.Views;
+using Eventa.Views.Main;
 using System.Linq;
 
 namespace Eventa;
@@ -19,7 +20,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = new MainWindowView();
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform) singleViewPlatform.MainView = new MainView();
         base.OnFrameworkInitializationCompleted();

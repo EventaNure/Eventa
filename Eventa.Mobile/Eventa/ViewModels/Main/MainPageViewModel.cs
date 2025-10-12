@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Authentication;
 using Eventa.Views;
 using Eventa.Views.Authentication;
+using Eventa.Views.Main;
 
-namespace Eventa.ViewModels;
+namespace Eventa.ViewModels.Main;
 
 public partial class MainPageViewModel : ObservableObject
 {
