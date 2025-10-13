@@ -3,12 +3,10 @@ using AutoMapper;
 using Eventa.Application.Common;
 using Eventa.Application.DTOs.Events;
 using Eventa.Application.Services.Events;
-using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace Eventa.Server.Controllers
 {

@@ -32,15 +32,14 @@
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
     </UserControl.Resources>
-    <Border>
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                <GradientStop Offset="0" Color="#FCE487" />
-                <GradientStop Offset="1" Color="#F9AAA9" />
-            </LinearGradientBrush>
-        </Border.Background>
-
-        <!--  Main Content  -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FCE487" />
+            <GradientStop Offset="1" Color="#F9AAA9" />
+        </LinearGradientBrush>
+    </UserControl.Background>
+    <!--  Main Content  -->
+    <ScrollViewer>
         <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -130,7 +129,8 @@
                     <ScrollViewer
                         Grid.Row="6"
                         MaxWidth="200"
-                        MaxHeight="100">
+                        MaxHeight="100"
+                        ScrollViewer.IsScrollChainingEnabled="False">
                         <TextBlock
                             Grid.Row="6"
                             Margin="20,0,20,0"
@@ -246,6 +246,5 @@
             </Border>
 
         </Grid>
-    </Border>
-
+    </ScrollViewer>
 </UserControl>

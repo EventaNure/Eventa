@@ -31,231 +31,263 @@
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
     </UserControl.Resources>
-    <Border>
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                <GradientStop Offset="0" Color="#FCE487" />
-                <GradientStop Offset="1" Color="#F9AAA9" />
-            </LinearGradientBrush>
-        </Border.Background>
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FCE487" />
+            <GradientStop Offset="1" Color="#F9AAA9" />
+        </LinearGradientBrush>
+    </UserControl.Background>
 
+    <Grid>
         <!--  Main Content  -->
-        <Grid
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            RowDefinitions="auto, *">
-            <!--  Logo/Title  -->
-            <TextBlock
-                Grid.Row="0"
-                Margin="0,0,0,20"
+        <ScrollViewer>
+            <Grid
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontFamily="{StaticResource JustAnotherHand}"
-                FontSize="80"
-                Foreground="#FF9999"
-                Text="EVENTA" />
+                RowDefinitions="auto, *">
+                <!--  Logo/Title  -->
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource JustAnotherHand}"
+                    FontSize="80"
+                    Foreground="#FF9999"
+                    Text="EVENTA" />
 
-            <!--  Registration Form Card  -->
-            <Border
-                Grid.Row="1"
-                Padding="30"
-                Background="White"
-                BoxShadow="0 4 20 0 #30000000"
-                CornerRadius="12">
+                <!--  Registration Form Card  -->
+                <Border
+                    Grid.Row="1"
+                    Padding="30"
+                    Background="White"
+                    BoxShadow="0 4 20 0 #30000000"
+                    CornerRadius="12">
 
-                <Grid Width="250" RowDefinitions="auto, *, auto, auto, auto">
-                    <!--  Form Title  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="0,-10,0,20"
-                        HorizontalAlignment="Center"
-                        FontFamily="{StaticResource Kadwa}"
-                        FontSize="24"
-                        Foreground="#FF9999"
-                        Text="Registration Form" />
-
-                    <Grid Grid.Row="1" RowDefinitions="auto, auto, auto, auto, auto">
-                        <!--  Username Field  -->
-                        <StackPanel Grid.Row="0">
-                            <TextBox
-                                Name="UserNameTextBox"
-                                Text="{Binding UserName, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Name"
-                                Watermark="Username" />
-                            <TextBlock
-                                Name="UserNameRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
-
-                        <!--  Email Field  -->
-                        <StackPanel Grid.Row="1">
-                            <TextBox
-                                Name="EmailTextBox"
-                                Text="{Binding Email, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Email"
-                                Watermark="Email" />
-                            <TextBlock
-                                Name="EmailRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
-
-                        <!--  Password Field  -->
-                        <StackPanel Grid.Row="2">
-                            <TextBox
-                                Name="PasswordTextBox"
-                                PasswordChar="●"
-                                Text="{Binding Password, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Password"
-                                Watermark="Password" />
-                            <TextBlock
-                                Name="PasswordRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
-
-                        <!--  Confirm Password Field  -->
-                        <StackPanel Grid.Row="3">
-                            <TextBox
-                                Name="ConfirmPasswordTextBox"
-                                PasswordChar="●"
-                                Text="{Binding ConfirmPassword, Mode=TwoWay}"
-                                TextChanged="TextBoxRequired_TextChanged"
-                                TextInputOptions.ContentType="Password"
-                                Watermark="Confirm Password" />
-                            <TextBlock
-                                Name="ConfirmPasswordRequired"
-                                Margin="0,-60,10,15"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="#FF9999"
-                                Text="*" />
-                        </StackPanel>
-
-                        <!--  Organization Field  -->
-                        <StackPanel Grid.Row="4">
-                            <TextBox
-                                Name="OrganizationTextBox"
-                                Text="{Binding OrganizationName, Mode=TwoWay}"
-                                TextInputOptions.ContentType="Name"
-                                Watermark="Organization name" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!--  Error Text  -->
-                    <ScrollViewer
-                        Grid.Row="2"
-                        MaxWidth="200"
-                        MaxHeight="100">
-                        <TextBlock
-                            FontFamily="{StaticResource Kadwa}"
-                            Foreground="#FF8181"
-                            IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
-                            Text="{Binding ErrorMessage}"
-                            TextAlignment="Center"
-                            TextWrapping="WrapWithOverflow" />
-                    </ScrollViewer>
-
-                    <!--  Continue Button  -->
-                    <Button
-                        Name="ContinueButton"
-                        Grid.Row="3"
-                        Margin="20,20,20,20"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="#FFB5B5"
-                        BorderThickness="2"
-                        Command="{Binding RegisterCommand}"
-                        CornerRadius="8"
-                        Cursor="Hand"
-                        FontFamily="{StaticResource Kadwa}"
-                        FontSize="16"
-                        Foreground="#FF8181">
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                <Setter Property="Background" Value="#FCE0E0" />
-                                <Setter Property="Foreground" Value="#FF8181" />
-                                <Setter Property="BorderBrush" Value="#FFB5B5" />
-                            </Style>
-                            <Style Selector="Button:pressed /template/ ContentPresenter">
-                                <Setter Property="Background" Value="#FCE0E0" />
-                                <Setter Property="Foreground" Value="#FF8181" />
-                                <Setter Property="BorderBrush" Value="#FFB5B5" />
-                            </Style>
-                        </Button.Styles>
-                        <Button.Content>
-                            <TextBlock Margin="0,4,0,0" Text="Continue" />
-                        </Button.Content>
-                    </Button>
-
-                    <!--  Login Link  -->
-                    <Grid
-                        Grid.Row="4"
-                        Margin="0,0,0,-20"
-                        HorizontalAlignment="Center"
-                        RowDefinitions="*, *">
-                        <TextBlock
+                    <Grid Width="250" RowDefinitions="auto, *, auto, auto, auto">
+                        <!--  Form Title  -->
+                        <Grid
                             Grid.Row="0"
-                            FontFamily="{StaticResource Kadwa}"
-                            FontSize="13"
-                            Foreground="#666666"
-                            Text="Already have an account?" />
-                        <HyperlinkButton
-                            Name="LoginLink"
-                            Grid.Row="1"
-                            HorizontalAlignment="Center"
-                            Command="{Binding LoginLinkCommand}"
+                            Margin="0,-10,0,20"
+                            ColumnDefinitions="auto, *">
+                            <Button
+                                Padding="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                Command="{Binding BackToMainCommand}">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#FCE0E0" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="#FFB5B5" />
+                                    </Style>
+                                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#FCE0E0" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="#FFB5B5" />
+                                    </Style>
+                                </Button.Styles>
+                                <Button.Content>
+                                    <PathIcon Data="M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z" Foreground="#FF9999" />
+                                </Button.Content>
+                            </Button>
+                            <TextBlock
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="24"
+                                Foreground="#FF9999"
+                                Text="Registration Form">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Grid>
+
+                        <Grid Grid.Row="1" RowDefinitions="auto, auto, auto, auto, auto">
+                            <!--  Username Field  -->
+                            <StackPanel Grid.Row="0">
+                                <TextBox
+                                    Name="UserNameTextBox"
+                                    Text="{Binding UserName, Mode=TwoWay}"
+                                    TextChanged="TextBoxRequired_TextChanged"
+                                    TextInputOptions.ContentType="Name"
+                                    Watermark="Username" />
+                                <TextBlock
+                                    Name="UserNameRequired"
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Email Field  -->
+                            <StackPanel Grid.Row="1">
+                                <TextBox
+                                    Name="EmailTextBox"
+                                    Text="{Binding Email, Mode=TwoWay}"
+                                    TextChanged="TextBoxRequired_TextChanged"
+                                    TextInputOptions.ContentType="Email"
+                                    Watermark="Email" />
+                                <TextBlock
+                                    Name="EmailRequired"
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Password Field  -->
+                            <StackPanel Grid.Row="2">
+                                <TextBox
+                                    Name="PasswordTextBox"
+                                    PasswordChar="●"
+                                    Text="{Binding Password, Mode=TwoWay}"
+                                    TextChanged="TextBoxRequired_TextChanged"
+                                    TextInputOptions.ContentType="Password"
+                                    Watermark="Password" />
+                                <TextBlock
+                                    Name="PasswordRequired"
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Confirm Password Field  -->
+                            <StackPanel Grid.Row="3">
+                                <TextBox
+                                    Name="ConfirmPasswordTextBox"
+                                    PasswordChar="●"
+                                    Text="{Binding ConfirmPassword, Mode=TwoWay}"
+                                    TextChanged="TextBoxRequired_TextChanged"
+                                    TextInputOptions.ContentType="Password"
+                                    Watermark="Confirm Password" />
+                                <TextBlock
+                                    Name="ConfirmPasswordRequired"
+                                    Margin="0,-60,10,15"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="#FF9999"
+                                    Text="*" />
+                            </StackPanel>
+
+                            <!--  Organization Field  -->
+                            <StackPanel Grid.Row="4">
+                                <TextBox
+                                    Name="OrganizationTextBox"
+                                    Text="{Binding OrganizationName, Mode=TwoWay}"
+                                    TextInputOptions.ContentType="Name"
+                                    Watermark="Organization name" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!--  Error Text  -->
+                        <ScrollViewer
+                            Grid.Row="2"
+                            MaxWidth="200"
+                            MaxHeight="100"
+                            ScrollViewer.IsScrollChainingEnabled="False">
+                            <TextBlock
+                                FontFamily="{StaticResource Kadwa}"
+                                Foreground="#FF8181"
+                                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                                Text="{Binding ErrorMessage}"
+                                TextAlignment="Center"
+                                TextWrapping="WrapWithOverflow" />
+                        </ScrollViewer>
+
+                        <!--  Continue Button  -->
+                        <Button
+                            Name="ContinueButton"
+                            Grid.Row="3"
+                            Margin="20,20,20,20"
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="Transparent"
+                            BorderBrush="#FFB5B5"
+                            BorderThickness="2"
+                            Command="{Binding RegisterCommand}"
+                            CornerRadius="8"
                             Cursor="Hand"
                             FontFamily="{StaticResource Kadwa}"
-                            FontSize="13"
-                            Foreground="#FF9999">
-                            <HyperlinkButton.Styles>
-                                <Style Selector="HyperlinkButton">
-                                    <Setter Property="TextBlock.TextDecorations" />
-                                </Style>
-                                <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="Transparent" />
+                            FontSize="16"
+                            Foreground="#FF8181">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FCE0E0" />
                                     <Setter Property="Foreground" Value="#FF8181" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    <Setter Property="BorderBrush" Value="#FFB5B5" />
                                 </Style>
-                                <Style Selector="HyperlinkButton:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="Transparent" />
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FCE0E0" />
                                     <Setter Property="Foreground" Value="#FF8181" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    <Setter Property="BorderBrush" Value="#FFB5B5" />
                                 </Style>
-                            </HyperlinkButton.Styles>
-                            <HyperlinkButton.Content>
-                                <TextBlock Text="Login here..." />
-                            </HyperlinkButton.Content>
-                        </HyperlinkButton>
+                            </Button.Styles>
+                            <Button.Content>
+                                <TextBlock Margin="0,4,0,0" Text="Continue" />
+                            </Button.Content>
+                        </Button>
+
+                        <!--  Login Link  -->
+                        <Grid
+                            Grid.Row="4"
+                            Margin="0,0,0,-20"
+                            HorizontalAlignment="Center"
+                            RowDefinitions="*, *">
+                            <TextBlock
+                                Grid.Row="0"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="13"
+                                Foreground="#666666"
+                                Text="Already have an account?" />
+                            <HyperlinkButton
+                                Name="LoginLink"
+                                Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Command="{Binding LoginLinkCommand}"
+                                Cursor="Hand"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="13"
+                                Foreground="#FF9999">
+                                <HyperlinkButton.Styles>
+                                    <Style Selector="HyperlinkButton">
+                                        <Setter Property="TextBlock.TextDecorations" />
+                                    </Style>
+                                    <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    </Style>
+                                    <Style Selector="HyperlinkButton:pressed /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#FF8181" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                    </Style>
+                                </HyperlinkButton.Styles>
+                                <HyperlinkButton.Content>
+                                    <TextBlock Text="Login here..." />
+                                </HyperlinkButton.Content>
+                            </HyperlinkButton>
+                        </Grid>
+
                     </Grid>
+                </Border>
 
-                </Grid>
-            </Border>
-
-        </Grid>
-    </Border>
-
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

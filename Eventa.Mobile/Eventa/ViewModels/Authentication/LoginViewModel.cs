@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Authentication;
 using Eventa.Services;
-using Eventa.Views;
 using Eventa.Views.Authentication;
 using Eventa.Views.Main;
 using System;
@@ -13,63 +12,45 @@ namespace Eventa.ViewModels.Authentication;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly ApiService _apiService;
+    private readonly ApiService _apiService = new();
 
     [ObservableProperty]
     private IAsyncRelayCommand? _loginCommand;
+
     [ObservableProperty]
     private string _email = string.Empty;
+
     [ObservableProperty]
     private string _password = string.Empty;
+
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
-
     public LoginViewModel()
     {
-        _apiService = new ApiService();
-        _loginCommand = new AsyncRelayCommand(Login);
+        _loginCommand = new AsyncRelayCommand(LoginAsync);
     }
 
-    private async Task Login()
+    private async Task LoginAsync()
     {
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
-        {
-            ErrorMessage = "All fields are required!";
+        if (!ValidateInput())
             return;
-        }
 
         ErrorMessage = string.Empty;
 
         try
         {
-            var loginRequestModel = new LoginRequestModel
+            var loginRequest = new LoginRequestModel
             {
                 Email = Email,
                 Password = Password
             };
 
-            // Call API
-            var (success, message, data) = await _apiService.LoginAsync(loginRequestModel);
+            var (success, message, data) = await _apiService.LoginAsync(loginRequest);
 
             if (success && data is JsonElement json)
             {
-                LoginResponseModel loginResponse = json.Deserialize<LoginResponseModel>()!;
-                if (loginResponse.EmailConfirmed)
-                {
-                    ErrorMessage = "Successfully logged in!";
-                    EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
-                    RegistrationView.Instance.registrationViewModel.ResetForm();
-                    LoginView.Instance.loginViewModel.ResetForm();
-
-                    MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
-                    MainView.Instance.ChangePage(MainPageView.Instance);
-                }
-                else
-                {
-                    EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, loginResponse.UserId);
-                    MainView.Instance.ChangePage(EmailVerifyView.Instance);
-                }
+                await HandleSuccessfulLoginAsync(json);
             }
             else
             {
@@ -82,10 +63,65 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
+    private async Task HandleSuccessfulLoginAsync(JsonElement json)
+    {
+        var loginResponse = json.Deserialize<LoginResponseModel>()!;
+
+        if (loginResponse.EmailConfirmed)
+        {
+            await HandleConfirmedEmailAsync(loginResponse);
+        }
+        else
+        {
+            NavigateToEmailVerification(loginResponse.UserId);
+        }
+    }
+
+    private async Task HandleConfirmedEmailAsync(LoginResponseModel loginResponse)
+    {
+        ErrorMessage = "Successfully logged in!";
+
+        ResetAllAuthenticationViews();
+        MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
+        MainView.Instance.ChangePage(MainPageView.Instance);
+
+        await Task.CompletedTask;
+    }
+
+    private void NavigateToEmailVerification(string userId)
+    {
+        EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, userId);
+        MainView.Instance.ChangePage(EmailVerifyView.Instance);
+    }
+
+    private static void ResetAllAuthenticationViews()
+    {
+        EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
+        RegistrationView.Instance.registrationViewModel.ResetForm();
+        LoginView.Instance.loginViewModel.ResetForm();
+    }
+
+    private bool ValidateInput()
+    {
+        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "All fields are required!";
+            return false;
+        }
+
+        return true;
+    }
+
     [RelayCommand]
     private void ForgotPasswordLink()
     {
         //MainView.Instance.ChangePage(PasswordResetRequestView.Instance);
+    }
+
+    [RelayCommand]
+    private void BackToMain()
+    {
+        MainView.Instance.ChangePage(MainPageView.Instance);
     }
 
     [RelayCommand]

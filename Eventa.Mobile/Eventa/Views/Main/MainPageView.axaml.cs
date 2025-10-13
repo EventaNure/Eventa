@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Eventa.ViewModels;
 using Eventa.ViewModels.Main;
 
 namespace Eventa.Views.Main;

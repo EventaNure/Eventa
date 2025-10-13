@@ -1,5 +1,4 @@
-﻿using System.Security.Principal;
-using Eventa.Application.DTOs.Events;
+﻿using Eventa.Application.DTOs.Events;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
 using Microsoft.EntityFrameworkCore;
