@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Eventa.Services;
@@ -117,6 +118,31 @@ public class ApiService
             {
                 var result = await response.Content.ReadFromJsonAsync<JsonElement>();
                 return (true, "Login successful!", result);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<(bool Success, string Message, object? Data)> GetMainTagsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("/api/Tags/main");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tags = await response.Content.ReadFromJsonAsync<JsonArray>();
+                return (true, "Tags fetched successfully!", tags);
             }
 
             var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);

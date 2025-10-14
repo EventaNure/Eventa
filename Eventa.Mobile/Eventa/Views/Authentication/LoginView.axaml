@@ -31,15 +31,14 @@
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
     </UserControl.Resources>
-    <Border>
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                <GradientStop Offset="0" Color="#FCE487" />
-                <GradientStop Offset="1" Color="#F9AAA9" />
-            </LinearGradientBrush>
-        </Border.Background>
-
-        <!--  Main Content  -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FCE487" />
+            <GradientStop Offset="1" Color="#F9AAA9" />
+        </LinearGradientBrush>
+    </UserControl.Background>
+    <!--  Main Content  -->
+    <ScrollViewer>
         <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -65,14 +64,44 @@
 
                 <Grid RowDefinitions="auto, *, auto, auto, auto">
                     <!--  Form Title  -->
-                    <TextBlock
+                    <Grid
                         Grid.Row="0"
                         Margin="0,-10,0,20"
-                        HorizontalAlignment="Center"
-                        FontFamily="{StaticResource Kadwa}"
-                        FontSize="24"
-                        Foreground="#FF9999"
-                        Text="Log In" />
+                        ColumnDefinitions="auto, *">
+                        <Button
+                            Padding="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Command="{Binding BackToMainCommand}">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FCE0E0" />
+                                    <Setter Property="Foreground" Value="#FF8181" />
+                                    <Setter Property="BorderBrush" Value="#FFB5B5" />
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FCE0E0" />
+                                    <Setter Property="Foreground" Value="#FF8181" />
+                                    <Setter Property="BorderBrush" Value="#FFB5B5" />
+                                </Style>
+                            </Button.Styles>
+                            <Button.Content>
+                                <PathIcon Data="M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z" Foreground="#FF9999" />
+                            </Button.Content>
+                        </Button>
+                        <TextBlock
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource Kadwa}"
+                            FontSize="24"
+                            Foreground="#FF9999"
+                            Text="Log In">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="1" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Grid>
 
                     <Grid
                         Grid.Row="1"
@@ -153,7 +182,8 @@
                     <ScrollViewer
                         Grid.Row="2"
                         MaxWidth="200"
-                        MaxHeight="100">
+                        MaxHeight="100"
+                        ScrollViewer.IsScrollChainingEnabled="False">
                         <TextBlock
                             FontFamily="{StaticResource Kadwa}"
                             Foreground="#FF8181"
@@ -246,6 +276,5 @@
             </Border>
 
         </Grid>
-    </Border>
-
+    </ScrollViewer>
 </UserControl>

@@ -8,7 +8,10 @@ public class StringNotEmptyConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return !string.IsNullOrWhiteSpace(value as string);
+        bool result = !string.IsNullOrWhiteSpace(value as string);
+        if (parameter is string p && p.Equals("Invert", StringComparison.OrdinalIgnoreCase))
+            result = !result;
+        return result;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

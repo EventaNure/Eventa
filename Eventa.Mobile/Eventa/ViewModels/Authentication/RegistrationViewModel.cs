@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Config;
 using Eventa.Models.Authentication;
 using Eventa.Services;
-using Eventa.Views;
 using Eventa.Views.Authentication;
 using Eventa.Views.Main;
 using System;
@@ -13,7 +13,8 @@ namespace Eventa.ViewModels.Authentication;
 
 public partial class RegistrationViewModel : ObservableObject
 {
-    private readonly ApiService _apiService;
+    private readonly ApiService _apiService = new();
+    private readonly JsonSettings<AppSettings> _settingsService = new();
 
     [ObservableProperty]
     private string _userName = string.Empty;
@@ -38,7 +39,6 @@ public partial class RegistrationViewModel : ObservableObject
 
     public RegistrationViewModel()
     {
-        _apiService = new ApiService();
         _registerCommand = new AsyncRelayCommand(RegisterAsync);
     }
 
@@ -51,32 +51,84 @@ public partial class RegistrationViewModel : ObservableObject
 
         try
         {
-            var registerRequest = new RegisterRequestModel
+            if (EmailVerifyView.Instance.emailVerifyViewModel.IsChangingEmail)
             {
-                UserName = UserName,
-                Email = Email,
-                Password = Password,
-                ConfirmPassword = ConfirmPassword,
-                OrganizationName = string.IsNullOrWhiteSpace(OrganizationName) ? null : OrganizationName
-            };
-
-            var (success, message, data) = await _apiService.RegisterAsync(registerRequest);
-
-            if (success && data is JsonElement json)
-            {
-                string userId = json.GetProperty("userId").GetString() ?? string.Empty;
-                EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, userId);
-                MainView.Instance.ChangePage(EmailVerifyView.Instance);
+                await HandleEmailChangeAsync();
             }
             else
             {
-                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+                await HandleNewRegistrationAsync();
             }
         }
         catch (Exception ex)
         {
             ErrorMessage = $"An error occurred: {ex.Message}";
         }
+    }
+
+    private async Task HandleEmailChangeAsync()
+    {
+        var loginRequest = new LoginRequestModel
+        {
+            Email = Email,
+            Password = Password
+        };
+
+        var (success, message, data) = await _apiService.LoginAsync(loginRequest);
+
+        if (success && data is JsonElement json)
+        {
+            var settings = await _settingsService.LoadAsync();
+            EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, settings.UserId);
+            MainView.Instance.ChangePage(EmailVerifyView.Instance);
+        }
+        else
+        {
+            ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+        }
+    }
+
+    private async Task HandleNewRegistrationAsync()
+    {
+        var registerRequest = new RegisterRequestModel
+        {
+            UserName = UserName,
+            Email = Email,
+            Password = Password,
+            ConfirmPassword = ConfirmPassword,
+            OrganizationName = string.IsNullOrWhiteSpace(OrganizationName) ? null : OrganizationName
+        };
+
+        var (success, message, data) = await _apiService.RegisterAsync(registerRequest);
+
+        if (success && data is JsonElement json)
+        {
+            await SaveRegistrationDataAsync(json);
+            NavigateToEmailVerification(json.GetProperty("userId").GetString() ?? string.Empty);
+        }
+        else
+        {
+            ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+        }
+    }
+
+    private async Task SaveRegistrationDataAsync(JsonElement json)
+    {
+        string userId = json.GetProperty("userId").GetString() ?? string.Empty;
+
+        var settings = await _settingsService.LoadAsync();
+        settings.UserId = userId;
+        settings.Email = Email;
+        settings.Password = Password;
+        settings.UserName = UserName;
+        settings.OrganizationName = OrganizationName;
+        await _settingsService.SaveAsync(settings);
+    }
+
+    private void NavigateToEmailVerification(string userId)
+    {
+        EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, userId);
+        MainView.Instance.ChangePage(EmailVerifyView.Instance);
     }
 
     private bool ValidateInput()
@@ -103,6 +155,21 @@ public partial class RegistrationViewModel : ObservableObject
     private void LoginLink()
     {
         MainView.Instance.ChangePage(LoginView.Instance);
+    }
+
+    [RelayCommand]
+    private void BackToMain()
+    {
+        MainView.Instance.ChangePage(MainPageView.Instance);
+    }
+
+    public void InsertFormData(string userName, string email, string password, string? organizationName)
+    {
+        UserName = userName;
+        Email = email;
+        Password = password;
+        ConfirmPassword = password;
+        OrganizationName = organizationName ?? string.Empty;
     }
 
     public void ResetForm()

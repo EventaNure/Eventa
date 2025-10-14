@@ -14,15 +14,14 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
     </UserControl.Styles>
-    <Border>
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                <GradientStop Offset="0" Color="#FCE487" />
-                <GradientStop Offset="1" Color="#F9AAA9" />
-            </LinearGradientBrush>
-        </Border.Background>
-
-        <!--  Main Content  -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FCE487" />
+            <GradientStop Offset="1" Color="#F9AAA9" />
+        </LinearGradientBrush>
+    </UserControl.Background>
+    <!--  Main Content  -->
+    <ScrollViewer>
         <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -151,6 +150,5 @@
             </Border>
 
         </Grid>
-    </Border>
-
+    </ScrollViewer>
 </UserControl>

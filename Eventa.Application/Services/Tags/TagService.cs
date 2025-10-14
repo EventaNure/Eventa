@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Eventa.Application.DTOs.Tags;
+﻿using Eventa.Application.DTOs.Tags;
 using Eventa.Application.Repositories;
 
 namespace Eventa.Application.Services.Tags

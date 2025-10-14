@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Config;
 using Eventa.Models.Authentication;
 using Eventa.Services;
-using Eventa.Views;
 using Eventa.Views.Authentication;
 using Eventa.Views.Main;
 using System;
@@ -13,7 +13,8 @@ namespace Eventa.ViewModels.Authentication;
 
 public partial class EmailVerifyViewModel : ObservableObject
 {
-    private readonly ApiService _apiService;
+    private readonly ApiService _apiService = new();
+    private readonly JsonSettings<AppSettings> _settingsService = new();
 
     [ObservableProperty]
     private string _email = string.Empty;
@@ -30,14 +31,19 @@ public partial class EmailVerifyViewModel : ObservableObject
     [ObservableProperty]
     private IAsyncRelayCommand? _resendCodeCommand;
 
+    [ObservableProperty]
+    private IAsyncRelayCommand? _changeEmailCommand;
+
     private string _userId = string.Empty;
     private string _password = string.Empty;
 
+    public bool IsChangingEmail { get; private set; } = false;
+
     public EmailVerifyViewModel()
     {
-        _apiService = new ApiService();
         _verifyEmailCommand = new AsyncRelayCommand(VerifyEmailAsync);
         _resendCodeCommand = new AsyncRelayCommand(ResendCodeAsync);
+        _changeEmailCommand = new AsyncRelayCommand(ChangeEmailAsync);
     }
 
     private async Task VerifyEmailAsync()
@@ -95,9 +101,18 @@ public partial class EmailVerifyViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    private void ChangeEmail()
+    private async Task ChangeEmailAsync()
     {
+        var settings = await _settingsService.LoadAsync();
+        IsChangingEmail = true;
+
+        RegistrationView.Instance.registrationViewModel.InsertFormData(
+            settings.UserName,
+            settings.Email,
+            settings.Password,
+            settings.OrganizationName
+        );
+
         MainView.Instance.ChangePage(RegistrationView.Instance);
     }
 
@@ -123,20 +138,14 @@ public partial class EmailVerifyViewModel : ObservableObject
 
             var (success, message, data) = await _apiService.LoginAsync(loginRequest);
 
-            if (!success || data is not JsonElement json)
+            if (success && data is JsonElement json)
+            {
+                await HandleLoginResponseAsync(json);
+            }
+            else
             {
                 ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
-                return;
             }
-
-            var loginResponse = json.Deserialize<LoginResponseModel>();
-            if (loginResponse == null)
-            {
-                ErrorMessage = "Failed to process login response.";
-                return;
-            }
-
-            NavigateAfterLogin(loginResponse);
         }
         catch (Exception ex)
         {
@@ -144,21 +153,33 @@ public partial class EmailVerifyViewModel : ObservableObject
         }
     }
 
-    private void NavigateAfterLogin(LoginResponseModel loginResponse)
+    private async Task HandleLoginResponseAsync(JsonElement json)
     {
+        var loginResponse = json.Deserialize<LoginResponseModel>();
+
+        if (loginResponse == null)
+        {
+            ErrorMessage = "Failed to process login response.";
+            return;
+        }
+
         if (loginResponse.EmailConfirmed)
         {
-            EmailVerifySuccessView.Instance.emailVerifySuccessViewModel.InsertFormData(loginResponse);
-            MainView.Instance.ChangePage(EmailVerifySuccessView.Instance);
+            NavigateToSuccessPage(loginResponse);
         }
-        else
-        {
-            MainView.Instance.ChangePage(EmailVerifyView.Instance);
-        }
+
+        await Task.CompletedTask;
+    }
+
+    private static void NavigateToSuccessPage(LoginResponseModel loginResponse)
+    {
+        EmailVerifySuccessView.Instance.emailVerifySuccessViewModel.InsertFormData(loginResponse);
+        MainView.Instance.ChangePage(EmailVerifySuccessView.Instance);
     }
 
     public void InsertFormData(string email, string password, string userId)
     {
+        IsChangingEmail = false;
         Email = email;
         _password = password;
         _userId = userId;
@@ -171,5 +192,6 @@ public partial class EmailVerifyViewModel : ObservableObject
         _password = string.Empty;
         _userId = string.Empty;
         ErrorMessage = string.Empty;
+        IsChangingEmail = false;
     }
 }
