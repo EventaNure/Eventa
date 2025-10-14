@@ -4,8 +4,8 @@
     {
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);
-        void GetAllAsync();
-        void GetAsync(params object[] keyValues);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetAsync(params object[] keyValues);
         void Remove(T entity);
     }
 }

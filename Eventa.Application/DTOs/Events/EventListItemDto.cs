@@ -13,5 +13,7 @@
         public DateTime LastDateTime { get; set; }
 
         public string Address { get; set; } = string.Empty;
+
+        public byte[] ImageBytes { get; set; } = default!;
     }
 }

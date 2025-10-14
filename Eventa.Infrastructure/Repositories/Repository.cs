@@ -20,8 +20,8 @@ namespace Eventa.Infrastructure.Repositories
 
         public void Remove(T entity) => _dbSet.Remove(entity);
 
-        public void GetAsync(params object[] keyValues) => _dbSet.FindAsync(keyValues);
+        public async Task<T?> GetAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
 
-        public void GetAllAsync() => _dbSet.ToListAsync();
+        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
     }
 }

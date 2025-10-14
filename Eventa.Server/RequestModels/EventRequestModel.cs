@@ -1,6 +1,6 @@
-﻿namespace Eventa.Application.DTOs.Events
+﻿namespace Eventa.Server.RequestModels
 {
-    public class CreateEventDto
+    public class EventRequestModel
     {
         public string Title { get; set; } = string.Empty;
 
@@ -18,8 +18,6 @@
 
         public IEnumerable<DateTime> DateTimes { get; set; } = [];
 
-        public Stream ImageBytes { get; set; } = default!;
-
-        public string ImageFileName { get; set; } = string.Empty;
+        public IFormFile ImageFile { get; set; } = default!;
     }
 }

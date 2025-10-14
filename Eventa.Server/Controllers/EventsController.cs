@@ -27,10 +27,60 @@ namespace Eventa.Server.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
-        public Task<IActionResult> CreateEvent()
+        public async Task<IActionResult> CreateEvent(EventRequestModel eventRequestModel)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            throw new NotImplementedException();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var dto = _mapper.Map<CreateEventDto>(eventRequestModel);
+            dto.OrganizerId = userId;
+            dto.ImageBytes = eventRequestModel.ImageFile.OpenReadStream();
+            dto.ImageFileName = eventRequestModel.ImageFile.FileName;
+            var result = await _eventService.CreateEventAsync(dto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Value);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        public async Task<IActionResult> UpdateEvent(int id, EventRequestModel eventRequestModel)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var dto = _mapper.Map<UpdateEventDto>(eventRequestModel);
+            dto.OrganizerId = userId;
+            dto.EventId = id;
+            dto.ImageBytes = eventRequestModel.ImageFile.OpenReadStream();
+            dto.ImageFileName = eventRequestModel.ImageFile.FileName;
+            var result = await _eventService.UpdateEventAsync(dto);
+            if (!result.IsSuccess)
+            {
+                if (result.Errors.Any(e => (string)e.Metadata["Code"] == "EventNotFound"))
+                {
+                    return Conflict(result.Errors[0]);
+                }
+
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        public async Task<IActionResult> DeleteEvent(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _eventService.DeleteEventAsync(id, userId);
+            if (!result.IsSuccess)
+            {
+                if (result.Errors.Any(e => (string)e.Metadata["Code"] == "EventNotFound"))
+                {
+                    return Conflict(result.Errors[0]);
+                }
+
+                return BadRequest(result.Errors);
+            }
+            return Ok();
         }
 
         [HttpGet]

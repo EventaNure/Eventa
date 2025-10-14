@@ -16,6 +16,7 @@ namespace Eventa.Infrastructure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();

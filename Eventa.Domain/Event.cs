@@ -12,6 +12,8 @@ namespace Eventa.Domain
         [MaxLength(3000)]
         public string Description { get; set; } = string.Empty;
 
+        public double Price { get; set; }
+
         public TimeSpan Duration { get; set; }
 
         public ICollection<EventTag> EventTags { get; set; } = [];
@@ -23,5 +25,7 @@ namespace Eventa.Domain
         public Place Place { get; set; } = default!;
 
         public int PlaceId { get; set; }
+
+        public bool IsApproved {  get; set; }
     }
 }

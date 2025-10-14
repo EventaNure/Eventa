@@ -61,5 +61,15 @@ namespace Eventa.Infrastructure.Repositories
                 })
                 .ToListAsync();
         }
+
+        public async Task<Event?> GetByIdAsync(int id)
+        {
+            return await _dbSet
+                .Where(e => e.Id == id)
+                .Include(e => e.EventTags)
+                .Include(e => e.EventDateTimes)
+                .Include(e => e.Place)
+                .FirstOrDefaultAsync();
+        }
     }
 }
