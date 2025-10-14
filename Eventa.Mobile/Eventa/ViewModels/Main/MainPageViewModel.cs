@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
 using Eventa.Converters;
@@ -9,8 +8,8 @@ using Eventa.Services;
 using Eventa.Views.Authentication;
 using Eventa.Views.Events;
 using Eventa.Views.Main;
+using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -21,9 +20,6 @@ public partial class MainPageViewModel : ObservableObject
 {
     private readonly ApiService _apiService = new();
     private readonly JsonSettings<AppSettings> _settingsService = new();
-
-    [ObservableProperty]
-    private UserControl? _currentPage;
 
     [ObservableProperty]
     private ObservableCollection<BrowseTagItemModel> _browseTags = [];
@@ -39,6 +35,11 @@ public partial class MainPageViewModel : ObservableObject
 
     [ObservableProperty]
     private string _userId = string.Empty;
+
+    [ObservableProperty] 
+    private bool _isLoading;
+    [ObservableProperty] 
+    private string _errorMessage = string.Empty;
 
     public MainPageViewModel()
     {
@@ -57,17 +58,32 @@ public partial class MainPageViewModel : ObservableObject
 
     public async Task LoadBrowseTagsAsync()
     {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
         BrowseTags.Clear();
 
-        var (success, message, data) = await _apiService.GetMainTagsAsync();
+        try
+        {
+            var (success, message, data) = await _apiService.GetMainTagsAsync();
 
-        if (success && data is JsonArray json)
-        {
-            PopulateBrowseTags(json);
+            if (success && data is JsonArray json)
+            {
+                PopulateBrowseTags(json);
+            }
+            else
+            {
+                AddErrorTag(message);
+                ErrorMessage = $"Failed to fetch tags: {ApiErrorConverter.ExtractErrorMessage(message)}";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AddErrorTag(message);
+            AddErrorTag(ex.Message);
+            ErrorMessage = $"Unexpected error: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
@@ -103,6 +119,9 @@ public partial class MainPageViewModel : ObservableObject
 
     private async Task LoadProfileAsync()
     {
+        IsLoading = true;
+        ErrorMessage = string.Empty;
+
         try
         {
             var settings = await _settingsService.LoadAsync();
@@ -112,7 +131,7 @@ public partial class MainPageViewModel : ObservableObject
                 Password = settings.Password
             };
 
-            var (success, _, data) = await _apiService.LoginAsync(loginRequest);
+            var (success, message, data) = await _apiService.LoginAsync(loginRequest);
 
             if (success && data is JsonElement json)
             {
@@ -121,11 +140,17 @@ public partial class MainPageViewModel : ObservableObject
             else
             {
                 UserId = string.Empty;
+                ErrorMessage = $"Profile load failed: {ApiErrorConverter.ExtractErrorMessage(message)}";
             }
         }
-        catch
+        catch (Exception ex)
         {
             UserId = string.Empty;
+            ErrorMessage = $"Error loading profile: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
@@ -158,10 +183,9 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToTag(BrowseTagItemModel tag)
+    private async Task NavigateToTag(BrowseTagItemModel tag)
     {
-        Trace.WriteLine($"Navigating to tag: {tag.TagName} (ID: {tag.TagId})");
-        CurrentPage = BrowseEventsView.Instance;
+        await BrowseEventsView.Instance.browseEventsViewModel.SelectTagByNameAsync(tag.TagName);
     }
 
     [RelayCommand]

@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:li="using:LoadingIndicators.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Eventa.Models.Events"
+    xmlns:views="clr-namespace:Eventa.Views.Events;assembly=Eventa"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Main"
     d:DesignHeight="750"
     d:DesignWidth="800"
@@ -152,21 +154,46 @@
                                 Background="White"
                                 BoxShadow="0 4 12 0 #30000000"
                                 CornerRadius="8">
-                                <ItemsControl ItemsSource="{Binding BrowseTags}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="models:BrowseTagItemModel">
-                                            <StackPanel Spacing="4">
-                                                <Button
-                                                    Classes="DropdownItem"
-                                                    Command="{Binding $parent[UserControl].((vm:MainPageViewModel)DataContext).NavigateToTagCommand}"
-                                                    CommandParameter="{Binding}"
-                                                    Content="{Binding TagName}"
-                                                    IsEnabled="{Binding !IsError}" />
-                                                <Separator Background="#E0E0E0" IsVisible="{Binding !IsLastItem}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <Grid>
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding IsLoading}"
+                                        Spacing="5">
+                                        <li:LoadingIndicator
+                                            Foreground="#FF8181"
+                                            IsActive="{Binding IsLoading}"
+                                            Mode="Arcs"
+                                            SpeedRatio="1.2" />
+                                        <ScrollViewer
+                                            MaxWidth="200"
+                                            MaxHeight="100"
+                                            IsScrollChainingEnabled="False">
+                                            <TextBlock
+                                                FontFamily="{StaticResource Kadwa}"
+                                                Foreground="#FF8181"
+                                                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                                                Text="{Binding ErrorMessage}"
+                                                TextAlignment="Center"
+                                                TextWrapping="WrapWithOverflow" />
+                                        </ScrollViewer>
+                                    </StackPanel>
+                                    <ItemsControl IsVisible="{Binding !IsLoading}" ItemsSource="{Binding BrowseTags}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:BrowseTagItemModel">
+                                                <StackPanel Spacing="4">
+                                                    <Button
+                                                        Classes="DropdownItem"
+                                                        Command="{Binding $parent[UserControl].((vm:MainPageViewModel)DataContext).NavigateToTagCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="{Binding TagName}"
+                                                        IsEnabled="{Binding !IsError}" />
+                                                    <Separator Background="#E0E0E0" IsVisible="{Binding !IsLastItem}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
                             </Border>
                         </Flyout>
                     </Button.Flyout>
@@ -197,34 +224,59 @@
                                 BoxShadow="0 4 12 0 #30000000"
                                 CornerRadius="8">
                                 <Grid>
-                                    <StackPanel IsVisible="{Binding UserId, Converter={StaticResource StringNotEmpty}}" Spacing="4">
-                                        <Button
-                                            Classes="DropdownItem"
-                                            Command="{Binding NavigateToMyProfileCommand}"
-                                            Content="My Profile" />
-                                        <Separator Background="#E0E0E0" />
-                                        <Button
-                                            Classes="DropdownItem"
-                                            Command="{Binding NavigateToMyTicketsCommand}"
-                                            Content="My Tickets" />
-                                        <Separator Background="#E0E0E0" />
-                                        <Button
-                                            Classes="DropdownItem"
-                                            Command="{Binding LogoutCommand}"
-                                            Content="Log Out"
-                                            Foreground="#FF8181" />
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding IsLoading}"
+                                        Spacing="5">
+                                        <li:LoadingIndicator
+                                            Foreground="#FF8181"
+                                            IsActive="{Binding IsLoading}"
+                                            Mode="Arcs"
+                                            SpeedRatio="1.2" />
+                                        <ScrollViewer
+                                            MaxWidth="200"
+                                            MaxHeight="100"
+                                            IsScrollChainingEnabled="False">
+                                            <TextBlock
+                                                FontFamily="{StaticResource Kadwa}"
+                                                Foreground="#FF8181"
+                                                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                                                Text="{Binding ErrorMessage}"
+                                                TextAlignment="Center"
+                                                TextWrapping="WrapWithOverflow" />
+                                        </ScrollViewer>
                                     </StackPanel>
-                                    <StackPanel IsVisible="{Binding UserId, Converter={StaticResource StringNotEmpty}, ConverterParameter=Invert}" Spacing="4">
-                                        <Button
-                                            Classes="DropdownItem"
-                                            Command="{Binding LoginCommand}"
-                                            Content="Login" />
-                                        <Separator Background="#E0E0E0" />
-                                        <Button
-                                            Classes="DropdownItem"
-                                            Command="{Binding RegisterCommand}"
-                                            Content="Register" />
-                                    </StackPanel>
+                                    <Grid IsVisible="{Binding !IsLoading}">
+                                        <StackPanel IsVisible="{Binding UserId, Converter={StaticResource StringNotEmpty}}" Spacing="4">
+                                            <Button
+                                                Classes="DropdownItem"
+                                                Command="{Binding NavigateToMyProfileCommand}"
+                                                Content="My Profile" />
+                                            <Separator Background="#E0E0E0" />
+                                            <Button
+                                                Classes="DropdownItem"
+                                                Command="{Binding NavigateToMyTicketsCommand}"
+                                                Content="My Tickets" />
+                                            <Separator Background="#E0E0E0" />
+                                            <Button
+                                                Classes="DropdownItem"
+                                                Command="{Binding LogoutCommand}"
+                                                Content="Log Out"
+                                                Foreground="#FF8181" />
+                                        </StackPanel>
+                                        <StackPanel IsVisible="{Binding UserId, Converter={StaticResource StringNotEmpty}, ConverterParameter=Invert}" Spacing="4">
+                                            <Button
+                                                Classes="DropdownItem"
+                                                Command="{Binding LoginCommand}"
+                                                Content="Login" />
+                                            <Separator Background="#E0E0E0" />
+                                            <Button
+                                                Classes="DropdownItem"
+                                                Command="{Binding RegisterCommand}"
+                                                Content="Register" />
+                                        </StackPanel>
+                                    </Grid>
                                 </Grid>
                             </Border>
                         </Flyout>
@@ -234,6 +286,8 @@
         </Border>
 
         <!--  Main Content  -->
-        <UserControl Grid.Row="1" Content="{Binding CurrentPage, Mode=OneWay}" />
+        <Grid Grid.Row="1" RowDefinitions="auto, *">
+            <views:BrowseEventsView Grid.Row="1" IsVisible="True" />
+        </Grid>
     </Grid>
 </UserControl>
