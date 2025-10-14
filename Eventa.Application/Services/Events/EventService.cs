@@ -117,15 +117,16 @@ namespace Eventa.Application.Services.Events
             return Result.Ok();
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
-            return await eventRepository.GetEventsAsync(pageNumber, pageSize);
+            return await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds);
         }
-        public async Task<List<EventListItemDto>> GetEventsByTagsAsync(int pageNumber, int pageSize, List<int> tagIds)
+
+        public async Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
-            return await eventRepository.GetEventsByTagsAsync(pageNumber, pageSize, tagIds);
+            return await eventRepository.GetEventsByOrganizerAsync(pageNumber, pageSize, organizerId);
         }
     }
 }

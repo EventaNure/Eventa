@@ -11,10 +11,12 @@ namespace Eventa.Infrastructure.Repositories
         {
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds)
         {
             return await _dbSet
                 .AsNoTracking()
+                .Where(e => e.EventTags
+                    .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count())
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto
@@ -35,12 +37,11 @@ namespace Eventa.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<EventListItemDto>> GetEventsByTagsAsync(int pageNumber, int pageSize, List<int> tagIds)
+        public async Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId)
         {
             return await _dbSet
                 .AsNoTracking()
-                .Where(e => e.EventTags
-                    .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count())
+                .Where(e => e.OrganizerId == organizerId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto

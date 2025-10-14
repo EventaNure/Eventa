@@ -7,8 +7,8 @@ namespace Eventa.Application.Services.Events
     {
         Task<Result<int>> CreateEventAsync(CreateEventDto dto);
         Task<Result> DeleteEventAsync(int eventId, string organizerId);
-        Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize);
-        Task<List<EventListItemDto>> GetEventsByTagsAsync(int pageNumber, int pageSize, List<int> tagIds);
+        Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds);
+        Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId);
         Task<Result> UpdateEventAsync(UpdateEventDto dto);
     }
 }

@@ -26,7 +26,7 @@ namespace Eventa.Server.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
-        public async Task<IActionResult> CreateEvent(EventRequestModel eventRequestModel)
+        public async Task<IActionResult> CreateEvent([FromForm] EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var dto = _mapper.Map<CreateEventDto>(eventRequestModel);
@@ -43,7 +43,7 @@ namespace Eventa.Server.Controllers
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
-        public async Task<IActionResult> UpdateEvent(int id, EventRequestModel eventRequestModel)
+        public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var dto = _mapper.Map<UpdateEventDto>(eventRequestModel);
@@ -83,17 +83,21 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEvents([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] int[] tagIds = null!)
+        public async Task<IActionResult> GetEvents([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] int[] tagIds = null!, string? organizerId = null!)
         {
-            IEnumerable<EventListItemDto> events;
-            if (tagIds == null || !tagIds.Any())
-            {
-                events = await _eventService.GetEventsAsync(pageNumber, pageSize);
-            } else
-            {
-                events = await _eventService.GetEventsByTagsAsync(pageNumber, pageSize, tagIds.ToList());
-            }
+            tagIds = tagIds ?? Array.Empty<int>();
+            var events = await _eventService.GetEventsAsync(pageNumber, pageSize, tagIds.ToList());
 
+            return Ok(_mapper.Map<List<EventListItemResponseModel>>(events));
+        }
+
+        [HttpGet("by-organizer")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        public async Task<IActionResult> GetEventsByOrganizer([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var events = await _eventService.GetEventsByOrganizerAsync(pageNumber, pageSize, userId);
 
             return Ok(_mapper.Map<List<EventListItemResponseModel>>(events));
         }
