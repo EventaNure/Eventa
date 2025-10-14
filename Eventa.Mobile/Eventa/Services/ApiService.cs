@@ -1,6 +1,8 @@
 ﻿using Eventa.Converters;
 using Eventa.Models.Authentication;
+using Eventa.Models.Events;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -142,6 +144,57 @@ public class ApiService
             if (response.IsSuccessStatusCode)
             {
                 var tags = await response.Content.ReadFromJsonAsync<JsonArray>();
+                return (true, "Tags fetched successfully!", tags);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<EventResponseModel>? Data)> GetEventsAsync(EventsRequestModel request)
+    {
+        try
+        {
+            var queryString = request.ToQueryString();
+            var response = await _httpClient.GetAsync($"/api/Events?{queryString}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var events = await response.Content.ReadFromJsonAsync<List<EventResponseModel>>();
+                return (true, "Events fetched successfully!", events);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<TagResponseModel>? Data)> GetAllTagsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("/api/Tags");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tags = await response.Content.ReadFromJsonAsync<List<TagResponseModel>>();
                 return (true, "Tags fetched successfully!", tags);
             }
 

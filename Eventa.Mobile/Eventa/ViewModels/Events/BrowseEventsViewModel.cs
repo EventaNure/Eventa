@@ -1,7 +1,187 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Eventa.Models.Events;
+using Eventa.Services;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eventa.ViewModels.Events;
 
 public partial class BrowseEventsViewModel : ObservableObject
 {
+    private readonly ApiService _apiService;
+    public ObservableCollection<TagResponseModel> Tags { get; set; }
+    public ObservableCollection<EventResponseModel> Events { get; set; }
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _nothingFound;
+
+    [ObservableProperty]
+    private string _errorMessage = "";
+
+    [ObservableProperty]
+    private IAsyncRelayCommand _loadTagsCommand;
+    [ObservableProperty]
+    private IAsyncRelayCommand _applyFiltersCommand;
+    [ObservableProperty]
+    private IAsyncRelayCommand _buyTicketCommand;
+
+    public BrowseEventsViewModel()
+    {
+        _apiService = new ApiService();
+        Tags = [];
+        Events = [];
+
+        _loadTagsCommand = new AsyncRelayCommand(LoadTagsAsync);
+        _applyFiltersCommand = new AsyncRelayCommand(ApplyFiltersAsync);
+        _buyTicketCommand = new AsyncRelayCommand(BuyTicketAsync);
+
+        Tags.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (TagResponseModel tag in e.NewItems)
+                {
+                    tag.PropertyChanged += async (sender, args) =>
+                    {
+                        if (args.PropertyName == nameof(TagResponseModel.IsSelected))
+                        {
+                            await ApplyFiltersAsync();
+                        }
+                    };
+                }
+            }
+        };
+
+        _loadTagsCommand.Execute(null);
+        _applyFiltersCommand.Execute(null);
+    }
+
+    private async Task LoadTagsAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            var result = await _apiService.GetAllTagsAsync();
+
+            if (result.Success && result.Data != null)
+            {
+                Tags.Clear();
+                foreach (var tag in result.Data)
+                {
+                    Tags.Add(new TagResponseModel
+                    {
+                        Id = tag.Id,
+                        Name = tag.Name,
+                        IsSelected = false,
+                        ApplyFiltersCommand = ApplyFiltersCommand
+                    });
+                }
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error loading tags: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    public async Task SelectTagByNameAsync(string tagName)
+    {
+        if (string.IsNullOrWhiteSpace(tagName))
+            return;
+
+        if (!Tags.Any())
+        {
+            await LoadTagsAsync();
+        }
+
+        var matchingTag = Tags.FirstOrDefault(t =>
+            t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
+
+        if (matchingTag != null)
+        {
+            foreach (var tag in Tags.Where(t => t.Id != matchingTag.Id))
+            {
+                tag.IsSelected = false;
+            }
+            matchingTag.IsSelected = true;
+        }
+    }
+
+    private async Task ApplyFiltersAsync()
+    {
+        try
+        {
+            // IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            var selectedTagIds = Tags
+                .Where(t => t.IsSelected)
+                .Select(t => t.Id)
+                .ToList();
+
+            var request = new EventsRequestModel
+            {
+                PageNumber = 1,
+                PageSize = 50,
+                TagIds = selectedTagIds.Any() ? selectedTagIds : null
+            };
+
+            (bool Success, string Message, List<EventResponseModel>? Data) result = await _apiService.GetEventsAsync(request);
+
+            if (result.Success && result.Data != null)
+            {
+                NothingFound = false;
+                Events.Clear();
+                if (result.Data.Count == 0)
+                {
+                    ErrorMessage = "No events found matching the selected filters.";
+                    NothingFound = true;
+                }
+                else
+                {
+                    foreach (var evt in result.Data)
+                    {
+                        Events.Add(evt);
+                    }
+                }
+            }
+            else
+            {
+                ErrorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error applying filters: {ex.Message}";
+        }
+        /*
+        finally
+        {
+            IsLoading = false;
+        }
+        */
+    }
+
+    private async Task BuyTicketAsync()
+    {
+        // Implement ticket buying logic here
+        await Task.CompletedTask;
+    }
 }

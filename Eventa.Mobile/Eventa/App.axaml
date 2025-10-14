@@ -15,6 +15,11 @@
         </FluentTheme>
     </Application.Styles>
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://LoadingIndicators.Avalonia/LoadingIndicators.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
         <FontFamily x:Key="JustAnotherHand">avares://Eventa/Assets/Fonts/JustAnotherHand#Just Another Hand</FontFamily>
         <FontFamily x:Key="Kadwa">avares://Eventa/Assets/Fonts/Kadwa#Kadwa</FontFamily>
     </Application.Resources>
