@@ -14,7 +14,4 @@ public partial class TagResponseModel : ObservableObject
 
     [ObservableProperty]
     private bool _isSelected;
-
-    [ObservableProperty]
-    private AsyncRelayCommand? _applyFiltersCommand;
 }

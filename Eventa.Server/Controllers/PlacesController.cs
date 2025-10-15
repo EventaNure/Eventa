@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using Eventa.Application.Services.Places;
 using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers

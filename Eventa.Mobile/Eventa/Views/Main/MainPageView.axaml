@@ -8,7 +8,6 @@
     xmlns:li="using:LoadingIndicators.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Eventa.Models.Events"
-    xmlns:views="clr-namespace:Eventa.Views.Events;assembly=Eventa"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Main"
     d:DesignHeight="750"
     d:DesignWidth="800"
@@ -263,7 +262,7 @@
                     AutoPlayInterval="0:00:05"
                     Images="{Binding ImageUrls}"
                     IsVisible="{Binding IsCarouselVisible}" />
-                <views:BrowseEventsView Grid.Row="1" IsVisible="True" />
+                <UserControl Grid.Row="1" Content="{Binding CurrentPage}" />
             </Grid>
         </ScrollViewer>
     </Grid>

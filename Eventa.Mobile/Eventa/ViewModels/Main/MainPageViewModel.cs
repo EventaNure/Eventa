@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
 using Eventa.Converters;
@@ -24,6 +25,9 @@ public partial class MainPageViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<BrowseTagItemModel> _browseTags = [];
+
+    [ObservableProperty]
+    private UserControl _currentPage;
 
     [ObservableProperty]
     private List<string> imageUrls = [
@@ -70,6 +74,7 @@ public partial class MainPageViewModel : ObservableObject
         _registerCommand = new AsyncRelayCommand(RegisterAsync);
         _loginCommand = new AsyncRelayCommand(LoginAsync);
         _logoutCommand = new AsyncRelayCommand(LogoutAsync);
+        _currentPage = BrowseEventsView.Instance;
 
         _ = InitializeAsync();
     }
@@ -210,7 +215,7 @@ public partial class MainPageViewModel : ObservableObject
     private async Task NavigateToTag(BrowseTagItemModel tag)
     {
         IsUserBrowsing = true;
-        await BrowseEventsView.Instance.SelectTagByNameInUI(tag.TagName);
+        await BrowseEventsView.Instance.browseEventsViewModel.SelectTagByNameAsync(tag.TagName);
     }
 
     [RelayCommand]

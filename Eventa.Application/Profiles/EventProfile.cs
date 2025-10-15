@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using AutoMapper;
+﻿using AutoMapper;
 using Eventa.Application.DTOs.Events;
 using Eventa.Domain;
 
