@@ -30,7 +30,7 @@ namespace Eventa.Infrastructure.Services
                 Name = dto.Name,
                 VerificationCode = code
             };
-            return await RegisterAsync(user, dto.Password, Roles.UserRole);
+            return await RegisterAsync(user, dto.Password, DefaultRoles.UserRole);
         }
 
         public async Task<Result<RegisterResultDto>> RegisterOrganizerAsync(RegisterOrganizerDto dto)
@@ -44,7 +44,7 @@ namespace Eventa.Infrastructure.Services
                 VerificationCode = code,
                 Organization = dto.Organization
             };
-            return await RegisterAsync(user, dto.Password, Roles.OrganizerRole);
+            return await RegisterAsync(user, dto.Password, DefaultRoles.OrganizerRole);
         }
 
         private async Task<Result<RegisterResultDto>> RegisterAsync(ApplicationUser user, string password, string role)

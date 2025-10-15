@@ -7,9 +7,12 @@ namespace Eventa.Infrastructure.Services
     {
         private const string filePath = "uploads";
 
+        private static readonly string[] validFileExtensions = { ".jpg" };
+
         private readonly string path = string.Empty;
 
-        public FileService(IWebHostEnvironment environment) {
+        public FileService(IWebHostEnvironment environment)
+        {
             path = Path.Combine(environment.WebRootPath, filePath);
         }
 
@@ -55,6 +58,13 @@ namespace Eventa.Infrastructure.Services
         public void DeleteFile(string fileName)
         {
             File.Delete(Path.Combine(path, fileName));
+        }
+
+        public bool IsValidExtension(string fileName)
+        {
+            string extension = Path.GetExtension(fileName);
+
+            return validFileExtensions.Contains(extension);
         }
     }
 }

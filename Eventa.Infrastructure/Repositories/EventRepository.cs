@@ -12,7 +12,7 @@ namespace Eventa.Infrastructure.Repositories
         {
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds)
         {
             return await _dbSet
                 .AsNoTracking()
@@ -23,7 +23,7 @@ namespace Eventa.Infrastructure.Repositories
                 .Select(e => new EventListItemDto
                 {
                     Id = e.Id,
-                    Price = 450,
+                    Price = e.Price,
                     Title = e.Title,
                     Address = e.Place.Address,
                     FirstDateTime = e.EventDateTimes
@@ -48,7 +48,7 @@ namespace Eventa.Infrastructure.Repositories
                 .Select(e => new EventListItemDto
                 {
                     Id = e.Id,
-                    Price = 450,
+                    Price = e.Price,
                     Title = e.Title,
                     Address = e.Place.Address,
                     FirstDateTime = e.EventDateTimes

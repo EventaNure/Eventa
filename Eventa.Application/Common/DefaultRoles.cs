@@ -1,6 +1,6 @@
 ﻿namespace Eventa.Application.Common
 {
-    public static class Roles
+    public static class DefaultRoles
     {
         public const string UserRole = "User";
 

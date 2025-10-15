@@ -25,7 +25,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> CreateEvent(EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -42,7 +42,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -65,7 +65,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -99,13 +99,13 @@ namespace Eventa.Server.Controllers
         public async Task<IActionResult> GetEvents([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] int[] tagIds = null!, string? organizerId = null!)
         {
             tagIds = tagIds ?? Array.Empty<int>();
-            var events = await _eventService.GetEventsAsync(pageNumber, pageSize, tagIds.ToList());
+            var events = await _eventService.GetEventsAsync(pageNumber, pageSize, tagIds);
 
             return Ok(_mapper.Map<List<EventListItemResponseModel>>(events));
         }
 
         [HttpGet("by-organizer")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> GetEventsByOrganizer([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;

@@ -19,32 +19,31 @@ namespace Eventa.Application.Services.Events
         }
         public async Task<Result<int>> CreateEventAsync(CreateEventDto dto)
         {
-            string extension = Path.GetExtension(dto.ImageFileName);
-
-            if (extension != ".jpg")
+            if (!_fileService.IsValidExtension(dto.ImageFileName))
             {
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
             }
 
-            var eventDbSet = _unitOfWork.GetDbSet<Event>();
-            var tagRepository = _unitOfWork.GetTagRepository();
-            var tags = await tagRepository.GetByIdsAsync(dto.TagIds);
-            if (tags.Count() != dto.TagIds.Count())
+            var checkTagExistingResult = await CheckTagsExistingAsync(dto.TagIds);
+            if (!checkTagExistingResult.IsSuccess)
             {
-                return Result.Fail(new Error("At least one tag doesn't exist").WithMetadata("Code", "TagNotExist"));
+                return checkTagExistingResult;
             }
-            var placeDbSet = _unitOfWork.GetDbSet<Place>();
-            var placeEntity = placeDbSet.GetAsync(dto.PlaceId);
-            if (placeEntity == null)
+
+            var checkPlaceExistingResult = await CheckPlaceExistingAsync(dto.PlaceId);
+            if (!checkPlaceExistingResult.IsSuccess)
             {
-                return Result.Fail(new Error("Place doesn't exist").WithMetadata("Code", "PlaceNotExist"));
+                return checkPlaceExistingResult;
             }
+
             var eventEntity = _mapper.Map<Event>(dto);
+
+            var eventDbSet = _unitOfWork.GetDbSet<Event>();
             eventDbSet.Add(eventEntity);
             await _unitOfWork.CommitAsync();
 
 
-            string fileName = eventEntity.Id + extension;
+            string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
 
             bool isSaved = !_fileService.Exists(fileName) && await _fileService.SaveFile(dto.ImageBytes, fileName);
 
@@ -61,26 +60,24 @@ namespace Eventa.Application.Services.Events
 
         public async Task<Result> UpdateEventAsync(UpdateEventDto dto)
         {
-            string extension = Path.GetExtension(dto.ImageFileName);
-
-            if (extension != ".jpg")
+            if (!_fileService.IsValidExtension(dto.ImageFileName))
             {
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
             }
 
+            var checkTagExistingResult = await CheckTagsExistingAsync(dto.TagIds);
+            if (!checkTagExistingResult.IsSuccess)
+            {
+                return checkTagExistingResult;
+            }
+
+            var checkPlaceExistingResult = await CheckPlaceExistingAsync(dto.PlaceId);
+            if (!checkPlaceExistingResult.IsSuccess)
+            {
+                return checkPlaceExistingResult;
+            }
+
             var eventRepository = _unitOfWork.GetEventRepository();
-            var tagRepository = _unitOfWork.GetTagRepository();
-            var tags = await tagRepository.GetByIdsAsync(dto.TagIds);
-            if (tags.Count() != dto.TagIds.Count())
-            {
-                return Result.Fail(new Error("At least one tag doesn't exist").WithMetadata("Code", "TagNotExist"));
-            }
-            var placeDbSet = _unitOfWork.GetDbSet<Place>();
-            var placeEntity = placeDbSet.GetAsync(dto.PlaceId);
-            if (placeEntity == null)
-            {
-                return Result.Fail(new Error("Place doesn't exist").WithMetadata("Code", "PlaceNotExist"));
-            }
             var eventEntity = await eventRepository.GetByIdAsync(dto.EventId);
             if (eventEntity == null)
             {
@@ -96,9 +93,33 @@ namespace Eventa.Application.Services.Events
 
             await _unitOfWork.CommitAsync();
 
-            string fileName = eventEntity.Id + extension;
+            string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
 
             await _fileService.UpdateFile(dto.ImageBytes, fileName);
+
+            return Result.Ok();
+        }
+
+        private async Task<Result> CheckTagsExistingAsync(IEnumerable<int> tagIds)
+        {
+            var tagRepository = _unitOfWork.GetTagRepository();
+            var tags = await tagRepository.GetByIdsAsync(tagIds);
+            if (tags.Count() != tagIds.Count())
+            {
+                return Result.Fail(new Error("At least one tag doesn't exist").WithMetadata("Code", "TagNotExist"));
+            }
+
+            return Result.Ok();
+        }
+
+        private async Task<Result> CheckPlaceExistingAsync(int placeId)
+        {
+            var placeDbSet = _unitOfWork.GetDbSet<Place>();
+            var placeEntity = await placeDbSet.GetAsync(placeId);
+            if (placeEntity == null)
+            {
+                return Result.Fail(new Error("Place doesn't exist").WithMetadata("Code", "PlaceNotExist"));
+            }
 
             return Result.Ok();
         }
@@ -141,7 +162,7 @@ namespace Eventa.Application.Services.Events
             return eventDto;
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
             var events = await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds);
