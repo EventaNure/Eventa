@@ -2,6 +2,7 @@
     x:Class="Eventa.Views.Main.MainPageView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Eventa.Controls;assembly=Eventa"
     xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:li="using:LoadingIndicators.Avalonia"
@@ -286,8 +287,18 @@
         </Border>
 
         <!--  Main Content  -->
-        <Grid Grid.Row="1" RowDefinitions="auto, *">
-            <views:BrowseEventsView Grid.Row="1" IsVisible="True" />
-        </Grid>
+        <ScrollViewer Grid.Row="1">
+            <Grid RowDefinitions="auto, *">
+                <controls:ImageCarousel
+                    Grid.Row="0"
+                    Height="300"
+                    Margin="10"
+                    AutoPlay="True"
+                    AutoPlayInterval="0:00:05"
+                    Images="{Binding ImageUrls}"
+                    IsVisible="{Binding !IsLoading}" />
+                <views:BrowseEventsView Grid.Row="1" IsVisible="True" />
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>

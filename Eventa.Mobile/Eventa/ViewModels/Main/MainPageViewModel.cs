@@ -9,6 +9,7 @@ using Eventa.Views.Authentication;
 using Eventa.Views.Events;
 using Eventa.Views.Main;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -23,6 +24,22 @@ public partial class MainPageViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<BrowseTagItemModel> _browseTags = [];
+
+    [ObservableProperty]
+    private List<string> imageUrls = [
+        "https://gfmoritracker.fun/gallery/ghostFace.webp",
+        "https://gfmoritracker.fun/gallery/portraits/dwight_fairfield.webp",
+        "https://gfmoritracker.fun/gallery/portraits/meg_thomas.webp",
+        "https://gfmoritracker.fun/gallery/portraits/claudette_morel.webp",
+        "https://gfmoritracker.fun/gallery/portraits/jake_park.webp",
+        "https://gfmoritracker.fun/gallery/portraits/nea_karlsson.webp",
+        "https://gfmoritracker.fun/gallery/portraits/laurie_strode.webp",
+        "https://gfmoritracker.fun/gallery/portraits/ace_visconti.webp",
+        "https://gfmoritracker.fun/gallery/portraits/bill_overbeck.webp",
+        "https://gfmoritracker.fun/gallery/portraits/feng_min.webp",
+        "https://gfmoritracker.fun/gallery/portraits/david_king.webp",
+        "https://gfmoritracker.fun/gallery/portraits/kate_denson.webp",
+    ];
 
     [ObservableProperty]
     private IAsyncRelayCommand? _registerCommand;

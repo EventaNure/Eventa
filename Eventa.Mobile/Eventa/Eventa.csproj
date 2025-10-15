@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AsyncImageLoader.Avalonia" />
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
@@ -24,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\ImageCarousel.axaml.cs">
+      <DependentUpon>ImageCarousel.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Authentication\EmailVerifySuccessView.axaml.cs">
       <DependentUpon>EmailVerifySuccessView.axaml</DependentUpon>
     </Compile>
