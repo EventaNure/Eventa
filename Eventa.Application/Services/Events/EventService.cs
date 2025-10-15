@@ -33,6 +33,12 @@ namespace Eventa.Application.Services.Events
             {
                 return Result.Fail(new Error("At least one tag doesn't exist").WithMetadata("Code", "TagNotExist"));
             }
+            var placeDbSet = _unitOfWork.GetDbSet<Place>();
+            var placeEntity = placeDbSet.GetAsync(dto.PlaceId);
+            if (placeEntity == null)
+            {
+                return Result.Fail(new Error("Place doesn't exist").WithMetadata("Code", "PlaceNotExist"));
+            }
             var eventEntity = _mapper.Map<Event>(dto);
             eventDbSet.Add(eventEntity);
             await _unitOfWork.CommitAsync();
@@ -69,7 +75,12 @@ namespace Eventa.Application.Services.Events
             {
                 return Result.Fail(new Error("At least one tag doesn't exist").WithMetadata("Code", "TagNotExist"));
             }
-
+            var placeDbSet = _unitOfWork.GetDbSet<Place>();
+            var placeEntity = placeDbSet.GetAsync(dto.PlaceId);
+            if (placeEntity == null)
+            {
+                return Result.Fail(new Error("Place doesn't exist").WithMetadata("Code", "PlaceNotExist"));
+            }
             var eventEntity = await eventRepository.GetByIdAsync(dto.EventId);
             if (eventEntity == null)
             {
@@ -117,16 +128,49 @@ namespace Eventa.Application.Services.Events
             return Result.Ok();
         }
 
+        public async Task<Result<EventDto>> GetEventAsync(int eventId)
+        {
+            var eventRepository = _unitOfWork.GetEventRepository();
+            var eventDto = await eventRepository.GetEventAsync(eventId);
+            if (eventDto == null)
+            {
+                return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
+            }
+            eventDto.ImageUrl = AddImageUrl(eventId);
+
+            return eventDto;
+        }
+
         public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, List<int> tagIds)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
-            return await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds);
+            var events = await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds);
+            foreach (var eventDto in events)
+            {
+                eventDto.ImageUrl = AddImageUrl(eventDto.Id);
+            }
+
+            return events;
         }
 
         public async Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
-            return await eventRepository.GetEventsByOrganizerAsync(pageNumber, pageSize, organizerId);
+
+            var events = await eventRepository.GetEventsByOrganizerAsync(pageNumber, pageSize, organizerId);
+
+            foreach (var eventDto in events)
+            {
+                eventDto.ImageUrl = AddImageUrl(eventDto.Id);
+            }
+
+            return events;
+        }
+
+        private string? AddImageUrl(int id)
+        {
+            var path = Path.Combine("events", $"{id}.jpg");
+            return _fileService.GetFileUrl(path);
         }
     }
 }

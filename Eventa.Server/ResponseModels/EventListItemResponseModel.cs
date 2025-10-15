@@ -13,5 +13,7 @@
         public DateTime LastDateTime { get; set; }
 
         public string Address { get; set; } = string.Empty;
+
+        public string? ImageUrl { get; set; } = string.Empty;
     }
 }

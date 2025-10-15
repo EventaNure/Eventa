@@ -1,6 +1,7 @@
 ﻿using Eventa.Application.Repositories;
 using Eventa.Application.Services;
 using Eventa.Application.Services.Events;
+using Eventa.Application.Services.Places;
 using Eventa.Application.Services.Tags;
 using Eventa.Infrastructure.Repositories;
 using Eventa.Infrastructure.Services;
@@ -16,6 +17,7 @@ namespace Eventa.Infrastructure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IPlaceService, PlaceService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEmailSender, EmailSender>();

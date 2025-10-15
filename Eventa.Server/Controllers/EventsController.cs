@@ -26,7 +26,7 @@ namespace Eventa.Server.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Roles.OrganizerRole)]
-        public async Task<IActionResult> CreateEvent([FromForm] EventRequestModel eventRequestModel)
+        public async Task<IActionResult> CreateEvent(EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var dto = _mapper.Map<CreateEventDto>(eventRequestModel);
@@ -56,7 +56,7 @@ namespace Eventa.Server.Controllers
             {
                 if (result.Errors.Any(e => (string)e.Metadata["Code"] == "EventNotFound"))
                 {
-                    return Conflict(result.Errors[0]);
+                    return NotFound(result.Errors[0]);
                 }
 
                 return BadRequest(result.Errors);
@@ -74,12 +74,25 @@ namespace Eventa.Server.Controllers
             {
                 if (result.Errors.Any(e => (string)e.Metadata["Code"] == "EventNotFound"))
                 {
-                    return Conflict(result.Errors[0]);
+                    return NotFound(result.Errors[0]);
                 }
 
                 return BadRequest(result.Errors);
             }
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEvent(int id)
+        {
+            var getEventResult = await _eventService.GetEventAsync(id);
+
+            if (!getEventResult.IsSuccess)
+            {
+                return NotFound(getEventResult.Errors);
+            }
+
+            return Ok(_mapper.Map<EventResponseModel>(getEventResult.Value));
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
 ﻿using Eventa.Application.DTOs.Events;
+using Eventa.Application.DTOs.Tags;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -69,6 +70,34 @@ namespace Eventa.Infrastructure.Repositories
                 .Include(e => e.EventTags)
                 .Include(e => e.EventDateTimes)
                 .Include(e => e.Place)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<EventDto?> GetEventAsync(int id)
+        {
+            return await _dbSet
+                .Where(e => e.Id == id)
+                .Select(e => new EventDto
+                {
+                    Id = e.Id,
+                    Price = e.Price,
+                    Title = e.Title,
+                    Description = e.Description,
+                    Duration = e.Duration,
+                    PlaceName = e.Place.Name,
+                    PlaceAddress = e.Place.Address,
+                    OrganizerName = _dbContext.Users
+                        .Where(u => u.Id == e.OrganizerId)
+                        .Select(u => u.Name)
+                        .First(),
+                    DateTimes = e.EventDateTimes.Select(e => e.StartDateTime),
+                    Tags = e.EventTags.Select(et => new TagDto
+                    {
+                        Id = et.TagId,
+                        Name = et.Tag.Name
+                    }),
+                    
+                })
                 .FirstOrDefaultAsync();
         }
     }

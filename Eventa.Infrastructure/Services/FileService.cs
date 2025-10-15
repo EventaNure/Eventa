@@ -7,10 +7,16 @@ namespace Eventa.Infrastructure.Services
     {
         private const string filePath = "uploads";
 
-        private string path = string.Empty;
+        private readonly string path = string.Empty;
 
         public FileService(IWebHostEnvironment environment) {
             path = Path.Combine(environment.WebRootPath, filePath);
+        }
+
+        public string? GetFileUrl(string fileName)
+        {
+            var filePath = Path.Combine(path, fileName);
+            return File.Exists(filePath) ? filePath : null;
         }
 
         public async Task<bool> SaveFile(Stream bytes, string fileName)
