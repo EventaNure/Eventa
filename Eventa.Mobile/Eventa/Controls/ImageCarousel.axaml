@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:Eventa.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:services="clr-namespace:Eventa.Services;assembly=Eventa"
     mc:Ignorable="d">
     <UserControl.Styles>
         <Style Selector="Button.nav-button">
@@ -83,10 +82,7 @@
             <Carousel Name="MainCarousel" SelectedIndex="{Binding CurrentIndex, RelativeSource={RelativeSource AncestorType=controls:ImageCarousel}, Mode=TwoWay}">
                 <Carousel.ItemTemplate>
                     <DataTemplate>
-                        <asyncImageLoader:AdvancedImage
-                            Loader="{x:Static services:AsyncImageLoader.Instance}"
-                            Source="{Binding}"
-                            Stretch="Uniform" />
+                        <asyncImageLoader:AdvancedImage Source="{Binding}" Stretch="Uniform" />
                     </DataTemplate>
                 </Carousel.ItemTemplate>
                 <Carousel.PageTransition>
