@@ -19,51 +19,16 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
 
-        <!--  Button Styles  -->
-        <Style Selector="Button.FilterButton">
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Foreground" Value="#666666" />
-            <Setter Property="BorderBrush" Value="#E0E0E0" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Padding" Value="12,6" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
-
-        <Style Selector="Button.FilterButton:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#FCE0E0" />
-            <Setter Property="BorderBrush" Value="#FFB5B5" />
-        </Style>
-
-        <Style Selector="Button.FilterButton.Selected">
-            <Setter Property="Background" Value="#FFB5B5" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush" Value="#FFB5B5" />
-        </Style>
-
-        <Style Selector="CheckBox">
-            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Foreground" Value="#666666" />
-        </Style>
-
-        <Style Selector="Button.BuyButton">
-            <Setter Property="Background" Value="#FFB5B5" />
-            <Setter Property="Foreground" Value="White" />
+        <Style Selector="Button.HeaderButton">
+            <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Padding" Value="20,6" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-            <Setter Property="FontSize" Value="13" />
         </Style>
 
-        <Style Selector="Button.BuyButton:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#FF9999" />
+        <Style Selector="Button.HeaderButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#286d6d6d" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
 
         <Style Selector="Button.DropdownItem">
@@ -90,10 +55,6 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="Margin" Value="0" />
         </Style>
-
-        <Style Selector="ItemsControl > ContentPresenter:last-child StackPanel > Separator">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
     </UserControl.Styles>
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
@@ -111,19 +72,24 @@
                 </LinearGradientBrush>
             </Border.Background>
             <Grid ColumnDefinitions="Auto, *, Auto">
+
                 <!--  Logo  -->
-                <TextBlock
+                <Button
                     Grid.Column="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    FontFamily="{StaticResource JustAnotherHand}"
-                    FontSize="40"
-                    Foreground="#FF9999"
-                    Text="EVENTA">
-                    <TextBlock.RenderTransform>
-                        <TranslateTransform Y="5" />
-                    </TextBlock.RenderTransform>
-                </TextBlock>
+                    Classes="HeaderButton"
+                    Command="{Binding HeaderTitleClickedCommand}">
+                    <TextBlock
+                        FontFamily="{StaticResource JustAnotherHand}"
+                        FontSize="40"
+                        Foreground="#FF9999"
+                        Text="EVENTA">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="5" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Button>
 
                 <!--  Browse Dropdown  -->
                 <Button
@@ -296,7 +262,7 @@
                     AutoPlay="True"
                     AutoPlayInterval="0:00:05"
                     Images="{Binding ImageUrls}"
-                    IsVisible="{Binding !IsLoading}" />
+                    IsVisible="{Binding IsCarouselVisible}" />
                 <views:BrowseEventsView Grid.Row="1" IsVisible="True" />
             </Grid>
         </ScrollViewer>

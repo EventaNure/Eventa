@@ -13,7 +13,7 @@ public partial class EmailVerifySuccessViewModel : ObservableObject
     private readonly JsonSettings<AppSettings> _settingsService = new();
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _goToLoginCommand;
+    private AsyncRelayCommand? _goToLoginCommand;
 
     private LoginResponseModel _loginResponseModel = new();
 

@@ -26,13 +26,13 @@ public partial class EmailVerifyViewModel : ObservableObject
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _verifyEmailCommand;
+    private AsyncRelayCommand? _verifyEmailCommand;
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _resendCodeCommand;
+    private AsyncRelayCommand? _resendCodeCommand;
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _changeEmailCommand;
+    private AsyncRelayCommand? _changeEmailCommand;
 
     private string _userId = string.Empty;
     private string _password = string.Empty;

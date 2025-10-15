@@ -189,7 +189,7 @@
                 BoxShadow="0 2 8 0 #20000000"
                 CornerRadius="12">
                 <ScrollViewer ScrollViewer.IsScrollChainingEnabled="False">
-                    <ItemsControl ItemsSource="{Binding Tags}">
+                    <ItemsControl x:Name="TagsItemsControl" ItemsSource="{Binding Tags}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Rows="4" />
@@ -197,7 +197,12 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Command="{Binding ApplyFiltersCommand}" IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                <CheckBox
+                                    Checked="OnTagCheckChanged"
+                                    Command="{Binding ApplyFiltersCommand}"
+                                    IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                    Tag="Tag"
+                                    Unchecked="OnTagCheckChanged">
                                     <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" />
                                 </CheckBox>
                             </DataTemplate>

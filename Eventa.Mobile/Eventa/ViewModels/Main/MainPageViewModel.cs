@@ -42,19 +42,26 @@ public partial class MainPageViewModel : ObservableObject
     ];
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _registerCommand;
+    private AsyncRelayCommand? _registerCommand;
 
     [ObservableProperty]
-    private IAsyncRelayCommand _loginCommand;
+    private AsyncRelayCommand _loginCommand;
 
     [ObservableProperty]
-    private IAsyncRelayCommand _logoutCommand;
+    private AsyncRelayCommand _logoutCommand;
 
     [ObservableProperty]
     private string _userId = string.Empty;
 
     [ObservableProperty] 
     private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _isUserBrowsing;
+
+    [ObservableProperty]
+    private bool _isCarouselVisible;
+
     [ObservableProperty] 
     private string _errorMessage = string.Empty;
 
@@ -202,7 +209,8 @@ public partial class MainPageViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToTag(BrowseTagItemModel tag)
     {
-        await BrowseEventsView.Instance.browseEventsViewModel.SelectTagByNameAsync(tag.TagName);
+        IsUserBrowsing = true;
+        await BrowseEventsView.Instance.SelectTagByNameInUI(tag.TagName);
     }
 
     [RelayCommand]
@@ -217,6 +225,12 @@ public partial class MainPageViewModel : ObservableObject
     {
         // TODO: Implement navigation to My Tickets page
         // CurrentPage = new MyTicketsView();
+    }
+
+    [RelayCommand]
+    private void HeaderTitleClicked()
+    {
+        IsUserBrowsing = false;
     }
 
     private async Task LoginAsync()
@@ -273,5 +287,15 @@ public partial class MainPageViewModel : ObservableObject
     {
         UserId = string.Empty;
         BrowseTags.Clear();
+    }
+
+    partial void OnIsLoadingChanged(bool value)
+    {
+        IsCarouselVisible = !IsUserBrowsing && !value;
+    }
+
+    partial void OnIsUserBrowsingChanged(bool value)
+    {
+        IsCarouselVisible = !value && !IsLoading;
     }
 }

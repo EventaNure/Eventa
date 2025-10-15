@@ -26,11 +26,11 @@ public partial class BrowseEventsViewModel : ObservableObject
     private string _errorMessage = "";
 
     [ObservableProperty]
-    private IAsyncRelayCommand _loadTagsCommand;
+    private AsyncRelayCommand _loadTagsCommand;
     [ObservableProperty]
-    private IAsyncRelayCommand _applyFiltersCommand;
+    private AsyncRelayCommand _applyFiltersCommand;
     [ObservableProperty]
-    private IAsyncRelayCommand _buyTicketCommand;
+    private AsyncRelayCommand _buyTicketCommand;
 
     public BrowseEventsViewModel()
     {
@@ -41,23 +41,6 @@ public partial class BrowseEventsViewModel : ObservableObject
         _loadTagsCommand = new AsyncRelayCommand(LoadTagsAsync);
         _applyFiltersCommand = new AsyncRelayCommand(ApplyFiltersAsync);
         _buyTicketCommand = new AsyncRelayCommand(BuyTicketAsync);
-
-        Tags.CollectionChanged += (s, e) =>
-        {
-            if (e.NewItems != null)
-            {
-                foreach (TagResponseModel tag in e.NewItems)
-                {
-                    tag.PropertyChanged += async (sender, args) =>
-                    {
-                        if (args.PropertyName == nameof(TagResponseModel.IsSelected))
-                        {
-                            await ApplyFiltersAsync();
-                        }
-                    };
-                }
-            }
-        };
 
         _loadTagsCommand.Execute(null);
         _applyFiltersCommand.Execute(null);
@@ -98,29 +81,6 @@ public partial class BrowseEventsViewModel : ObservableObject
         finally
         {
             IsLoading = false;
-        }
-    }
-
-    public async Task SelectTagByNameAsync(string tagName)
-    {
-        if (string.IsNullOrWhiteSpace(tagName))
-            return;
-
-        if (!Tags.Any())
-        {
-            await LoadTagsAsync();
-        }
-
-        var matchingTag = Tags.FirstOrDefault(t =>
-            t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
-
-        if (matchingTag != null)
-        {
-            foreach (var tag in Tags.Where(t => t.Id != matchingTag.Id))
-            {
-                tag.IsSelected = false;
-            }
-            matchingTag.IsSelected = true;
         }
     }
 

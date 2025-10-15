@@ -15,7 +15,7 @@ public partial class LoginViewModel : ObservableObject
     private readonly ApiService _apiService = new();
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _loginCommand;
+    private AsyncRelayCommand? _loginCommand;
 
     [ObservableProperty]
     private string _email = string.Empty;

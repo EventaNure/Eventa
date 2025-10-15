@@ -35,7 +35,7 @@ public partial class RegistrationViewModel : ObservableObject
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private IAsyncRelayCommand? _registerCommand;
+    private AsyncRelayCommand? _registerCommand;
 
     public RegistrationViewModel()
     {
