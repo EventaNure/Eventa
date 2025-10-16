@@ -1,9 +1,11 @@
 ﻿using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Models.Events;
+using Eventa.Models.Events.Organizer;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -14,8 +16,8 @@ namespace Eventa.Services;
 public class ApiService
 {
     private readonly HttpClient _httpClient;
-    private const string BaseUrlDesktop = "https://localhost:7293"; // For Desktop
-    private const string BaseUrlAndroid = "https://10.0.2.2:7293"; // For Android Emulator
+    private const string BaseUrlDesktop = "https://localhost:7293";
+    private const string BaseUrlAndroid = "https://10.0.2.2:7293";
 
     public ApiService()
     {
@@ -33,6 +35,17 @@ public class ApiService
         _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
+    public void SetAuthToken(string token)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
+    public void ClearAuthToken()
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+    }
+
+    // Authentication methods
     public async Task<(bool Success, string Message, object? Data)> RegisterAsync(RegisterRequestModel model)
     {
         try
@@ -160,6 +173,31 @@ public class ApiService
         }
     }
 
+    public async Task<(bool Success, string Message, List<TagResponseModel>? Data)> GetAllTagsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("/api/Tags");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tags = await response.Content.ReadFromJsonAsync<List<TagResponseModel>>();
+                return (true, "Tags fetched successfully!", tags);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
     public async Task<(bool Success, string Message, List<EventResponseModel>? Data)> GetEventsAsync(EventsRequestModel request)
     {
         try
@@ -186,16 +224,216 @@ public class ApiService
         }
     }
 
-    public async Task<(bool Success, string Message, List<TagResponseModel>? Data)> GetAllTagsAsync()
+    public async Task<(bool Success, string Message, EventDetailsResponseModel? Data)> GetEventByIdAsync(int eventId, string? jwtToken = null)
     {
         try
         {
-            var response = await _httpClient.GetAsync("/api/Tags");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            var response = await _httpClient.GetAsync($"/api/Events/{eventId}");
 
             if (response.IsSuccessStatusCode)
             {
-                var tags = await response.Content.ReadFromJsonAsync<List<TagResponseModel>>();
-                return (true, "Tags fetched successfully!", tags);
+                var eventDetails = await response.Content.ReadFromJsonAsync<EventDetailsResponseModel>();
+                return (true, "Event details fetched successfully!", eventDetails);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<OrganizerEventResponseModel>? Data)> GetOrganizerEventsAsync(string jwtToken, int pageNumber = 1, int pageSize = 10)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.GetAsync($"/api/Events/by-organizer?pageNumber={pageNumber}&pageSize={pageSize}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var events = await response.Content.ReadFromJsonAsync<List<OrganizerEventResponseModel>>();
+                return (true, "Organizer events fetched successfully!", events);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message)> CreateEventAsync(CreateEventRequestModel model)
+    {
+        try
+        {
+            using var content = new MultipartFormDataContent
+            {
+                { new StringContent(model.Title), "Title" },
+                { new StringContent(model.Description), "Description" },
+                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Duration.ToString()), "Duration" },
+                { new StringContent(model.OrganizerId), "OrganizerId" },
+                { new StringContent(model.PlaceId.ToString()), "PlaceId" }
+            };
+
+            foreach (var tagId in model.TagIds)
+            {
+                content.Add(new StringContent(tagId.ToString()), "TagIds");
+            }
+
+            foreach (var dateTime in model.DateTimes)
+            {
+                content.Add(new StringContent(dateTime.ToString("o")), "DateTimes");
+            }
+
+            if (model.ImageFile != null && model.ImageFileName != null)
+            {
+                var imageContent = new ByteArrayContent(model.ImageFile);
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                content.Add(imageContent, "ImageFile", model.ImageFileName);
+            }
+
+            var response = await _httpClient.PostAsync("/api/Events", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Event created successfully!");
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
+        }
+    }
+
+    public async Task<(bool Success, string Message)> UpdateEventAsync(int eventId, UpdateEventRequestModel model)
+    {
+        try
+        {
+            using var content = new MultipartFormDataContent
+            {
+                { new StringContent(model.Title), "Title" },
+                { new StringContent(model.Description), "Description" },
+                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Duration.ToString()), "Duration" },
+                { new StringContent(model.OrganizerId), "OrganizerId" },
+                { new StringContent(model.PlaceId.ToString()), "PlaceId" }
+            };
+
+            foreach (var tagId in model.TagIds)
+            {
+                content.Add(new StringContent(tagId.ToString()), "TagIds");
+            }
+
+            foreach (var dateTime in model.DateTimes)
+            {
+                content.Add(new StringContent(dateTime.ToString("o")), "DateTimes");
+            }
+
+            if (model.ImageFile != null && model.ImageFileName != null)
+            {
+                var imageContent = new ByteArrayContent(model.ImageFile);
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                content.Add(imageContent, "ImageFile", model.ImageFileName);
+            }
+
+            var response = await _httpClient.PutAsync($"/api/Events/{eventId}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Event updated successfully!");
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
+        }
+    }
+
+    public async Task<(bool Success, string Message)> DeleteEventAsync(int eventId, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.DeleteAsync($"/api/Events/{eventId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Event deleted successfully!");
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<PlaceResponseModel>? Data)> GetPlacesAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("/api/Places");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var places = await response.Content.ReadFromJsonAsync<List<PlaceResponseModel>>();
+                return (true, "Places fetched successfully!", places);
             }
 
             var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);

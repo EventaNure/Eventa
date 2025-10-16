@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Config;
 using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views.Authentication;
@@ -13,6 +14,7 @@ namespace Eventa.ViewModels.Authentication;
 public partial class LoginViewModel : ObservableObject
 {
     private readonly ApiService _apiService = new();
+    private readonly JsonSettings<AppSettings> _settingsService = new();
 
     [ObservableProperty]
     private AsyncRelayCommand? _loginCommand;
@@ -81,11 +83,21 @@ public partial class LoginViewModel : ObservableObject
     {
         ErrorMessage = "Successfully logged in!";
 
+        await SaveCredentialsAsync(loginResponse);
+
         ResetAllAuthenticationViews();
         MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
         MainView.Instance.ChangePage(MainPageView.Instance);
+    }
 
-        await Task.CompletedTask;
+    private async Task SaveCredentialsAsync(LoginResponseModel loginResponse)
+    {
+        var settings = await _settingsService.LoadAsync();
+        settings.Email = Email;
+        settings.Password = Password;
+        settings.JwtToken = loginResponse.JwtToken;
+        settings.UserId = loginResponse.UserId;
+        await _settingsService.SaveAsync(settings);
     }
 
     private void NavigateToEmailVerification(string userId)

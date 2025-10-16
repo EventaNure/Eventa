@@ -5,6 +5,7 @@ using Eventa.Config;
 using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Models.Events;
+using Eventa.Models.Events.Organizer;
 using Eventa.Services;
 using Eventa.Views.Authentication;
 using Eventa.Views.Events;
@@ -27,7 +28,10 @@ public partial class MainPageViewModel : ObservableObject
     private ObservableCollection<BrowseTagItemModel> _browseTags = [];
 
     [ObservableProperty]
-    private UserControl _currentPage;
+    private UserControl? _currentPage;
+
+    [ObservableProperty]
+    private UserControl? _organizerEvents;
 
     [ObservableProperty]
     private List<string> imageUrls = [
@@ -57,7 +61,7 @@ public partial class MainPageViewModel : ObservableObject
     [ObservableProperty]
     private string _userId = string.Empty;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private bool _isLoading;
 
     [ObservableProperty]
@@ -66,7 +70,16 @@ public partial class MainPageViewModel : ObservableObject
     [ObservableProperty]
     private bool _isCarouselVisible;
 
-    [ObservableProperty] 
+    [ObservableProperty]
+    private bool _isBrowsingOrganizerEvents;
+
+    [ObservableProperty]
+    private bool _isBrowsingEventsAsOrganizer;
+
+    [ObservableProperty]
+    private bool _isOrganizer;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     public MainPageViewModel()
@@ -75,6 +88,7 @@ public partial class MainPageViewModel : ObservableObject
         _loginCommand = new AsyncRelayCommand(LoginAsync);
         _logoutCommand = new AsyncRelayCommand(LogoutAsync);
         _currentPage = BrowseEventsView.Instance;
+        _organizerEvents = BrowseOrganizerEventsView.Instance;
 
         _ = InitializeAsync();
     }
@@ -154,6 +168,13 @@ public partial class MainPageViewModel : ObservableObject
         try
         {
             var settings = await _settingsService.LoadAsync();
+
+            if (string.IsNullOrEmpty(settings.Email) || string.IsNullOrEmpty(settings.Password))
+            {
+                UserId = string.Empty;
+                return;
+            }
+
             var loginRequest = new LoginRequestModel
             {
                 Email = settings.Email,
@@ -189,7 +210,8 @@ public partial class MainPageViewModel : ObservableObject
 
         if (loginResponse.EmailConfirmed)
         {
-            await SaveAuthenticationDataAsync(settings, loginResponse.JwtToken);
+            await SaveAuthenticationDataAsync(settings, loginResponse);
+
             ResetAllAuthenticationViews();
             InsertFormData(loginResponse);
             MainView.Instance.ChangePage(MainPageView.Instance);
@@ -205,17 +227,88 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
+    private async Task SaveAuthenticationDataAsync(AppSettings settings, LoginResponseModel loginResponse)
+    {
+        settings.JwtToken = loginResponse.JwtToken;
+        settings.UserId = loginResponse.UserId;
+        await _settingsService.SaveAsync(settings);
+    }
+
     public void InsertFormData(LoginResponseModel model)
     {
         UserId = model.UserId;
         _ = LoadBrowseTagsAsync();
+        _ = LoadOrganizerEventsAsync(model.JwtToken);
+    }
+
+    private async Task LoadOrganizerEventsAsync(string jwtToken)
+    {
+        var (success, message, data) = await _apiService.GetOrganizerEventsAsync(jwtToken);
+
+        if (success)
+        {
+            SetupOrganizerMode(data);
+        }
+        else
+        {
+            SetupNonOrganizerMode();
+        }
+    }
+
+    private void SetupOrganizerMode(List<OrganizerEventResponseModel>? events)
+    {
+        IsOrganizer = true;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = false;
+
+        ResetPages();
+
+        var organizerEventsViewModel = BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel;
+        organizerEventsViewModel.Events.Clear();
+        organizerEventsViewModel.IsCompact = true;
+        organizerEventsViewModel.NoEvents = events == null || events.Count == 0;
+
+        if (events != null)
+        {
+            foreach (var eventModel in events)
+            {
+                organizerEventsViewModel.Events.Add(eventModel);
+            }
+        }
+    }
+
+    private void SetupNonOrganizerMode()
+    {
+        IsOrganizer = false;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = false;
+
+        ResetPages();
+
+        var organizerEventsViewModel = BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel;
+        organizerEventsViewModel.Events.Clear();
+        organizerEventsViewModel.IsCompact = true;
+    }
+
+    private void ResetPages()
+    {
+        CurrentPage = null;
+        OrganizerEvents = null;
+        CurrentPage = BrowseEventsView.Instance;
+        OrganizerEvents = BrowseOrganizerEventsView.Instance;
     }
 
     [RelayCommand]
     private async Task NavigateToTag(BrowseTagItemModel tag)
     {
         IsUserBrowsing = true;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = true;
+
+        BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
         await BrowseEventsView.Instance.browseEventsViewModel.SelectTagByNameAsync(tag.TagName);
+
+        ResetPages();
     }
 
     [RelayCommand]
@@ -236,6 +329,25 @@ public partial class MainPageViewModel : ObservableObject
     private void HeaderTitleClicked()
     {
         IsUserBrowsing = false;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = false;
+
+        BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
+        ResetPages();
+    }
+
+    [RelayCommand]
+    private void OrganizerEventsClicked()
+    {
+        IsUserBrowsing = false;
+        IsBrowsingOrganizerEvents = true;
+        IsBrowsingEventsAsOrganizer = false;
+
+        BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = false;
+
+        CurrentPage = null;
+        OrganizerEvents = null;
+        CurrentPage = BrowseOrganizerEventsView.Instance;
     }
 
     private async Task LoginAsync()
@@ -255,7 +367,13 @@ public partial class MainPageViewModel : ObservableObject
     private async Task LogoutAsync()
     {
         await ClearAuthenticationDataAsync();
+        ClearOrganizerState();
         ResetAllAuthenticationViews();
+        IsUserBrowsing = false;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = false;
+        BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
+        ResetPages();
         MainView.Instance.ChangePage(MainPageView.Instance);
     }
 
@@ -275,10 +393,18 @@ public partial class MainPageViewModel : ObservableObject
         ResetForm();
     }
 
-    private async Task SaveAuthenticationDataAsync(AppSettings settings, string jwtToken)
+    private void ClearOrganizerState()
     {
-        settings.JwtToken = jwtToken;
-        await _settingsService.SaveAsync(settings);
+        IsOrganizer = false;
+        IsBrowsingOrganizerEvents = false;
+        IsBrowsingEventsAsOrganizer = false;
+
+        OrganizerEvents = null;
+
+        var organizerEventsViewModel = BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel;
+        organizerEventsViewModel.Events.Clear();
+        organizerEventsViewModel.IsCompact = true;
+        organizerEventsViewModel.NoEvents = false;
     }
 
     private static void ResetAllAuthenticationViews()

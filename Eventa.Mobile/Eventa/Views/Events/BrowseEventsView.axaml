@@ -11,239 +11,239 @@
     d:DesignWidth="800"
     x:DataType="vm:BrowseEventsViewModel"
     mc:Ignorable="d">
-	<UserControl.Resources>
-		<converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
-	</UserControl.Resources>
-	<UserControl.Styles>
-		<Style Selector="TextBlock">
-			<Setter Property="TextTrimming" Value="CharacterEllipsis" />
-		</Style>
+    <UserControl.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
 
-		<!--  Button Styles  -->
-		<Style Selector="Button.FilterButton">
-			<Setter Property="Background" Value="White" />
-			<Setter Property="Foreground" Value="#666666" />
-			<Setter Property="BorderBrush" Value="#E0E0E0" />
-			<Setter Property="BorderThickness" Value="1" />
-			<Setter Property="CornerRadius" Value="8" />
-			<Setter Property="Padding" Value="12,6" />
-			<Setter Property="Cursor" Value="Hand" />
-			<Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-			<Setter Property="FontSize" Value="13" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="HorizontalContentAlignment" Value="Center" />
-		</Style>
+        <!--  Button Styles  -->
+        <Style Selector="Button.FilterButton">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#666666" />
+            <Setter Property="BorderBrush" Value="#E0E0E0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
 
-		<Style Selector="Button.FilterButton:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#FCE0E0" />
-			<Setter Property="BorderBrush" Value="#FFB5B5" />
-		</Style>
+        <Style Selector="Button.FilterButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FCE0E0" />
+            <Setter Property="BorderBrush" Value="#FFB5B5" />
+        </Style>
 
-		<Style Selector="Button.FilterButton.Selected">
-			<Setter Property="Background" Value="#FFB5B5" />
-			<Setter Property="Foreground" Value="White" />
-			<Setter Property="BorderBrush" Value="#FFB5B5" />
-		</Style>
+        <Style Selector="Button.FilterButton.Selected">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#FFB5B5" />
+        </Style>
 
-		<Style Selector="CheckBox">
-			<Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-			<Setter Property="FontSize" Value="13" />
-			<Setter Property="Foreground" Value="#666666" />
-		</Style>
+        <Style Selector="CheckBox">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#666666" />
+        </Style>
 
-		<Style Selector="Button.BuyButton">
-			<Setter Property="Background" Value="#FFB5B5" />
-			<Setter Property="Foreground" Value="White" />
-			<Setter Property="BorderThickness" Value="0" />
-			<Setter Property="CornerRadius" Value="8" />
-			<Setter Property="Padding" Value="20,6" />
-			<Setter Property="Cursor" Value="Hand" />
-			<Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-			<Setter Property="FontSize" Value="13" />
-		</Style>
+        <Style Selector="Button.BuyButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="20,6" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
 
-		<Style Selector="Button.BuyButton:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#FF9999" />
-		</Style>
+        <Style Selector="Button.BuyButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
 
-		<Style Selector="Button.DropdownItem">
-			<Setter Property="Padding" Value="16,8" />
-			<Setter Property="HorizontalAlignment" Value="Stretch" />
-			<Setter Property="HorizontalContentAlignment" Value="Left" />
-			<Setter Property="Background" Value="Transparent" />
-			<Setter Property="BorderThickness" Value="0" />
-			<Setter Property="Cursor" Value="Hand" />
-			<Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
-			<Setter Property="FontSize" Value="14" />
-			<Setter Property="Foreground" Value="#666666" />
-		</Style>
+        <Style Selector="Button.DropdownItem">
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="#666666" />
+        </Style>
 
-		<Style Selector="Button.DropdownItem:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#F5F5F5" />
-		</Style>
+        <Style Selector="Button.DropdownItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F5F5F5" />
+        </Style>
 
-		<Style Selector="FlyoutPresenter">
-			<Setter Property="Background" Value="Transparent" />
-			<Setter Property="BorderBrush" Value="#747474" />
-			<Setter Property="BorderThickness" Value="1" />
-			<Setter Property="CornerRadius" Value="8" />
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="Margin" Value="0" />
-		</Style>
-	</UserControl.Styles>
-	<Grid RowDefinitions="*, auto">
-		<!--  Loading  -->
-		<StackPanel
+        <Style Selector="FlyoutPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="#747474" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </UserControl.Styles>
+    <Grid RowDefinitions="*, auto">
+        <!--  Loading  -->
+        <StackPanel
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             IsVisible="{Binding IsLoading}"
             Spacing="5">
-			<li:LoadingIndicator
+            <li:LoadingIndicator
                 Foreground="#FF8181"
                 IsActive="{Binding IsLoading}"
                 Mode="Arcs"
                 SpeedRatio="1.2" />
-			<ScrollViewer IsScrollChainingEnabled="False">
-				<TextBlock
+            <ScrollViewer IsScrollChainingEnabled="False">
+                <TextBlock
                     MaxWidth="150"
                     MaxHeight="150"
                     Text="{Binding ErrorMessage}"
                     TextWrapping="WrapWithOverflow" />
-			</ScrollViewer>
-		</StackPanel>
-		<StackPanel
+            </ScrollViewer>
+        </StackPanel>
+        <StackPanel
             Margin="16"
             IsVisible="{Binding !IsLoading}"
             Spacing="16">
-			<!--  Filter Section  -->
-			<Border
+            <!--  Filter Section  -->
+            <Border
                 MaxHeight="250"
                 Padding="16"
                 Background="White"
                 BoxShadow="0 2 8 0 #20000000"
                 CornerRadius="12">
-				<ScrollViewer>
-					<UniformGrid Columns="3">
-						<!--  Date Filters  -->
-						<Button
+                <ScrollViewer>
+                    <UniformGrid Columns="3">
+                        <!--  Date Filters  -->
+                        <Button
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="4"
                             Classes="FilterButton Selected">
-							<TextBlock Text="Top Events" TextWrapping="NoWrap" />
-						</Button>
-						<Button
+                            <TextBlock Text="Top Events" TextWrapping="NoWrap" />
+                        </Button>
+                        <Button
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="4"
                             Classes="FilterButton">
-							<TextBlock Text="Any Date" TextWrapping="NoWrap" />
-						</Button>
-						<Button
+                            <TextBlock Text="Any Date" TextWrapping="NoWrap" />
+                        </Button>
+                        <Button
                             Grid.Row="0"
                             Grid.Column="2"
                             Margin="4"
                             Classes="FilterButton">
-							<TextBlock Text="Today" TextWrapping="NoWrap" />
-						</Button>
-						<Button
+                            <TextBlock Text="Today" TextWrapping="NoWrap" />
+                        </Button>
+                        <Button
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="4"
                             Classes="FilterButton">
-							<TextBlock Text="This Week" TextWrapping="NoWrap" />
-						</Button>
-						<Button
+                            <TextBlock Text="This Week" TextWrapping="NoWrap" />
+                        </Button>
+                        <Button
                             Grid.Row="1"
                             Grid.Column="1"
                             Margin="4"
                             Classes="FilterButton">
-							<TextBlock Text="On Weekend" TextWrapping="NoWrap" />
-						</Button>
-						<Button
+                            <TextBlock Text="On Weekend" TextWrapping="NoWrap" />
+                        </Button>
+                        <Button
                             Grid.Row="1"
                             Grid.Column="2"
                             Margin="4"
                             Classes="FilterButton">
-							<StackPanel Orientation="Horizontal" Spacing="4">
-								<PathIcon
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <PathIcon
                                     Width="14"
                                     Height="14"
                                     Data="M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19Z"
                                     Foreground="#666666" />
-								<TextBlock Text="Choose" TextWrapping="NoWrap" />
-								<PathIcon
+                                <TextBlock Text="Choose" TextWrapping="NoWrap" />
+                                <PathIcon
                                     Width="10"
                                     Height="10"
                                     Data="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
                                     Foreground="#666666" />
-							</StackPanel>
-						</Button>
-					</UniformGrid>
-				</ScrollViewer>
-			</Border>
-			<Border
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
+                </ScrollViewer>
+            </Border>
+            <Border
                 MaxHeight="150"
                 Padding="16"
                 Background="White"
                 BoxShadow="0 2 8 0 #20000000"
                 CornerRadius="12">
-				<ScrollViewer ScrollViewer.IsScrollChainingEnabled="False">
-					<ItemsControl ItemsSource="{Binding Tags}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<UniformGrid Rows="4" />
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}">
-									<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" />
-								</CheckBox>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</ScrollViewer>
-			</Border>
-			<ScrollViewer
+                <ScrollViewer ScrollViewer.IsScrollChainingEnabled="False">
+                    <ItemsControl ItemsSource="{Binding Tags}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" />
+                                </CheckBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+            <ScrollViewer
                 MaxWidth="200"
                 MaxHeight="100"
                 IsScrollChainingEnabled="False"
                 IsVisible="{Binding NothingFound}">
-				<TextBlock
+                <TextBlock
                     FontFamily="{StaticResource Kadwa}"
                     Foreground="#FF8181"
                     IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
                     Text="{Binding ErrorMessage}"
                     TextAlignment="Center"
                     TextWrapping="WrapWithOverflow" />
-			</ScrollViewer>
-			<ItemsControl ItemsSource="{Binding Events}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<UniformGrid Columns="2" />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<!--  Event Card  -->
-						<Border
+            </ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Events}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <!--  Event Card  -->
+                        <Border
                             Margin="4"
                             Background="White"
                             BoxShadow="0 2 8 0 #20000000"
                             CornerRadius="12">
-							<Grid RowDefinitions="120, Auto">
-								<!--  Event Image  -->
-								<Border
+                            <Grid RowDefinitions="120, Auto">
+                                <!--  Event Image  -->
+                                <Border
                                     Grid.Row="0"
                                     Background="#E0E0E0"
                                     CornerRadius="12,12,0,0" />
 
-								<!--  Event Details  -->
-								<Border Grid.Row="1" Padding="12">
-									<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto">
-										<!--  Title  -->
-										<TextBlock
+                                <!--  Event Details  -->
+                                <Border Grid.Row="1" Padding="12">
+                                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+                                        <!--  Title  -->
+                                        <TextBlock
                                             Grid.Row="0"
                                             FontFamily="{StaticResource Kadwa}"
                                             FontSize="14"
@@ -254,28 +254,28 @@
                                             TextAlignment="Center"
                                             TextTrimming="CharacterEllipsis" />
 
-										<!--  Date, Time  -->
-										<StackPanel
+                                        <!--  Date, Time  -->
+                                        <StackPanel
                                             Grid.Row="1"
                                             Margin="0,6,0,0"
                                             HorizontalAlignment="Center"
                                             Orientation="Horizontal"
                                             Spacing="4">
-											<PathIcon Data="M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19Z" Foreground="#999999" />
-											<TextBlock
+                                            <PathIcon Data="M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19Z" Foreground="#999999" />
+                                            <TextBlock
                                                 VerticalAlignment="Center"
                                                 FontFamily="{StaticResource Kadwa}"
                                                 FontSize="11"
                                                 Foreground="#666666"
                                                 Text="{Binding FirstDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm}'}">
-												<TextBlock.RenderTransform>
-													<TranslateTransform Y="1.5" />
-												</TextBlock.RenderTransform>
-											</TextBlock>
-										</StackPanel>
+                                                <TextBlock.RenderTransform>
+                                                    <TranslateTransform Y="1.5" />
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
+                                        </StackPanel>
 
-										<!--  City  -->
-										<TextBlock
+                                        <!--  City  -->
+                                        <TextBlock
                                             Grid.Row="2"
                                             Margin="0,2,0,0"
                                             FontFamily="{StaticResource Kadwa}"
@@ -286,93 +286,52 @@
                                             TextAlignment="Center"
                                             TextTrimming="CharacterEllipsis" />
 
-										<!--  Price  -->
-										<StackPanel
+                                        <!--  Price  -->
+                                        <StackPanel
                                             Grid.Row="3"
                                             Margin="0,6,0,10"
                                             HorizontalAlignment="Center"
                                             Orientation="Horizontal"
                                             Spacing="3">
-											<PathIcon
+                                            <PathIcon
                                                 Width="12"
                                                 Height="12"
                                                 Data="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"
                                                 Foreground="#666666" />
-											<TextBlock
+                                            <TextBlock
                                                 VerticalAlignment="Center"
                                                 FontFamily="{StaticResource Kadwa}"
                                                 FontSize="12"
                                                 FontWeight="SemiBold"
                                                 Foreground="#666666"
                                                 Text="{Binding Price}">
-												<TextBlock.RenderTransform>
-													<TranslateTransform Y="1.5" />
-												</TextBlock.RenderTransform>
-											</TextBlock>
-										</StackPanel>
+                                                <TextBlock.RenderTransform>
+                                                    <TranslateTransform Y="1.5" />
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
+                                        </StackPanel>
 
-										<!--  Buy Button  -->
-										<Button
+                                        <!--  Buy Button  -->
+                                        <Button
                                             Grid.Row="4"
                                             Margin="25,0,25,0"
                                             Padding="0"
                                             HorizontalAlignment="Stretch"
                                             Classes="BuyButton"
                                             CornerRadius="20">
-											<TextBlock
+                                            <TextBlock
                                                 FontWeight="Bold"
                                                 Text="Buy"
                                                 TextAlignment="Center" />
-										</Button>
-									</Grid>
-								</Border>
-							</Grid>
-						</Border>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-		</StackPanel>
-		<!--  Footer  -->
-		<Border
-            Grid.Row="1"
-            Padding="16,12"
-            Background="#FFB5B5">
-			<Grid ColumnDefinitions="*, Auto, Auto">
-				<!--  Logo  -->
-				<TextBlock
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    FontFamily="{StaticResource JustAnotherHand}"
-                    FontSize="32"
-                    Foreground="White"
-                    Text="EVENTA" />
-
-				<!--  Footer Links  -->
-				<Button
-                    Grid.Column="1"
-                    Margin="0,0,12,0"
-                    Padding="8,4"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Content="About Us"
-                    Cursor="Hand"
-                    FontFamily="{StaticResource Kadwa}"
-                    FontSize="12"
-                    Foreground="White" />
-				<Button
-                    Grid.Column="2"
-                    Padding="8,4"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Content="Contact Us"
-                    Cursor="Hand"
-                    FontFamily="{StaticResource Kadwa}"
-                    FontSize="12"
-                    Foreground="White" />
-			</Grid>
-		</Border>
-	</Grid>
+        </StackPanel>
+    </Grid>
 </UserControl>

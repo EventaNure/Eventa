@@ -1,0 +1,204 @@
+<UserControl
+    x:Class="Eventa.Views.Events.BrowseOrganizerEventsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Events"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:BrowseOrganizerEventsViewModel"
+    mc:Ignorable="d">
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Title">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="Foreground" Value="#FFB5B5" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Border.EventCard">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#999999" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style Selector="TextBlock.EventTitle">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="#FFB5B5" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <Style Selector="TextBlock.EventDetails">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#666666" />
+        </Style>
+
+        <Style Selector="Button.EditButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#FFB5B5" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+        <Style Selector="Button.EditButton:pointerover">
+            <Setter Property="Foreground" Value="#FF9999" />
+        </Style>
+
+        <Style Selector="Button.AddButton">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4" />
+        </Style>
+
+        <Style Selector="Button.AddButton /template/ ContentPresenter">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
+        <Style Selector="Button.AddButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+
+        <Style Selector="Button.AddButton:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+    </UserControl.Styles>
+    <UserControl.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </UserControl.Resources>
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!--  Header  -->
+        <Border
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            BoxShadow="5 5 10 0 DarkGray">
+            <TextBlock Classes="Title" Text="My Events" />
+        </Border>
+
+        <Grid
+            Grid.Row="1"
+            ColumnDefinitions="*, auto"
+            IsVisible="{Binding !IsCompact}">
+            <TextBlock
+                Margin="60,0,0,0"
+                Classes="Title"
+                FontWeight="Bold"
+                Text="Planned"
+                TextAlignment="Center" />
+            <Button
+                Grid.Column="1"
+                Width="50"
+                Height="50"
+                Margin="0,0,20,0"
+                Padding="0"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                Classes="AddButton">
+                <Grid>
+                    <Ellipse Fill="#FFAAAA" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="48"
+                        FontWeight="Thin"
+                        Foreground="White"
+                        Text="+">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform X="1" Y="-3" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Grid>
+            </Button>
+        </Grid>
+
+        <!--  Events List  -->
+        <ScrollViewer
+            Grid.Row="2"
+            MaxWidth="200"
+            MaxHeight="100"
+            ScrollViewer.IsScrollChainingEnabled="False">
+            <TextBlock
+                FontFamily="{StaticResource Kadwa}"
+                Foreground="#FF8181"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                Text="{Binding ErrorMessage}"
+                TextAlignment="Center"
+                TextWrapping="WrapWithOverflow" />
+        </ScrollViewer>
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding Events}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Height="161"
+                            Margin="30,5,30,0"
+                            Classes="EventCard">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <!--  Event Image Placeholder  -->
+                                <Border
+                                    Grid.Column="0"
+                                    Width="115"
+                                    Height="97"
+                                    Background="#D9D9D9"
+                                    CornerRadius="8" />
+
+                                <!--  Event Details  -->
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="16,-30,0,0"
+                                    VerticalAlignment="Center">
+                                    <TextBlock
+                                        Margin="0"
+                                        Classes="EventTitle"
+                                        FontSize="24"
+                                        FontWeight="Normal"
+                                        Text="{Binding Title}" />
+                                    <TextBlock Classes="EventDetails">
+                                        <Run Text="{Binding FirstDateTime}" />
+                                        <Run Text=" - " />
+                                        <Run Text="{Binding LastDateTime}" />
+                                    </TextBlock>
+                                    <TextBlock Classes="EventDetails" Text="{Binding Address}" />
+                                    <TextBlock Classes="EventDetails" Text="{Binding Price, StringFormat='Price: {0}'}" />
+                                    <TextBlock Classes="EventDetails" Text="{Binding TicketsSold, StringFormat='Tickets sold: {0}'}" />
+                                </StackPanel>
+
+                                <!--  Edit Button  -->
+                                <Button
+                                    Grid.Column="1"
+                                    VerticalAlignment="Bottom"
+                                    Classes="EditButton"
+                                    Command="{Binding $parent[UserControl].((vm:BrowseOrganizerEventsViewModel)DataContext).EditEventCommand}"
+                                    CommandParameter="{Binding}">
+                                    <TextBlock Text="Edit →" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <Separator
+            Grid.Row="3"
+            Height="2"
+            IsVisible="{Binding IsCompact}" />
+    </Grid>
+</UserControl>
