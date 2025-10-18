@@ -37,7 +37,7 @@ public partial class BrowseOrganizerEventsViewModel : ObservableObject
     public BrowseOrganizerEventsViewModel()
     {
         _apiService = new ApiService();
-        _createPage = CreateOrganizerEventView.Instance;
+        _createPage = CreateEditDeleteOrganizerEventView.Instance;
         _editEventCommand = new AsyncRelayCommand<OrganizerEventResponseModel>(EditEventAsync);
     }
 
@@ -51,7 +51,7 @@ public partial class BrowseOrganizerEventsViewModel : ObservableObject
     private void CreateEvent()
     {
         IsCreating = true;
-        CreateOrganizerEventView.Instance.createOrganizerEventViewModel.IsEditMode = false;
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = true;
     }
 
     partial void OnNoEventsChanged(bool value)

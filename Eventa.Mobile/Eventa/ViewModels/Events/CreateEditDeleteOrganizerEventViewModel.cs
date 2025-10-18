@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Controls;
 using Eventa.Models.Events.Organizer;
 using Eventa.Services;
 using Eventa.Views.Events;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eventa.ViewModels.Events;
 
-public partial class CreateOrganizerEventViewModel : ObservableObject
+public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
 {
     private readonly ApiService _apiService;
 
@@ -21,7 +22,7 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
     private string _eventName = string.Empty;
 
     [ObservableProperty]
-    private string? _selectedPlace;
+    private PlaceResponseModel? _selectedPlace;
 
     [ObservableProperty]
     private string _eventTime = string.Empty;
@@ -36,7 +37,7 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
     private string _ticketPrice = string.Empty;
 
     [ObservableProperty]
-    private string? _selectedTag;
+    private ObservableCollection<SelectableTag>? _selectedTags;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -54,10 +55,10 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
     private string? _eventId;
 
     public ObservableCollection<string> AvailablePlaces { get; }
-    public ObservableCollection<string> AvailableTags { get; }
+    public ObservableCollection<SelectableTag> AvailableTags { get; }
     public ObservableCollection<AdditionalDateModel> AdditionalDates { get; }
 
-    public CreateOrganizerEventViewModel()
+    public CreateEditDeleteOrganizerEventViewModel()
     {
         _apiService = new ApiService();
 
@@ -74,18 +75,18 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
             "Exhibition Center"
         };
 
-        AvailableTags = new ObservableCollection<string>
+        AvailableTags = new ObservableCollection<SelectableTag>
         {
-            "Music",
-            "Sports",
-            "Technology",
-            "Art",
-            "Food & Drink",
-            "Business",
-            "Education",
-            "Entertainment",
-            "Health & Wellness",
-            "Community"
+            new() { Name = "Music" },
+            new() { Name = "Sports" },
+            new() { Name = "Technology" },
+            new() { Name = "Art" },
+            new() { Name = "Food & Drink" },
+            new() { Name = "Business" },
+            new() { Name = "Education" },
+            new() { Name = "Entertainment" },
+            new() { Name = "Health & Wellness" },
+            new() { Name = "Community" }
         };
 
         AdditionalDates = new ObservableCollection<AdditionalDateModel>();
@@ -116,7 +117,6 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
         EventDuration = string.Empty;
         Description = string.Empty;
         TicketPrice = string.Empty;
-        SelectedTag = null;
         EventImage = null;
         SelectedEventDate = null;
         AdditionalDates.Clear();
@@ -198,7 +198,7 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(SelectedPlace))
+        if (SelectedPlace == null)
         {
             ErrorMessage = "Event place is required";
             return;
@@ -240,7 +240,7 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(SelectedTag))
+        if (SelectedTags == null || SelectedTags.Count < 0)
         {
             ErrorMessage = "Tag is required";
             return;
@@ -275,7 +275,7 @@ public partial class CreateOrganizerEventViewModel : ObservableObject
                 Date = SelectedEventDate.Value,
                 Description = Description,
                 TicketPrice = price,
-                Tag = SelectedTag,
+                Tags = SelectedTags,
                 ImageUrl = EventImage,
                 AdditionalDates = AdditionalDates.Select(d => new
                 {

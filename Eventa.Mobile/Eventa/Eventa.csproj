@@ -28,6 +28,9 @@
     <Compile Update="Controls\ImageCarousel.axaml.cs">
       <DependentUpon>ImageCarousel.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\TagContainer.axaml.cs">
+      <DependentUpon>TagContainer.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Authentication\EmailVerifySuccessView.axaml.cs">
       <DependentUpon>EmailVerifySuccessView.axaml</DependentUpon>
     </Compile>
@@ -40,8 +43,8 @@
     <Compile Update="Views\Authentication\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Events\CreateOrganizerEventView.axaml.cs">
-      <DependentUpon>CreateOrganizerEventView.axaml</DependentUpon>
+    <Compile Update="Views\Events\CreateEditDeleteOrganizerEventView.axaml.cs">
+      <DependentUpon>CreateEditDeleteOrganizerEventView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Events\BrowseOrganizerEventsView.axaml.cs">
       <DependentUpon>BrowseOrganizerEventsView.axaml</DependentUpon>

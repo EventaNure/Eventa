@@ -373,6 +373,8 @@ public partial class MainPageViewModel : ObservableObject
         IsBrowsingOrganizerEvents = false;
         IsBrowsingEventsAsOrganizer = false;
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
+        BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCreating = false;
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.ClearForm();
         ResetPages();
         MainView.Instance.ChangePage(MainPageView.Instance);
     }

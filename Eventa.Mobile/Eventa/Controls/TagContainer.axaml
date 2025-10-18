@@ -1,0 +1,99 @@
+<UserControl
+    x:Class="Eventa.Controls.TagContainer"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    d:DesignHeight="100"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <!--  Selected Tag Style  -->
+        <Style Selector="Border.selectedTag">
+            <Setter Property="Background" Value="#FFB3B3" />
+            <Setter Property="BorderBrush" Value="#FF9999" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="4,2" />
+        </Style>
+
+        <!--  Available Tag Style  -->
+        <Style Selector="Border.availableTag">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#999999" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="4,2" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Border.availableTag:pointerover">
+            <Setter Property="Background" Value="#F5F5F5" />
+        </Style>
+
+        <Style Selector="Border.dropdownContainer">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#CCCCCC" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Main Display Area  -->
+        <Border
+            Name="MainBorder"
+            Grid.Row="0"
+            MinHeight="50"
+            Background="White"
+            BorderBrush="#CCCCCC"
+            BorderThickness="1"
+            CornerRadius="4"
+            Cursor="Hand">
+            <Grid Margin="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Selected Tags Container  -->
+                <WrapPanel
+                    Name="SelectedTagsPanel"
+                    Grid.Column="0"
+                    VerticalAlignment="Center" />
+
+                <!--  Dropdown Arrow  -->
+                <Path
+                    Grid.Column="1"
+                    Width="12"
+                    Height="8"
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Data="M 0,0 L 6,6 L 12,0"
+                    Fill="#666666"
+                    Stretch="Uniform" />
+            </Grid>
+        </Border>
+
+        <!--  Dropdown Panel  -->
+        <Border
+            Name="DropdownPanel"
+            Grid.Row="1"
+            Margin="0,2,0,0"
+            Classes="dropdownContainer"
+            IsVisible="False">
+            <WrapPanel Name="AvailableTagsPanel" />
+        </Border>
+    </Grid>
+
+</UserControl>

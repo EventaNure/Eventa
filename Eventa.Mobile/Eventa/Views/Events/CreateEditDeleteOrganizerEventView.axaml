@@ -1,17 +1,18 @@
 <UserControl
-    x:Class="Eventa.Views.Events.CreateOrganizerEventView"
+    x:Class="Eventa.Views.Events.CreateEditDeleteOrganizerEventView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Eventa.Controls;assembly=Eventa"
     xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Events;assembly=Eventa"
-    d:DesignHeight="750"
+    d:DesignHeight="1450"
     d:DesignWidth="800"
-    x:DataType="vm:CreateOrganizerEventViewModel"
+    x:DataType="vm:CreateEditDeleteOrganizerEventViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
-        <Style Selector="TextBox, ComboBox">
+        <Style Selector="TextBox, AutoCompleteBox">
             <Setter Property="Margin" Value="0,0,0,15" />
             <Setter Property="Padding" Value="12,10" />
             <Setter Property="FontSize" Value="14" />
@@ -21,7 +22,7 @@
             <Setter Property="CornerRadius" Value="6" />
             <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
         </Style>
-        <Style Selector="TextBox:focus, ComboBox:focus">
+        <Style Selector="TextBox:focus, AutoCompleteBox:focus">
             <Setter Property="BorderBrush" Value="#FFB5B5" />
         </Style>
         <Style Selector="TextBlock.Label">
@@ -36,6 +37,7 @@
     </UserControl.Styles>
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
     </UserControl.Resources>
 
     <!--  Main Content  -->
@@ -49,12 +51,12 @@
                 FontFamily="{StaticResource Kadwa}"
                 FontSize="28"
                 Foreground="#FF9999"
-                Text="{Binding IsEditMode, Converter={StaticResource StringNotEmpty}, ConverterParameter='Edit Event|Create Event'}" />
+                Text="{Binding IsEditMode, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Edit Event|Create Event'}" />
 
             <!--  Form Card  -->
             <Border
                 Grid.Row="1"
-                MaxWidth="600"
+                Width="350"
                 Margin="20,0,20,40"
                 Padding="40"
                 Background="White"
@@ -127,17 +129,13 @@
                         <!--  Event Place  -->
                         <StackPanel Grid.Row="1">
                             <TextBlock Classes="Label" Text="Event place:" />
-                            <ComboBox
-                                Name="EventPlaceComboBox"
+                            <AutoCompleteBox
+                                Name="EventPlaceAutoCompleteBox"
                                 HorizontalAlignment="Stretch"
+                                FilterMode="Contains"
                                 ItemsSource="{Binding AvailablePlaces}"
-                                SelectedItem="{Binding SelectedPlace, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                                SelectedItem="{Binding SelectedPlace, Mode=TwoWay}"
+                                Watermark="Search for a place..." />
                         </StackPanel>
 
                         <!--  Event Time  -->
@@ -198,23 +196,13 @@
                             <TextBox
                                 Name="TicketPriceTextBox"
                                 Text="{Binding TicketPrice, Mode=TwoWay}"
-                                Watermark="0.00" />
+                                Watermark="0.00$" />
                         </StackPanel>
 
                         <!--  Tags  -->
                         <StackPanel Grid.Row="6">
                             <TextBlock Classes="Label" Text="Tags:" />
-                            <ComboBox
-                                Name="TagsComboBox"
-                                HorizontalAlignment="Stretch"
-                                ItemsSource="{Binding AvailableTags}"
-                                SelectedItem="{Binding SelectedTag, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <controls:TagContainer AvailableTags="{Binding AvailableTags}" SelectedTags="{Binding SelectedTags}" />
                         </StackPanel>
                     </Grid>
 
@@ -257,10 +245,12 @@
                                     <Grid Margin="0,0,0,15" ColumnDefinitions="*, *, Auto">
                                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
                                             <TextBlock Classes="Label" Text="Event place:" />
-                                            <ComboBox
+                                            <AutoCompleteBox
                                                 HorizontalAlignment="Stretch"
-                                                ItemsSource="{Binding $parent[UserControl].((vm:CreateOrganizerEventViewModel)DataContext).AvailablePlaces}"
-                                                SelectedItem="{Binding Place, Mode=TwoWay}" />
+                                                FilterMode="Contains"
+                                                ItemsSource="{Binding $parent[UserControl].((vm:CreateEditDeleteOrganizerEventViewModel)DataContext).AvailablePlaces}"
+                                                SelectedItem="{Binding Place, Mode=TwoWay}"
+                                                Watermark="Search place..." />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Margin="8,0,8,0">
                                             <TextBlock Classes="Label" Text="Event duration:" />
@@ -294,7 +284,7 @@
                                             VerticalAlignment="Bottom"
                                             Background="Transparent"
                                             BorderThickness="0"
-                                            Command="{Binding $parent[UserControl].((vm:CreateOrganizerEventViewModel)DataContext).RemoveDateCommand}"
+                                            Command="{Binding $parent[UserControl].((vm:CreateEditDeleteOrganizerEventViewModel)DataContext).RemoveDateCommand}"
                                             CommandParameter="{Binding}"
                                             CornerRadius="4"
                                             Cursor="Hand">
@@ -336,7 +326,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Button
@@ -358,7 +348,7 @@
                                     <Setter Property="Background" Value="#EEEEEE" />
                                 </Style>
                             </Button.Styles>
-                            Cancel
+                            <TextBlock Text="Cancel" TextAlignment="Center" />
                         </Button>
 
                         <Button
@@ -379,30 +369,29 @@
                                     <Setter Property="Background" Value="#FF9999" />
                                 </Style>
                             </Button.Styles>
-                            <TextBlock Text="{Binding IsEditMode, Converter={StaticResource StringNotEmpty}, ConverterParameter='Update|Create'}" />
+                            <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Update|Create'}" TextAlignment="Center" />
                         </Button>
 
                         <!--  Delete Button (only visible in edit mode)  -->
                         <Button
                             Grid.Column="2"
-                            Margin="8,0,0,0"
-                            Padding="12"
-                            Background="#FFE0E0"
+                            Margin="8,0,8,0"
+                            Padding="0,12"
+                            HorizontalAlignment="Stretch"
+                            Background="#FFB5B5"
                             BorderThickness="0"
                             Command="{Binding DeleteEventCommand}"
                             CornerRadius="8"
                             Cursor="Hand"
-                            IsVisible="{Binding IsEditMode, Converter={StaticResource StringNotEmpty}}">
+                            FontFamily="{StaticResource Kadwa}"
+                            FontSize="16"
+                            Foreground="White">
                             <Button.Styles>
                                 <Style Selector="Button:pointerover /template/ ContentPresenter">
                                     <Setter Property="Background" Value="#FFCCCC" />
                                 </Style>
                             </Button.Styles>
-                            <PathIcon
-                                Width="20"
-                                Height="20"
-                                Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
-                                Foreground="#FF8181" />
+                            <TextBlock Text="Delete" TextAlignment="Center" />
                         </Button>
                     </Grid>
                 </Grid>
