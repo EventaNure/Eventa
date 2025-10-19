@@ -32,7 +32,7 @@ public partial class OrganizerEventResponseModel : ObservableObject
 
     [ObservableProperty]
     [property: JsonPropertyName("imageUrl")]
-    private string? _imageUrl;
+    private string? _Image;
 
     [ObservableProperty]
     [property: JsonPropertyName("ticketsSold")]

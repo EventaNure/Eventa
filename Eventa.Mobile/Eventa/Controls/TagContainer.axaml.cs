@@ -7,6 +7,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Text.Json.Serialization;
 
 namespace Eventa.Controls
 {
@@ -240,6 +241,10 @@ namespace Eventa.Controls
 
     public partial class SelectableTag : ObservableObject
     {
+        [ObservableProperty]
+        private int _id;
+        [ObservableProperty]
+        private bool _isSelected;
         [ObservableProperty]
         private string _name = string.Empty;
     }

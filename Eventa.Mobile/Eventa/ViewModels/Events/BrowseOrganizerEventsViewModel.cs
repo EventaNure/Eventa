@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Events.Organizer;
 using Eventa.Services;
 using Eventa.Views.Events;
+using Eventa.Views.Main;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -45,13 +46,19 @@ public partial class BrowseOrganizerEventsViewModel : ObservableObject
     {
         if (eventToEdit == null)
             return;
+
+        MainPageView.Instance.mainPageViewModel.OrganizerEventsClickedCommand.Execute(eventToEdit);
+        IsCreating = true;
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.InsertFormData(MainPageView.Instance.mainPageViewModel.JwtToken, MainPageView.Instance.mainPageViewModel.UserId, eventToEdit.Id);
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = true;
     }
 
     [RelayCommand]
     private void CreateEvent()
     {
         IsCreating = true;
-        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = true;
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.InsertFormData(MainPageView.Instance.mainPageViewModel.JwtToken, MainPageView.Instance.mainPageViewModel.UserId);
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = false;
     }
 
     partial void OnNoEventsChanged(bool value)

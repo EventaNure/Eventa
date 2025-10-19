@@ -2,6 +2,7 @@
     x:Class="Eventa.Views.Events.BrowseEventsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:converters="clr-namespace:Eventa.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:li="using:LoadingIndicators.Avalonia"
@@ -237,7 +238,9 @@
                                 <Border
                                     Grid.Row="0"
                                     Background="#E0E0E0"
-                                    CornerRadius="12,12,0,0" />
+                                    CornerRadius="12,12,0,0">
+                                    <asyncImageLoader:AdvancedImage Source="{Binding Image}" />
+                                </Border>
 
                                 <!--  Event Details  -->
                                 <Border Grid.Row="1" Padding="12">

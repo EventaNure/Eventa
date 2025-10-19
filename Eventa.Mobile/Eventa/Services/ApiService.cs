@@ -35,16 +35,6 @@ public class ApiService
         _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
-    public void SetAuthToken(string token)
-    {
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    }
-
-    public void ClearAuthToken()
-    {
-        _httpClient.DefaultRequestHeaders.Authorization = null;
-    }
-
     // Authentication methods
     public async Task<(bool Success, string Message, object? Data)> RegisterAsync(RegisterRequestModel model)
     {
@@ -224,7 +214,7 @@ public class ApiService
         }
     }
 
-    public async Task<(bool Success, string Message, EventDetailsResponseModel? Data)> GetEventByIdAsync(int eventId, string? jwtToken = null)
+    public async Task<(bool Success, string Message, EventDetailsResponseModel? Data)> GetEventByIdAsync(int eventId, string jwtToken)
     {
         try
         {
@@ -292,10 +282,12 @@ public class ApiService
         }
     }
 
-    public async Task<(bool Success, string Message)> CreateEventAsync(CreateEventRequestModel model)
+    public async Task<(bool Success, string Message)> CreateEventAsync(CreateEventRequestModel model, string jwtToken)
     {
         try
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
             using var content = new MultipartFormDataContent
             {
                 { new StringContent(model.Title), "Title" },
@@ -319,7 +311,7 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
@@ -341,12 +333,19 @@ public class ApiService
         {
             return (false, $"Error: {ex.Message}");
         }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
     }
 
-    public async Task<(bool Success, string Message)> UpdateEventAsync(int eventId, UpdateEventRequestModel model)
+
+    public async Task<(bool Success, string Message)> UpdateEventAsync(int eventId, UpdateEventRequestModel model, string jwtToken)
     {
         try
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
             using var content = new MultipartFormDataContent
             {
                 { new StringContent(model.Title), "Title" },
@@ -370,7 +369,7 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
@@ -391,6 +390,10 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}");
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }
 

@@ -3,6 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Eventa.Converters;assembly=Eventa"
+	xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Events"
@@ -155,12 +156,14 @@
                                 Classes="EventCard">
                                 <Grid ColumnDefinitions="Auto,*">
                                     <!--  Event Image Placeholder  -->
-                                    <Border
+									<Border
                                         Grid.Column="0"
                                         Width="115"
                                         Height="97"
                                         Background="#D9D9D9"
-                                        CornerRadius="8" />
+                                        CornerRadius="8">
+										<asyncImageLoader:AdvancedImage Source="{Binding Image}"/>
+									</Border>
 
                                     <!--  Event Details  -->
                                     <StackPanel
@@ -174,9 +177,9 @@
                                             FontWeight="Normal"
                                             Text="{Binding Title}" />
                                         <TextBlock Classes="EventDetails">
-                                            <Run Text="{Binding FirstDateTime}" />
+                                            <Run Text="{Binding FirstDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm}'}" />
                                             <Run Text=" - " />
-                                            <Run Text="{Binding LastDateTime}" />
+                                            <Run Text="{Binding LastDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm}'}" />
                                         </TextBlock>
                                         <TextBlock Classes="EventDetails" Text="{Binding Address}" />
                                         <TextBlock Classes="EventDetails" Text="{Binding Price, StringFormat='Price: {0}'}" />

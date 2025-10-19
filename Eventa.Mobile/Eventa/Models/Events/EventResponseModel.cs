@@ -22,4 +22,7 @@ public class EventResponseModel
 
     [JsonPropertyName("address")]
     public string Address { get; set; } = string.Empty;
+
+    [JsonPropertyName("imageUrl")]
+    public string Image { get; set; } = string.Empty;
 }

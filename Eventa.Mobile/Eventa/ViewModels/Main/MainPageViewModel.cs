@@ -82,6 +82,9 @@ public partial class MainPageViewModel : ObservableObject
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
+    [ObservableProperty]
+    private string _jwtToken = "";
+
     public MainPageViewModel()
     {
         _registerCommand = new AsyncRelayCommand(RegisterAsync);
@@ -237,11 +240,12 @@ public partial class MainPageViewModel : ObservableObject
     public void InsertFormData(LoginResponseModel model)
     {
         UserId = model.UserId;
+        JwtToken = model.JwtToken;
         _ = LoadBrowseTagsAsync();
         _ = LoadOrganizerEventsAsync(model.JwtToken);
     }
 
-    private async Task LoadOrganizerEventsAsync(string jwtToken)
+    public async Task LoadOrganizerEventsAsync(string jwtToken)
     {
         var (success, message, data) = await _apiService.GetOrganizerEventsAsync(jwtToken);
 
@@ -333,6 +337,7 @@ public partial class MainPageViewModel : ObservableObject
         IsBrowsingEventsAsOrganizer = false;
 
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
+        CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.CancelCommand.Execute(null);
         ResetPages();
     }
 
