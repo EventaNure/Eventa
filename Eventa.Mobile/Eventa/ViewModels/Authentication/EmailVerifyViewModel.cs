@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
+using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views.Authentication;
@@ -69,7 +70,7 @@ public partial class EmailVerifyViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
             }
         }
         catch (Exception ex)
@@ -93,7 +94,7 @@ public partial class EmailVerifyViewModel : ObservableObject
 
             ErrorMessage = success
                 ? "The new code has been sent to your email!"
-                : ErrorMessageMapper.MapErrorMessage(message);
+                : ApiErrorConverter.ExtractErrorMessage(message);
         }
         catch (Exception ex)
         {
@@ -144,7 +145,7 @@ public partial class EmailVerifyViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
             }
         }
         catch (Exception ex)

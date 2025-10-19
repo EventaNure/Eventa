@@ -79,10 +79,16 @@
             Margin="40,0"
             Background="#E0E0E0"
             CornerRadius="8">
-            <Carousel Name="MainCarousel" SelectedIndex="{Binding CurrentIndex, RelativeSource={RelativeSource AncestorType=controls:ImageCarousel}, Mode=TwoWay}">
+            <Carousel
+                Name="MainCarousel"
+                ClipToBounds="True"
+                SelectedIndex="{Binding CurrentIndex, RelativeSource={RelativeSource AncestorType=controls:ImageCarousel}, Mode=TwoWay}">
                 <Carousel.ItemTemplate>
                     <DataTemplate>
-                        <asyncImageLoader:AdvancedImage Source="{Binding}" Stretch="Uniform" />
+                        <asyncImageLoader:AdvancedImage
+                            RenderOptions.BitmapInterpolationMode="HighQuality"
+                            Source="{Binding}"
+                            Stretch="Uniform" />
                     </DataTemplate>
                 </Carousel.ItemTemplate>
                 <Carousel.PageTransition>

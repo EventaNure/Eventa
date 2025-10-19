@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
+using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views.Authentication;
@@ -56,7 +57,7 @@ public partial class LoginViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
             }
         }
         catch (Exception ex)

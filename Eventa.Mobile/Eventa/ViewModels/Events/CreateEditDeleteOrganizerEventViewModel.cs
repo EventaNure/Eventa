@@ -59,46 +59,46 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
     [ObservableProperty]
     private int? _eventId;
 
-    public ObservableCollection<string> AvailablePlaces { get; }
-    public ObservableCollection<SelectableTag> AvailableTags { get; }
-    public ObservableCollection<AdditionalDateModel> AdditionalDates { get; }
+    [ObservableProperty]
+    private ObservableCollection<string> _availablePlaces = [];
+    [ObservableProperty]
+    private ObservableCollection<SelectableTag> _availableTags = [];
+    [ObservableProperty]
+    private ObservableCollection<AdditionalDateModel> _additionalDates = [];
 
     private string _jwtToken = "";
     private string _organizerId = "";
-    private List<PlaceResponseModel> _placesData = new();
+    private List<PlaceResponseModel> _placesData = [];
 
     public CreateEditDeleteOrganizerEventViewModel()
     {
         _apiService = new ApiService();
 
-        AvailablePlaces = new ObservableCollection<string>();
-        AvailableTags = new ObservableCollection<SelectableTag>();
-        AdditionalDates = new ObservableCollection<AdditionalDateModel>();
-
-        // Load places and tags on initialization
-        _ = LoadPlacesAndTagsAsync();
+        AvailablePlaces = [];
+        AvailableTags = [];
+        AdditionalDates = [];
     }
 
-    private async Task LoadPlacesAndTagsAsync()
+    public async Task LoadPlacesAndTagsAsync()
     {
         try
         {
             IsLoading = true;
 
             // Fetch places
-            var placesResult = await _apiService.GetPlacesAsync();
-            if (placesResult.Success && placesResult.Data != null)
+            var (Success, Message, Data) = await _apiService.GetPlacesAsync();
+            if (Success && Data != null)
             {
-                _placesData = placesResult.Data;
+                _placesData = Data;
                 AvailablePlaces.Clear();
-                foreach (var place in placesResult.Data)
+                foreach (var place in Data)
                 {
                     AvailablePlaces.Add($"{place.Name} - {place.Address}");
                 }
             }
             else
             {
-                ErrorMessage = placesResult.Message;
+                ErrorMessage = Message;
             }
 
             // Fetch tags
@@ -138,15 +138,15 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            var result = await _apiService.GetEventByIdAsync(eventId, _jwtToken);
+            var (Success, Message, Data) = await _apiService.GetEventByIdAsync(eventId, _jwtToken);
 
-            if (!result.Success || result.Data == null)
+            if (!Success || Data == null)
             {
-                ErrorMessage = result.Message;
+                ErrorMessage = Message;
                 return;
             }
 
-            var eventData = result.Data;
+            var eventData = Data;
 
             IsEditMode = true;
             EventId = eventData.Id;
@@ -217,6 +217,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         TicketPrice = string.Empty;
         EventImage = null;
         SelectedEventDate = null;
+        SelectedTags?.Clear();
         AdditionalDates.Clear();
         ErrorMessage = string.Empty;
 
@@ -486,9 +487,9 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                     ImageFileName = imageFileName
                 };
 
-                var result = await _apiService.UpdateEventAsync(EventId.Value, updateModel, _jwtToken);
+                var (Success, Message) = await _apiService.UpdateEventAsync(EventId.Value, updateModel, _jwtToken);
 
-                if (result.Success)
+                if (Success)
                 {
                     ErrorMessage = string.Empty;
                     ClearForm();
@@ -500,7 +501,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                 }
                 else
                 {
-                    ErrorMessage = result.Message;
+                    ErrorMessage = Message;
                 }
             }
             else
@@ -520,9 +521,9 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                     ImageFileName = imageFileName
                 };
 
-                var result = await _apiService.CreateEventAsync(createModel, _jwtToken);
+                var (Success, Message) = await _apiService.CreateEventAsync(createModel, _jwtToken);
 
-                if (result.Success)
+                if (Success)
                 {
                     ErrorMessage = string.Empty;
                     ClearForm();
@@ -534,7 +535,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                 }
                 else
                 {
-                    ErrorMessage = result.Message;
+                    ErrorMessage = Message;
                 }
             }
         }
@@ -554,36 +555,44 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         if (!IsEditMode || !EventId.HasValue)
             return;
 
-        // TODO: Show confirmation dialog
-        // For now, proceeding directly
+        // Show confirmation dialog and await response
+        bool confirmed = await DialogControl.Instance.Show(
+            title: "Delete Event",
+            description: "Are you sure you want to delete this event?\n\nYou won't be able to undo this action.",
+            noButton: "No, go back",
+            okButton: "Delete"
+        );
 
-        try
+        if (confirmed)
         {
-            IsLoading = true;
-
-            var result = await _apiService.DeleteEventAsync(EventId.Value, _jwtToken);
-
-            if (result.Success)
+            try
             {
-                ErrorMessage = string.Empty;
-                ClearForm();
-                BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCreating = false;
+                IsLoading = true;
 
-                // Refresh the events list
-                await MainPageView.Instance.mainPageViewModel.LoadOrganizerEventsAsync(_jwtToken);
+                var (Success, Message) = await _apiService.DeleteEventAsync(EventId.Value, _jwtToken);
+
+                if (Success)
+                {
+                    ErrorMessage = string.Empty;
+                    ClearForm();
+                    BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCreating = false;
+
+                    await MainPageView.Instance.mainPageViewModel.LoadOrganizerEventsAsync(_jwtToken);
+                    await BrowseEventsView.Instance.browseEventsViewModel.ApplyFiltersCommand.ExecuteAsync(null);
+                }
+                else
+                {
+                    ErrorMessage = Message;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ErrorMessage = result.Message;
+                ErrorMessage = $"Failed to delete event: {ex.Message}";
             }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to delete event: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 

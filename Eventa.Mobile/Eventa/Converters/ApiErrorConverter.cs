@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using Eventa.Services;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -18,20 +20,55 @@ public class ApiErrorConverter
             var jsonDoc = JsonDocument.Parse(errorContent);
             var root = jsonDoc.RootElement;
 
-            if (root.TryGetProperty("metadata", out var metadata) &&
-                metadata.TryGetProperty("Code", out var codeProperty))
+            // Handle array of error objects: [{"reasons":[],"message":"...","metadata":{"Code":"..."}}]
+            if (root.ValueKind == JsonValueKind.Array)
             {
-                return codeProperty.GetString() ?? "An error occurred.";
+                var errorMessages = new List<string>();
+
+                foreach (var errorItem in root.EnumerateArray())
+                {
+                    // Try to get metadata.Code first
+                    if (errorItem.TryGetProperty("metadata", out var metadata) &&
+                        metadata.TryGetProperty("Code", out var codeProperty))
+                    {
+                        var rawError = codeProperty.GetString();
+                        if (!string.IsNullOrEmpty(rawError))
+                        {
+                            errorMessages.Add(ErrorMessageMapper.MapErrorMessage(rawError));
+                        }
+                    }
+                    // Fallback to message property
+                    else if (errorItem.TryGetProperty("message", out var messageProperty))
+                    {
+                        var message = messageProperty.GetString();
+                        if (!string.IsNullOrEmpty(message))
+                        {
+                            errorMessages.Add(ErrorMessageMapper.MapErrorMessage(message));
+                        }
+                    }
+                }
+
+                if (errorMessages.Count != 0)
+                {
+                    return string.Join(" ", errorMessages);
+                }
             }
 
+            // Handle single error object with metadata: {"metadata":{"Code":"..."}}
+            if (root.TryGetProperty("metadata", out var metadataObj) &&
+                metadataObj.TryGetProperty("Code", out var codeProp))
+            {
+                var rawError = codeProp.GetString() ?? "An error occurred.";
+                return ErrorMessageMapper.MapErrorMessage(rawError);
+            }
+
+            // Handle validation errors: {"errors":{"field":["error1","error2"]}}
             if (root.TryGetProperty("errors", out var errorsProperty))
             {
                 var errorMessages = new List<string>();
 
                 foreach (var errorField in errorsProperty.EnumerateObject())
                 {
-                    var fieldName = errorField.Name;
-
                     if (errorField.Value.ValueKind == JsonValueKind.Array)
                     {
                         foreach (var error in errorField.Value.EnumerateArray())
@@ -39,7 +76,8 @@ public class ApiErrorConverter
                             var errorText = error.GetString();
                             if (!string.IsNullOrEmpty(errorText))
                             {
-                                errorMessages.Add(errorText);
+                                var mappedError = ErrorMessageMapper.MapErrorMessage(errorText);
+                                errorMessages.Add(mappedError);
                             }
                         }
                     }
@@ -55,9 +93,11 @@ public class ApiErrorConverter
         }
         catch (JsonException)
         {
-            return errorContent.Length > 200
+            var fallbackMessage = errorContent.Length > 200
                 ? string.Concat(errorContent.AsSpan(0, 200), "...")
                 : errorContent;
+
+            return ErrorMessageMapper.MapErrorMessage(fallbackMessage);
         }
     }
 

@@ -247,7 +247,7 @@ public partial class MainPageViewModel : ObservableObject
 
     public async Task LoadOrganizerEventsAsync(string jwtToken)
     {
-        var (success, message, data) = await _apiService.GetOrganizerEventsAsync(jwtToken);
+        var (success, _, data) = await _apiService.GetOrganizerEventsAsync(jwtToken);
 
         if (success)
         {

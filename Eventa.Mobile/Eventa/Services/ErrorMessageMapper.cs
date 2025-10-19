@@ -6,24 +6,26 @@ public class ErrorMessageMapper
 {
     private static readonly Dictionary<string, string> ErrorMappings = new()
     {
-        { "Password must have at least one lowercase and one upperrcase letter", "Password must have at least one lowercase and one uppercase letter!" },
-        { "The field Password must be a string with a minimum length of 8 and a maximum length of 128.", "Password must be at least 8 or maximum 128 characters!" },
-        { "The field Name must be a string with a minimum length of 3 and a maximum length of 32.", "Name must be at least 3 or maximum 32 characters!" },
-        { "The field Organization must be a string with a minimum length of 3 and a maximum length of 32.", "Organization Name must be at least 3 or maximum 32 characters!" },
-        { "The field Email must be a string with a minimum length of 5 and a maximum length of 254.", "Email must be at least 5 or maximum 254 characters!" },
-        { "The Email field is not a valid e-mail address.", "Email format is not correct! (email@example.com)" },
-        { "UserNotFound", "User not found!" },
-        { "TokenIncorrect", "The code is not correct!" },
-        { "LoginFailed", "Login or password is incorrect!" },
-        { "RegistrationFailed", "Failed to register, try again!" },
-        { "DuplicateEmail", "Email is already taken!" },
-        { "EmailAlreadyConfirmed", "Email is already confirmed!" },
+        { "password must have at least one lowercase and one upperrcase letter", "Password must have at least one lowercase and one uppercase letter!" },
+        { "the field password must be a string with a minimum length of 8 and a maximum length of 128.", "Password must be at least 8 or maximum 128 characters!" },
+        { "the field name must be a string with a minimum length of 3 and a maximum length of 32.", "Name must be at least 3 or maximum 32 characters!" },
+        { "the field organization must be a string with a minimum length of 3 and a maximum length of 32.", "Organization Name must be at least 3 or maximum 32 characters!" },
+        { "the field email must be a string with a minimum length of 5 and a maximum length of 254.", "Email must be at least 5 or maximum 254 characters!" },
+        { "the email field is not a valid e-mail address.", "Email format is not correct! (email@example.com)" },
+        { "usernotfound", "User not found!" },
+        { "tokenincorrect", "The code is not correct!" },
+        { "loginfailed", "Login or password is incorrect!" },
+        { "registrationfailed", "Failed to register, try again!" },
+        { "duplicateemail", "Email is already taken!" },
+        { "emailalreadyconfirmed", "Email is already confirmed!" },
+        { "smallnumberoftags", "The minimum amount of tags has is 3!" },
+        { "datetimemustbeinthefuture", "The dates must be set to upcoming days!" },
+        { "the field description must be a string with a minimum length of 300 and a maximum 3000", "Description must be at least 300 or maximum 3000 characters!" }
     };
-
     public static string MapErrorMessage(string serverMessage)
     {
         if (string.IsNullOrWhiteSpace(serverMessage))
-            return "Unknown error occured!";
+            return "Unknown error occurred!";
 
         var normalizedMessage = serverMessage.Trim().ToLowerInvariant();
 
@@ -35,12 +37,10 @@ public class ErrorMessageMapper
 
         foreach (var kvp in ErrorMappings)
         {
-            var key = kvp.Key.ToLowerInvariant();
-
-            if (normalizedMessage.Contains(key) && key.Length > longestMatchLength)
+            if (normalizedMessage.Contains(kvp.Key) && kvp.Key.Length > longestMatchLength)
             {
                 bestMatch = kvp.Value;
-                longestMatchLength = key.Length;
+                longestMatchLength = kvp.Key.Length;
             }
         }
 

@@ -49,14 +49,16 @@ public partial class BrowseOrganizerEventsViewModel : ObservableObject
 
         MainPageView.Instance.mainPageViewModel.OrganizerEventsClickedCommand.Execute(eventToEdit);
         IsCreating = true;
+        await CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.LoadPlacesAndTagsAsync();
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.InsertFormData(MainPageView.Instance.mainPageViewModel.JwtToken, MainPageView.Instance.mainPageViewModel.UserId, eventToEdit.Id);
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = true;
     }
 
     [RelayCommand]
-    private void CreateEvent()
+    private async Task CreateEvent()
     {
         IsCreating = true;
+        await CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.LoadPlacesAndTagsAsync();
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.InsertFormData(MainPageView.Instance.mainPageViewModel.JwtToken, MainPageView.Instance.mainPageViewModel.UserId);
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.IsEditMode = false;
     }

@@ -28,6 +28,9 @@
     <Compile Update="Controls\ImageCarousel.axaml.cs">
       <DependentUpon>ImageCarousel.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\DialogControl.axaml.cs">
+      <DependentUpon>DialogControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\TagContainer.axaml.cs">
       <DependentUpon>TagContainer.axaml</DependentUpon>
     </Compile>

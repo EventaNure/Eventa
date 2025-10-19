@@ -12,5 +12,8 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
+    <Grid>
+        <UserControl Content="{Binding CurrentDialog, Mode=OneWay}" ZIndex="999" />
+        <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
+    </Grid>
 </UserControl>

@@ -149,7 +149,7 @@
     </UserControl.Resources>
 
     <!--  Main Content  -->
-    <ScrollViewer Background="#F5F5F5">
+    <ScrollViewer Background="#F5F5F5" IsScrollChainingEnabled="False">
         <Grid HorizontalAlignment="Center" RowDefinitions="auto, *">
             <!--  Page Title  -->
             <TextBlock
@@ -180,10 +180,13 @@
                             HorizontalAlignment="Center"
                             Background="#F5F5F5"
                             BorderBrush="#E0E0E0"
-                            BorderThickness="2">
+                            BorderThickness="2"
+                            ClipToBounds="True"
+                            CornerRadius="12">
                             <Grid>
                                 <asyncImageLoader:AdvancedImage
                                     IsVisible="{Binding EventImage, Converter={StaticResource StringNotEmpty}}"
+                                    RenderOptions.BitmapInterpolationMode="HighQuality"
                                     Source="{Binding EventImage}"
                                     Stretch="UniformToFill" />
                                 <PathIcon
@@ -241,7 +244,7 @@
                                 Name="EventPlaceAutoCompleteBox"
                                 HorizontalAlignment="Stretch"
                                 FilterMode="ContainsOrdinal"
-                                ItemsSource="{Binding AvailablePlaces}"
+                                ItemsSource="{Binding AvailablePlaces, Mode=TwoWay}"
                                 SelectedItem="{Binding SelectedPlace, Mode=TwoWay}"
                                 Watermark="Search for a place...">
                                 <AutoCompleteBox.ItemTemplate>
@@ -307,7 +310,7 @@
                         <!--  Tags  -->
                         <StackPanel Grid.Row="7">
                             <TextBlock Classes="Label" Text="Tags:" />
-                            <controls:TagContainer AvailableTags="{Binding AvailableTags}" SelectedTags="{Binding SelectedTags, Mode=TwoWay}" />
+                            <controls:TagContainer AvailableTags="{Binding AvailableTags, Mode=TwoWay}" SelectedTags="{Binding SelectedTags, Mode=TwoWay}" />
                         </StackPanel>
                     </Grid>
 

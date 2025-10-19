@@ -9,424 +9,423 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Eventa.Infrastructure.Migrations
+namespace Eventa.Infrastructure.Migrations;
+
+[DbContext(typeof(ApplicationDbContext))]
+[Migration("20251011141916_InitialCreate")]
+partial class InitialCreate
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251011141916_InitialCreate")]
-    partial class InitialCreate
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.20")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+        modelBuilder
+            .HasAnnotation("ProductVersion", "8.0.20")
+            .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+        MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Eventa.Domain.Event", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("Eventa.Domain.Event", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasMaxLength(3000)
+                    .HasColumnType("varchar(3000)");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time(6)");
+                b.Property<TimeSpan>("Duration")
+                    .HasColumnType("time(6)");
 
-                    b.Property<int>("OrganizerId")
-                        .HasColumnType("int");
+                b.Property<int>("OrganizerId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("varchar(200)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Events");
-                });
+                b.ToTable("Events");
+            });
 
-            modelBuilder.Entity("Eventa.Domain.EventDateTime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("Eventa.Domain.EventDateTime", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
+                b.Property<int>("EventId")
+                    .HasColumnType("int");
 
-                    b.Property<DateTime>("StartDateTime")
-                        .HasColumnType("datetime(6)");
+                b.Property<DateTime>("StartDateTime")
+                    .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("EventId");
+                b.HasIndex("EventId");
 
-                    b.ToTable("EventDateTimes");
-                });
+                b.ToTable("EventDateTimes");
+            });
 
-            modelBuilder.Entity("Eventa.Domain.EventTag", b =>
-                {
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
+        modelBuilder.Entity("Eventa.Domain.EventTag", b =>
+            {
+                b.Property<int>("EventId")
+                    .HasColumnType("int");
 
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
+                b.Property<int>("TagId")
+                    .HasColumnType("int");
 
-                    b.HasKey("EventId", "TagId");
+                b.HasKey("EventId", "TagId");
 
-                    b.HasIndex("TagId");
+                b.HasIndex("TagId");
 
-                    b.ToTable("EventTags");
-                });
+                b.ToTable("EventTags");
+            });
 
-            modelBuilder.Entity("Eventa.Domain.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("Eventa.Domain.Tag", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Tags");
-                });
+                b.ToTable("Tags");
+            });
 
-            modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+        modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("varchar(255)");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                b.Property<int>("AccessFailedCount")
+                    .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("Email")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
+                b.Property<bool>("EmailConfirmed")
+                    .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
+                b.Property<bool>("LockoutEnabled")
+                    .HasColumnType("tinyint(1)");
+
+                b.Property<DateTimeOffset?>("LockoutEnd")
+                    .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(32)
+                    .HasColumnType("varchar(32)");
 
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("NormalizedEmail")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("NormalizedUserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.Property<string>("Organization")
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
+                b.Property<string>("Organization")
+                    .HasMaxLength(32)
+                    .HasColumnType("varchar(32)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                b.Property<string>("PasswordHash")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
+                b.Property<string>("PhoneNumber")
+                    .HasColumnType("longtext");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
+                b.Property<bool>("PhoneNumberConfirmed")
+                    .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
+                b.Property<string>("SecurityStamp")
+                    .HasColumnType("longtext");
 
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
+                b.Property<bool>("TwoFactorEnabled")
+                    .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("UserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.Property<string>("VerificationCode")
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
+                b.Property<string>("VerificationCode")
+                    .HasMaxLength(6)
+                    .HasColumnType("varchar(6)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                b.HasIndex("NormalizedEmail")
+                    .HasDatabaseName("EmailIndex");
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
+                b.HasIndex("NormalizedUserName")
+                    .IsUnique()
+                    .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
-                });
+                b.ToTable("AspNetUsers", (string)null);
+            });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("Name")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                b.Property<string>("NormalizedName")
+                    .HasMaxLength(256)
+                    .HasColumnType("varchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
+                b.HasIndex("NormalizedName")
+                    .IsUnique()
+                    .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                b.ToTable("AspNetRoles", (string)null);
 
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "Organizer",
-                            NormalizedName = "ORGANIZER"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = "1",
+                        Name = "User",
+                        NormalizedName = "USER"
+                    },
+                    new
+                    {
+                        Id = "2",
+                        Name = "Organizer",
+                        NormalizedName = "ORGANIZER"
+                    });
+            });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                b.Property<string>("RoleId")
+                    .IsRequired()
+                    .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
-                });
+                b.ToTable("AspNetRoleClaims", (string)null);
+            });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
-                });
+                b.ToTable("AspNetUserClaims", (string)null);
+            });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            {
+                b.Property<string>("LoginProvider")
+                    .HasMaxLength(128)
+                    .HasColumnType("varchar(128)");
 
-                    b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
+                b.Property<string>("ProviderKey")
+                    .HasMaxLength(128)
+                    .HasColumnType("varchar(128)");
 
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext");
+                b.Property<string>("ProviderDisplayName")
+                    .HasColumnType("longtext");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("varchar(255)");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
-                });
+                b.ToTable("AspNetUserLogins", (string)null);
+            });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("varchar(255)");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("UserId", "RoleId");
+                b.Property<string>("RoleId")
+                    .HasColumnType("varchar(255)");
+
+                b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("Eventa.Domain.EventDateTime", b =>
-                {
-                    b.HasOne("Eventa.Domain.Event", "Event")
-                        .WithMany("EventDateTimes")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-                });
-
-            modelBuilder.Entity("Eventa.Domain.EventTag", b =>
-                {
-                    b.HasOne("Eventa.Domain.Event", "Event")
-                        .WithMany("EventTags")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Eventa.Domain.Tag", "Tag")
-                        .WithMany("EventTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Eventa.Domain.Event", b =>
-                {
-                    b.Navigation("EventDateTimes");
-
-                    b.Navigation("EventTags");
-                });
-
-            modelBuilder.Entity("Eventa.Domain.Tag", b =>
-                {
-                    b.Navigation("EventTags");
-                });
+                b.HasIndex("RoleId");
+
+                b.ToTable("AspNetUserRoles", (string)null);
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("varchar(255)");
+
+                b.Property<string>("LoginProvider")
+                    .HasMaxLength(128)
+                    .HasColumnType("varchar(128)");
+
+                b.Property<string>("Name")
+                    .HasMaxLength(128)
+                    .HasColumnType("varchar(128)");
+
+                b.Property<string>("Value")
+                    .HasColumnType("longtext");
+
+                b.HasKey("UserId", "LoginProvider", "Name");
+
+                b.ToTable("AspNetUserTokens", (string)null);
+            });
+
+        modelBuilder.Entity("Eventa.Domain.EventDateTime", b =>
+            {
+                b.HasOne("Eventa.Domain.Event", "Event")
+                    .WithMany("EventDateTimes")
+                    .HasForeignKey("EventId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Event");
+            });
+
+        modelBuilder.Entity("Eventa.Domain.EventTag", b =>
+            {
+                b.HasOne("Eventa.Domain.Event", "Event")
+                    .WithMany("EventTags")
+                    .HasForeignKey("EventId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Eventa.Domain.Tag", "Tag")
+                    .WithMany("EventTags")
+                    .HasForeignKey("TagId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Event");
+
+                b.Navigation("Tag");
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            {
+                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    .WithMany()
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            {
+                b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            {
+                b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            {
+                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    .WithMany()
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            {
+                b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+        modelBuilder.Entity("Eventa.Domain.Event", b =>
+            {
+                b.Navigation("EventDateTimes");
+
+                b.Navigation("EventTags");
+            });
+
+        modelBuilder.Entity("Eventa.Domain.Tag", b =>
+            {
+                b.Navigation("EventTags");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }
