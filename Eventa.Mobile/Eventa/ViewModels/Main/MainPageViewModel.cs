@@ -47,6 +47,7 @@ public partial class MainPageViewModel : ObservableObject
         "https://gfmoritracker.fun/gallery/portraits/feng_min.webp",
         "https://gfmoritracker.fun/gallery/portraits/david_king.webp",
         "https://gfmoritracker.fun/gallery/portraits/kate_denson.webp",
+        "https://10.0.2.2:7293/"
     ];
 
     [ObservableProperty]
@@ -421,10 +422,10 @@ public partial class MainPageViewModel : ObservableObject
         LoginView.Instance.loginViewModel.ResetForm();
     }
 
-    public void ResetForm()
+    public async void ResetForm()
     {
         UserId = string.Empty;
-        BrowseTags.Clear();
+        await LoadBrowseTagsAsync();
     }
 
     partial void OnIsLoadingChanged(bool value)

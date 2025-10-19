@@ -239,46 +239,49 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                 ErrorMessage = "Unable to access file picker";
                 return;
             }
-
             var storageProvider = topLevel.StorageProvider;
-
             var fileTypeFilter = new FilePickerFileType("Images")
             {
                 Patterns = ["*.jpg", "*.jpeg"],
                 MimeTypes = ["image/*"]
             };
-
             var options = new FilePickerOpenOptions
             {
                 Title = "Select an Event Image",
                 AllowMultiple = false,
                 FileTypeFilter = [fileTypeFilter]
             };
-
             var result = await storageProvider.OpenFilePickerAsync(options);
-
             if (result != null && result.Count > 0)
             {
                 var file = result[0];
+
+                // Validate image dimensions
+                await using (var stream = await file.OpenReadAsync())
+                {
+                    using var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+
+                    if (bitmap.PixelSize.Width != 128 || bitmap.PixelSize.Height != 128)
+                    {
+                        ErrorMessage = $"Image must be exactly 128x128 pixels. Selected image is {bitmap.PixelSize.Width}x{bitmap.PixelSize.Height}.";
+                        return;
+                    }
+                }
 
                 var cacheDirectory = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "Eventa",
                     "ImageCache"
                 );
-
                 Directory.CreateDirectory(cacheDirectory);
-
                 var fileExtension = Path.GetExtension(file.Name) ?? ".jpg";
                 var fileName = $"event_image_{Guid.NewGuid()}{fileExtension}";
                 var destinationPath = Path.Combine(cacheDirectory, fileName);
-
                 await using (var sourceStream = await file.OpenReadAsync())
                 await using (var destinationStream = File.Create(destinationPath))
                 {
                     await sourceStream.CopyToAsync(destinationStream);
                 }
-
                 EventImage = destinationPath;
                 ErrorMessage = string.Empty;
             }

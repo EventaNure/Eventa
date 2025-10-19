@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:EmailVerifySuccessViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -20,6 +21,9 @@
             <GradientStop Offset="1" Color="#F9AAA9" />
         </LinearGradientBrush>
     </UserControl.Background>
+    <UserControl.Resources>
+        <StreamGeometry x:Key="CheckMarkIcon">M1827.701 303.065 698.835 1431.801 92.299 825.266 0 917.564 698.835 1616.4 1919.869 395.234z</StreamGeometry>
+    </UserControl.Resources>
     <!--  Main Content  -->
     <ScrollViewer>
         <Grid
@@ -83,7 +87,7 @@
                                 Canvas.Top="35"
                                 Width="40"
                                 Height="30"
-                                Data="M1827.701 303.065 698.835 1431.801 92.299 825.266 0 917.564 698.835 1616.4 1919.869 395.234z"
+                                Data="{StaticResource CheckMarkIcon}"
                                 Foreground="#FF9999" />
                         </Canvas>
                     </Viewbox>

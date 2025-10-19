@@ -20,7 +20,8 @@ public class ErrorMessageMapper
         { "emailalreadyconfirmed", "Email is already confirmed!" },
         { "smallnumberoftags", "The minimum amount of tags has is 3!" },
         { "datetimemustbeinthefuture", "The dates must be set to upcoming days!" },
-        { "the field description must be a string with a minimum length of 300 and a maximum 3000", "Description must be at least 300 or maximum 3000 characters!" }
+        { "the field description must be a string with a minimum length of 300 and a maximum 3000", "Description must be at least 300 or maximum 3000 characters!" },
+        { "invalidextension", "Only .jpg images are allowed!" }
     };
     public static string MapErrorMessage(string serverMessage)
     {

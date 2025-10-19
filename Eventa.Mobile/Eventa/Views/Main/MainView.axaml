@@ -7,13 +7,14 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Main"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
     <Grid>
-        <UserControl Content="{Binding CurrentDialog, Mode=OneWay}" ZIndex="999" />
-        <UserControl Content="{Binding CurrentPage, Mode=OneWay}" />
+        <ContentControl Content="{Binding CurrentDialog, Mode=OneWay}" ZIndex="999" />
+        <ContentControl Content="{Binding CurrentPage, Mode=OneWay}" />
     </Grid>
 </UserControl>

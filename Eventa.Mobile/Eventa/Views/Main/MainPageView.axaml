@@ -11,6 +11,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Main"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:MainPageViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -85,6 +86,9 @@
     </UserControl.Styles>
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <StreamGeometry x:Key="DownArrow">M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z</StreamGeometry>
+        <StreamGeometry x:Key="Arrow">M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z</StreamGeometry>
+        <StreamGeometry x:Key="UserAvatar">M52.6006 15.6C52.6006 24.2156 45.6163 31.2 37.0006 31.2C28.385 31.2 21.4006 24.2156 21.4006 15.6C21.4006 6.98436 28.385 0 37.0006 0C45.6163 0 52.6006 6.98436 52.6006 15.6ZM47.4006 15.6C47.4006 21.3438 42.7444 26 37.0006 26C31.2569 26 26.6006 21.3438 26.6006 15.6C26.6006 9.85624 31.2569 5.2 37.0006 5.2C42.7444 5.2 47.4006 9.85624 47.4006 15.6Z M37.0006 39C20.1672 39 5.82475 48.9539 0.361328 62.8993C1.69226 64.2209 3.09429 65.471 4.56118 66.6433C8.62951 53.84 21.3921 44.2 37.0006 44.2C52.6092 44.2 65.3718 53.84 69.4401 66.6434C70.907 65.471 72.309 64.221 73.64 62.8993C68.1766 48.9539 53.8341 39 37.0006 39Z</StreamGeometry>
     </UserControl.Resources>
     <Grid RowDefinitions="Auto, *">
         <!--  Header with Navigation  -->
@@ -137,7 +141,7 @@
                         <PathIcon
                             Width="10"
                             Height="10"
-                            Data="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
+                            Data="{StaticResource DownArrow}"
                             Foreground="#666666" />
                     </StackPanel>
 
@@ -207,7 +211,7 @@
                     <PathIcon
                         Width="20"
                         Height="20"
-                        Data="M52.6006 15.6C52.6006 24.2156 45.6163 31.2 37.0006 31.2C28.385 31.2 21.4006 24.2156 21.4006 15.6C21.4006 6.98436 28.385 0 37.0006 0C45.6163 0 52.6006 6.98436 52.6006 15.6ZM47.4006 15.6C47.4006 21.3438 42.7444 26 37.0006 26C31.2569 26 26.6006 21.3438 26.6006 15.6C26.6006 9.85624 31.2569 5.2 37.0006 5.2C42.7444 5.2 47.4006 9.85624 47.4006 15.6Z M37.0006 39C20.1672 39 5.82475 48.9539 0.361328 62.8993C1.69226 64.2209 3.09429 65.471 4.56118 66.6433C8.62951 53.84 21.3921 44.2 37.0006 44.2C52.6092 44.2 65.3718 53.84 69.4401 66.6434C70.907 65.471 72.309 64.221 73.64 62.8993C68.1766 48.9539 53.8341 39 37.0006 39Z"
+                        Data="{StaticResource UserAvatar}"
                         Foreground="#FF8181" />
 
                     <Button.Flyout>
@@ -290,7 +294,7 @@
                             Classes="OrganizerMenuButton"
                             Command="{Binding OrganizerEventsClickedCommand}"
                             IsVisible="{Binding IsOrganizer}">
-                            <UserControl Height="360" Content="{Binding OrganizerEvents}" />
+                            <ContentControl Height="360" Content="{Binding OrganizerEvents}" />
                         </Button>
                     </Grid>
                     <controls:ImageCarousel
@@ -302,7 +306,7 @@
                         Images="{Binding ImageUrls}"
                         IsVisible="{Binding IsCarouselVisible}" />
                 </Grid>
-                <UserControl Grid.Row="1" Content="{Binding CurrentPage}" />
+                <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
 
                 <!--  Footer  -->
                 <Border

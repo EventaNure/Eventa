@@ -86,7 +86,7 @@
                 <Carousel.ItemTemplate>
                     <DataTemplate>
                         <asyncImageLoader:AdvancedImage
-                            RenderOptions.BitmapInterpolationMode="HighQuality"
+                            
                             Source="{Binding}"
                             Stretch="Uniform" />
                     </DataTemplate>

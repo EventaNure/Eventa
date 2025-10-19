@@ -9,6 +9,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Events"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:BrowseOrganizerEventsViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -163,10 +164,7 @@
                                         Background="#D9D9D9"
                                         ClipToBounds="True"
                                         CornerRadius="8">
-                                        <asyncImageLoader:AdvancedImage
-                                            RenderOptions.BitmapInterpolationMode="HighQuality"
-                                            Source="{Binding Image}"
-                                            Stretch="UniformToFill" />
+                                        <asyncImageLoader:AdvancedImage Source="{Binding Image}" Stretch="UniformToFill" />
                                     </Border>
 
                                     <!--  Event Details  -->
@@ -210,6 +208,6 @@
                 Height="2"
                 IsVisible="{Binding IsCompact}" />
         </Grid>
-        <UserControl Content="{Binding CreatePage}" IsVisible="{Binding IsCreating}" />
+        <ContentControl Content="{Binding CreatePage}" IsVisible="{Binding IsCreating}" />
     </Grid>
 </UserControl>

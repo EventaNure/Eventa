@@ -8,6 +8,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:LoginViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -30,6 +31,7 @@
     </UserControl.Styles>
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <StreamGeometry x:Key="BackArrow">M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z</StreamGeometry>
     </UserControl.Resources>
     <UserControl.Background>
         <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
@@ -87,7 +89,7 @@
                                 </Style>
                             </Button.Styles>
                             <Button.Content>
-                                <PathIcon Data="M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z" Foreground="#FF9999" />
+                                <PathIcon Data="{StaticResource BackArrow}" Foreground="#FF9999" />
                             </Button.Content>
                         </Button>
                         <TextBlock

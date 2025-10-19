@@ -11,6 +11,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Events;assembly=Eventa"
     d:DesignHeight="1650"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:CreateEditDeleteOrganizerEventViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>
@@ -146,6 +147,10 @@
     <UserControl.Resources>
         <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
         <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
+        <StreamGeometry x:Key="EventImage">M19,13A1,1 0 0,0 18,14V18A1,1 0 0,0 19,19H23A1,1 0 0,0 24,18V14A1,1 0 0,0 23,13M19,15H23V18H19M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5M22,3H5A2,2 0 0,0 3,5V17A2,2 0 0,0 5,19H22A2,2 0 0,0 24,17V5A2,2 0 0,0 22,3M22,17H5V5H22Z</StreamGeometry>
+        <StreamGeometry x:Key="UploadImage">M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z</StreamGeometry>
+        <StreamGeometry x:Key="PlusIcon">M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z</StreamGeometry>
+        <StreamGeometry x:Key="DeleteIcon">M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z</StreamGeometry>
     </UserControl.Resources>
 
     <!--  Main Content  -->
@@ -186,13 +191,12 @@
                             <Grid>
                                 <asyncImageLoader:AdvancedImage
                                     IsVisible="{Binding EventImage, Converter={StaticResource StringNotEmpty}}"
-                                    RenderOptions.BitmapInterpolationMode="HighQuality"
                                     Source="{Binding EventImage}"
                                     Stretch="UniformToFill" />
                                 <PathIcon
                                     Width="60"
                                     Height="60"
-                                    Data="M19,13A1,1 0 0,0 18,14V18A1,1 0 0,0 19,19H23A1,1 0 0,0 24,18V14A1,1 0 0,0 23,13M19,15H23V18H19M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5M22,3H5A2,2 0 0,0 3,5V17A2,2 0 0,0 5,19H22A2,2 0 0,0 24,17V5A2,2 0 0,0 22,3M22,17H5V5H22Z"
+                                    Data="{StaticResource EventImage}"
                                     Foreground="#CCCCCC"
                                     IsVisible="{Binding EventImage, Converter={StaticResource StringNotEmpty}, ConverterParameter=Invert}" />
                             </Grid>
@@ -219,7 +223,7 @@
                                 <PathIcon
                                     Width="16"
                                     Height="16"
-                                    Data="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z"
+                                    Data="{StaticResource UploadImage}"
                                     Foreground="#FF8181" />
                                 <TextBlock Text="Upload Image" />
                             </StackPanel>
@@ -341,7 +345,7 @@
                                 <PathIcon
                                     Width="20"
                                     Height="20"
-                                    Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+                                    Data="{StaticResource PlusIcon}"
                                     Foreground="#FF8181" />
                             </Button>
                         </Grid>
@@ -401,7 +405,7 @@
                                                     <PathIcon
                                                         Width="20"
                                                         Height="20"
-                                                        Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                                                        Data="{StaticResource DeleteIcon}"
                                                         Foreground="#FF8181" />
                                                 </Button>
                                             </Grid>
