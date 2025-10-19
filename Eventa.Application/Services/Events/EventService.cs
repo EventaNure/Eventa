@@ -12,6 +12,8 @@ namespace Eventa.Application.Services.Events
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
 
+        private const int minimumTagsNumber = 3;
+
         public EventService(IUnitOfWork unitOfWork, IMapper mapper, IFileService fileService) {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -22,6 +24,18 @@ namespace Eventa.Application.Services.Events
             if (!_fileService.IsValidExtension(dto.ImageFileName))
             {
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
+            }
+
+            var checkTagsNumber = CheckTagsNumber(dto.TagIds);
+            if (!checkTagsNumber.IsSuccess)
+            {
+                return checkTagsNumber;
+            }
+
+            var checkDateTimes = CheckDateTimes(dto.DateTimes);
+            if (!checkDateTimes.IsSuccess)
+            {
+                return checkDateTimes;
             }
 
             var checkTagExistingResult = await CheckTagsExistingAsync(dto.TagIds);
@@ -44,8 +58,8 @@ namespace Eventa.Application.Services.Events
 
 
             string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
-
-            bool isSaved = !_fileService.Exists(fileName) && await _fileService.SaveFile(dto.ImageBytes, fileName);
+            var path = Path.Combine("events", fileName);
+            bool isSaved = !_fileService.Exists(fileName) && await _fileService.SaveFile(dto.ImageBytes, path);
 
             if (!isSaved)
             {
@@ -63,6 +77,18 @@ namespace Eventa.Application.Services.Events
             if (!_fileService.IsValidExtension(dto.ImageFileName))
             {
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
+            }
+
+            var checkTagsNumber = CheckTagsNumber(dto.TagIds);
+            if (!checkTagsNumber.IsSuccess)
+            {
+                return checkTagsNumber;
+            }
+
+            var checkDateTimes = CheckDateTimes(dto.DateTimes);
+            if (!checkDateTimes.IsSuccess)
+            {
+                return checkDateTimes;
             }
 
             var checkTagExistingResult = await CheckTagsExistingAsync(dto.TagIds);
@@ -94,8 +120,36 @@ namespace Eventa.Application.Services.Events
             await _unitOfWork.CommitAsync();
 
             string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
+            var path = Path.Combine("events", fileName);
+            await _fileService.UpdateFile(dto.ImageBytes, path);
 
-            await _fileService.UpdateFile(dto.ImageBytes, fileName);
+            return Result.Ok();
+        }
+
+        private static Result CheckTagsNumber(IEnumerable<int> tagIds)
+        {
+            if (tagIds.Count() < minimumTagsNumber)
+            {
+                return Result.Fail(new Error("Minimum number of tags: " + minimumTagsNumber).WithMetadata("Code", "SmallNumberOfTags"));
+            }
+
+            return Result.Ok();
+        }
+
+        private static Result CheckDateTimes(IEnumerable<DateTime> dateTimes)
+        {
+            if (!dateTimes.Any())
+            {
+                return Result.Fail(new Error("At least one date time must exist").WithMetadata("Code", "DateTimeNotExist"));
+            }
+
+            foreach (var date in dateTimes)
+            {
+                if (date < DateTime.Now)
+                {
+                    return Result.Fail(new Error("At least one date time in the past").WithMetadata("Code", "DateTimeMustBeInTheFuture"));
+                }
+            }
 
             return Result.Ok();
         }
