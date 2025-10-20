@@ -26,16 +26,22 @@ namespace Eventa.Application.Services.Events
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
             }
 
-            var checkTagsNumber = CheckTagsNumber(dto.TagIds);
-            if (!checkTagsNumber.IsSuccess)
+            var checkImageSizeResult = CheckImageSize(dto.ImageBytes);
+            if (!checkImageSizeResult.IsSuccess)
             {
-                return checkTagsNumber;
+                return checkImageSizeResult;
             }
 
-            var checkDateTimes = CheckDateTimes(dto.DateTimes);
-            if (!checkDateTimes.IsSuccess)
+            var checkTagsNumberResult = CheckTagsNumber(dto.TagIds);
+            if (!checkTagsNumberResult.IsSuccess)
             {
-                return checkDateTimes;
+                return checkTagsNumberResult;
+            }
+
+            var checkDateTimesResult = CheckDateTimes(dto.DateTimes);
+            if (!checkDateTimesResult.IsSuccess)
+            {
+                return checkDateTimesResult;
             }
 
             var checkTagExistingResult = await CheckTagsExistingAsync(dto.TagIds);
@@ -59,7 +65,7 @@ namespace Eventa.Application.Services.Events
 
             string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
             var path = Path.Combine("events", fileName);
-            bool isSaved = !_fileService.Exists(fileName) && await _fileService.SaveFile(dto.ImageBytes, path);
+            bool isSaved = await _fileService.SaveFile(dto.ImageBytes, path);
 
             if (!isSaved)
             {
@@ -77,6 +83,12 @@ namespace Eventa.Application.Services.Events
             if (!_fileService.IsValidExtension(dto.ImageFileName))
             {
                 return Result.Fail(new Error("Invalid extension").WithMetadata("Code", "InvalidExtension"));
+            }
+
+            var checkImageSizeResult = CheckImageSize(dto.ImageBytes);
+            if (!checkImageSizeResult.IsSuccess)
+            {
+                return checkImageSizeResult;
             }
 
             var checkTagsNumber = CheckTagsNumber(dto.TagIds);
@@ -121,7 +133,7 @@ namespace Eventa.Application.Services.Events
 
             string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
             var path = Path.Combine("events", fileName);
-            await _fileService.UpdateFile(dto.ImageBytes, path);
+            await _fileService.SaveFile(dto.ImageBytes, path);
 
             return Result.Ok();
         }
@@ -131,6 +143,17 @@ namespace Eventa.Application.Services.Events
             if (tagIds.Count() < minimumTagsNumber)
             {
                 return Result.Fail(new Error("Minimum number of tags: " + minimumTagsNumber).WithMetadata("Code", "SmallNumberOfTags"));
+            }
+
+            return Result.Ok();
+        }
+
+        private Result CheckImageSize(Stream bytes)
+        {
+            var checkImageSizeResult = _fileService.IsValidSize(bytes);
+            if (!checkImageSizeResult)
+            {
+                return Result.Fail(new Error("Image size too large").WithMetadata("Code", "LargeImageSize"));
             }
 
             return Result.Ok();
@@ -244,7 +267,7 @@ namespace Eventa.Application.Services.Events
 
         private string? AddImageUrl(int id)
         {
-            var path = Path.Combine("events", $"{id}.jpg");
+            var path = Path.Combine("events", id.ToString());
             return _fileService.GetFileUrl(path);
         }
     }

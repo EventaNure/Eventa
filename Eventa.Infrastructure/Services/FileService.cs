@@ -1,5 +1,7 @@
 ﻿using Eventa.Application.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using SixLabors.ImageSharp;
 
 namespace Eventa.Infrastructure.Services
 {
@@ -7,49 +9,72 @@ namespace Eventa.Infrastructure.Services
     {
         private const string filePath = "uploads";
 
-        private static readonly string[] validFileExtensions = { ".jpg" };
+        private const int maxFileSize = 256;
 
-        private readonly string path = string.Empty;
+        private static readonly string[] _validFileExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
 
-        public FileService(IWebHostEnvironment environment)
+        private readonly string _path = string.Empty;
+
+        private readonly string _baseUrl;
+
+        public FileService(IWebHostEnvironment environment, IHttpContextAccessor accessor)
         {
-            path = Path.Combine(environment.WebRootPath, filePath);
+            var request = accessor?.HttpContext?.Request;
+            if (request != null)
+            {
+                _baseUrl = new Uri(new Uri($"{request.Scheme}://{request.Host}"), filePath.Replace("\\", "/")).ToString();
+            }
+
+            _path = Path.Combine(environment.WebRootPath, filePath);
         }
 
         public string? GetFileUrl(string fileName)
         {
-            var filePath = Path.Combine(path, fileName);
-            return File.Exists(filePath) ? filePath : null;
-        }
+            string? fileNameWithExtension = null!;
 
-        public async Task<bool> SaveFile(Stream bytes, string fileName)
-        {
-            using var fileStream = File.Create(Path.Combine(path, fileName));
-
-            if (fileStream == null)
+            foreach (var extension in _validFileExtensions)
             {
-                return false;
+                if (Exists(fileName + extension))
+                {
+                    fileNameWithExtension = fileName + extension;
+                    break;
+                }
             }
 
-            await bytes.CopyToAsync(fileStream);
+            if (fileNameWithExtension == null)
+            {
+                return null;
+            }
 
-            return true;
+            return new Uri(
+                new Uri(_baseUrl.EndsWith('/') ? _baseUrl : _baseUrl + "/"), 
+                fileNameWithExtension.Replace("\\", "/")).ToString();
         }
 
         public bool Exists(string fileName)
         {
-            return File.Exists(Path.Combine(path, fileName));
+            return File.Exists(Path.Combine(_path, fileName));
         }
 
-        public async Task<bool> UpdateFile(Stream bytes, string fileName)
+        public async Task<bool> SaveFile(Stream bytes, string fileName)
         {
-            using var fileStream = File.OpenWrite(Path.Combine(path, fileName));
+            var fileNameWithoutExtension = Path.Combine(Path.GetDirectoryName(fileName) ?? string.Empty, Path.GetFileNameWithoutExtension(fileName));
+            foreach (var extension in _validFileExtensions)
+            {
+                if (Exists(fileNameWithoutExtension + extension))
+                {
+                    DeleteFile(fileNameWithoutExtension + extension);
+                    break;
+                }
+            }
+
+            using var fileStream = File.Create(Path.Combine(_path, fileName));
 
             if (fileStream == null)
             {
                 return false;
             }
-
+            bytes.Position = 0;
             await bytes.CopyToAsync(fileStream);
 
             return true;
@@ -57,14 +82,26 @@ namespace Eventa.Infrastructure.Services
 
         public void DeleteFile(string fileName)
         {
-            File.Delete(Path.Combine(path, fileName));
+            File.Delete(Path.Combine(_path, fileName));
         }
 
         public bool IsValidExtension(string fileName)
         {
             string extension = Path.GetExtension(fileName);
 
-            return validFileExtensions.Contains(extension);
+            return _validFileExtensions.Contains(extension);
+        }
+
+        public bool IsValidSize(Stream bytes)
+        {
+            using var image = Image.Load(bytes);
+
+            if (image.Width > maxFileSize || image.Height > maxFileSize)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

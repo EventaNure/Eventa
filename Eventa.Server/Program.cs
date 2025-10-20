@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
