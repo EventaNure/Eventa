@@ -242,7 +242,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             var storageProvider = topLevel.StorageProvider;
             var fileTypeFilter = new FilePickerFileType("Images")
             {
-                Patterns = ["*.jpg", "*.jpeg"],
+                Patterns = ["*.jpg", "*.jpeg", "*.png", "*.webp"],
                 MimeTypes = ["image/*"]
             };
             var options = new FilePickerOpenOptions
@@ -261,9 +261,9 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                 {
                     using var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
 
-                    if (bitmap.PixelSize.Width != 128 || bitmap.PixelSize.Height != 128)
+                    if (bitmap.PixelSize.Width != 256 || bitmap.PixelSize.Height != 256)
                     {
-                        ErrorMessage = $"Image must be exactly 128x128 pixels. Selected image is {bitmap.PixelSize.Width}x{bitmap.PixelSize.Height}.";
+                        ErrorMessage = $"Image must be exactly 256x256 pixels. Selected image is {bitmap.PixelSize.Width}x{bitmap.PixelSize.Height}.";
                         return;
                     }
                 }

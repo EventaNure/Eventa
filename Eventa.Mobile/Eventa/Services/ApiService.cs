@@ -4,6 +4,7 @@ using Eventa.Models.Events;
 using Eventa.Models.Events.Organizer;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -311,7 +312,16 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
+                var extension = Path.GetExtension(model.ImageFileName).ToLowerInvariant();
+                var mimeType = extension switch
+                {
+                    ".png" => "image/png",
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => "application/octet-stream"
+                };
+
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
@@ -345,7 +355,6 @@ public class ApiService
         try
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
             using var content = new MultipartFormDataContent
             {
                 { new StringContent(model.Title), "Title" },
@@ -369,7 +378,17 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
+
+                var extension = Path.GetExtension(model.ImageFileName).ToLowerInvariant();
+                var mimeType = extension switch
+                {
+                    ".png" => "image/png",
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => "application/octet-stream"
+                };
+
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
