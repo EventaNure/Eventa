@@ -9,6 +9,7 @@
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
     d:DesignHeight="750"
     d:DesignWidth="800"
+    x:CompileBindings="True"
     x:DataType="vm:EmailVerifyViewModel"
     mc:Ignorable="d">
     <UserControl.Styles>

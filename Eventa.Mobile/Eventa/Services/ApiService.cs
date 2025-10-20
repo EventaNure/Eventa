@@ -15,11 +15,11 @@ namespace Eventa.Services;
 
 public class ApiService
 {
-    private readonly HttpClient _httpClient;
+    private static readonly HttpClient _httpClient;
     private const string BaseUrlDesktop = "https://localhost:7293";
     private const string BaseUrlAndroid = "https://10.0.2.2:7293";
 
-    public ApiService()
+    static ApiService()
     {
         var handler = new HttpClientHandler
         {

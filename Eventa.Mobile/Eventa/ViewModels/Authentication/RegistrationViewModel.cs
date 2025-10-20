@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
+using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Services;
 using Eventa.Views.Authentication;
@@ -75,8 +76,7 @@ public partial class RegistrationViewModel : ObservableObject
         };
 
         var (success, message, data) = await _apiService.LoginAsync(loginRequest);
-
-        if (success && data is JsonElement json)
+        if (success && data is JsonElement)
         {
             var settings = await _settingsService.LoadAsync();
             EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, settings.UserId);
@@ -84,7 +84,7 @@ public partial class RegistrationViewModel : ObservableObject
         }
         else
         {
-            ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+            ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
         }
     }
 
@@ -108,7 +108,7 @@ public partial class RegistrationViewModel : ObservableObject
         }
         else
         {
-            ErrorMessage = ErrorMessageMapper.MapErrorMessage(message);
+            ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
         }
     }
 

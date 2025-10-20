@@ -70,12 +70,12 @@ public partial class BrowseEventsViewModel : ObservableObject
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            var result = await _apiService.GetAllTagsAsync();
+            var (Success, Message, Data) = await _apiService.GetAllTagsAsync();
 
-            if (result.Success && result.Data != null)
+            if (Success && Data != null)
             {
                 Tags.Clear();
-                foreach (var tag in result.Data)
+                foreach (var tag in Data)
                 {
                     Tags.Add(new TagResponseModel
                     {
@@ -87,7 +87,7 @@ public partial class BrowseEventsViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = result.Message;
+                ErrorMessage = Message;
             }
         }
         catch (Exception ex)
@@ -142,20 +142,20 @@ public partial class BrowseEventsViewModel : ObservableObject
                 TagIds = selectedTagIds.Any() ? selectedTagIds : null
             };
 
-            (bool Success, string Message, List<EventResponseModel>? Data) result = await _apiService.GetEventsAsync(request);
+            (bool Success, string Message, List<EventResponseModel>? Data) = await _apiService.GetEventsAsync(request);
 
-            if (result.Success && result.Data != null)
+            if (Success && Data != null)
             {
                 NothingFound = false;
                 Events.Clear();
-                if (result.Data.Count == 0)
+                if (Data.Count == 0)
                 {
                     ErrorMessage = "No events found matching the selected filters.";
                     NothingFound = true;
                 }
                 else
                 {
-                    foreach (var evt in result.Data)
+                    foreach (var evt in Data)
                     {
                         Events.Add(evt);
                     }
@@ -163,7 +163,7 @@ public partial class BrowseEventsViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = result.Message;
+                ErrorMessage = Message;
             }
         }
         catch (Exception ex)
