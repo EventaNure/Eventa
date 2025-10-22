@@ -4,6 +4,7 @@ using Eventa.Models.Events;
 using Eventa.Models.Events.Organizer;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -21,16 +22,27 @@ public class ApiService
 
     static ApiService()
     {
-        var handler = new HttpClientHandler
+        if (OperatingSystem.IsBrowser())
         {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        };
+            _httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+        }
+        else
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
 
-        _httpClient = new HttpClient(handler)
-        {
-            BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
-            Timeout = TimeSpan.FromSeconds(30)
-        };
+            _httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+        }
 
         _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
@@ -292,7 +304,7 @@ public class ApiService
             {
                 { new StringContent(model.Title), "Title" },
                 { new StringContent(model.Description), "Description" },
-                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price" },
                 { new StringContent(model.Duration.ToString()), "Duration" },
                 { new StringContent(model.OrganizerId), "OrganizerId" },
                 { new StringContent(model.PlaceId.ToString()), "PlaceId" }
@@ -311,7 +323,16 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
+                var extension = Path.GetExtension(model.ImageFileName).ToLowerInvariant();
+                var mimeType = extension switch
+                {
+                    ".png" => "image/png",
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => "application/octet-stream"
+                };
+
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
@@ -345,12 +366,11 @@ public class ApiService
         try
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
             using var content = new MultipartFormDataContent
             {
                 { new StringContent(model.Title), "Title" },
                 { new StringContent(model.Description), "Description" },
-                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price" },
                 { new StringContent(model.Duration.ToString()), "Duration" },
                 { new StringContent(model.OrganizerId), "OrganizerId" },
                 { new StringContent(model.PlaceId.ToString()), "PlaceId" }
@@ -369,7 +389,17 @@ public class ApiService
             if (model.ImageFile != null && model.ImageFileName != null)
             {
                 var imageContent = new ByteArrayContent(model.ImageFile);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpg");
+
+                var extension = Path.GetExtension(model.ImageFileName).ToLowerInvariant();
+                var mimeType = extension switch
+                {
+                    ".png" => "image/png",
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => "application/octet-stream"
+                };
+
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
                 content.Add(imageContent, "ImageFile", model.ImageFileName);
             }
 
@@ -449,6 +479,23 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<byte[]?> DownloadImageAsync(string imageUrl)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(imageUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            return null;
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }

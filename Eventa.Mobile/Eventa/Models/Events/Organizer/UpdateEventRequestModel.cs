@@ -13,7 +13,7 @@ public class UpdateEventRequestModel
     public string Description { get; set; } = string.Empty;
 
     [JsonPropertyName("price")]
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 
     [JsonPropertyName("duration")]
     public TimeSpan Duration { get; set; }

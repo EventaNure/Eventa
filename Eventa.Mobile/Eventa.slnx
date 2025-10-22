@@ -3,15 +3,12 @@
     <File Path="Directory.Packages.props" />
   </Folder>
   <Project Path="../Eventa.Application/Eventa.Application.csproj" />
-  <Project Path="../Eventa.Client/Eventa.Client.esproj">
-    <Build />
-    <Deploy />
-  </Project>
+  <Project Path="../Eventa.Browser/Eventa.Browser.csproj" />
   <Project Path="../Eventa.Domain/Eventa.Domain.csproj" />
   <Project Path="../Eventa.Infrastructure/Eventa.Infrastructure.csproj" />
   <Project Path="../Eventa.Server/Eventa.Server.csproj" />
   <Project Path="Eventa.Android/Eventa.Android.csproj">
-    <Deploy Solution="Debug|*" />
+    <Deploy />
   </Project>
   <Project Path="Eventa.Desktop/Eventa.Desktop.csproj" />
   <Project Path="Eventa/Eventa.csproj" />

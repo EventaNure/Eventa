@@ -47,7 +47,6 @@ public partial class MainPageViewModel : ObservableObject
         "https://gfmoritracker.fun/gallery/portraits/feng_min.webp",
         "https://gfmoritracker.fun/gallery/portraits/david_king.webp",
         "https://gfmoritracker.fun/gallery/portraits/kate_denson.webp",
-        "https://10.0.2.2:7293/"
     ];
 
     [ObservableProperty]
@@ -136,6 +135,7 @@ public partial class MainPageViewModel : ObservableObject
 
     private void PopulateBrowseTags(JsonArray json)
     {
+        BrowseTags.Clear();
         foreach (var element in json)
         {
             if (element is not JsonObject obj) continue;
@@ -360,6 +360,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         await ClearAuthenticationDataAsync();
         ResetAllAuthenticationViews();
+        await LoadBrowseTagsAsync();
         MainView.Instance.ChangePage(LoginView.Instance);
     }
 
@@ -367,6 +368,7 @@ public partial class MainPageViewModel : ObservableObject
     {
         await ClearAuthenticationDataAsync();
         ResetAllAuthenticationViews();
+        await LoadBrowseTagsAsync();
         MainView.Instance.ChangePage(RegistrationView.Instance);
     }
 
@@ -382,6 +384,7 @@ public partial class MainPageViewModel : ObservableObject
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCreating = false;
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.ClearForm();
         ResetPages();
+        await LoadBrowseTagsAsync();
         MainView.Instance.ChangePage(MainPageView.Instance);
     }
 
