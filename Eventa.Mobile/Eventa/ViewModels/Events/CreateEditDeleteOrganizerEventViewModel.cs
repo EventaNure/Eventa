@@ -372,7 +372,9 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             return;
         }
 
-        if (!decimal.TryParse(TicketPrice, out var price) || price < 0)
+        string normalizedPrice = TicketPrice.Replace(',', '.');
+
+        if (!double.TryParse(normalizedPrice, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price) || price < 0)
         {
             ErrorMessage = "Invalid ticket price";
             return;
@@ -462,15 +464,45 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
                 }
             }
 
-            // Prepare image file if exists
+            // Prepare image file
             byte[]? imageBytes = null;
             string? imageFileName = null;
 
-            if (!string.IsNullOrEmpty(EventImage) && File.Exists(EventImage))
+            if (!string.IsNullOrEmpty(EventImage))
             {
-                imageBytes = await File.ReadAllBytesAsync(EventImage);
-                // Use original filename to preserve correct extension for validation
-                imageFileName = Path.GetFileName(EventImage);
+                // Check if EventImage is a local file path (not a URL)
+                if (!EventImage.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                    !EventImage.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
+                    File.Exists(EventImage))
+                {
+                    // Load local file
+                    imageBytes = await File.ReadAllBytesAsync(EventImage);
+                    imageFileName = Path.GetFileName(EventImage);
+                }
+                else if (EventImage.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                         EventImage.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Download image from server
+                    try
+                    {
+                        var imageData = await _apiService.DownloadImageAsync(EventImage);
+                        if (imageData != null && imageData.Length > 0)
+                        {
+                            imageBytes = imageData;
+                            // Extract filename from URL or use a default
+                            imageFileName = Path.GetFileName(new Uri(EventImage).LocalPath);
+                            if (string.IsNullOrEmpty(imageFileName))
+                            {
+                                imageFileName = $"event_image_{Guid.NewGuid()}.png";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorMessage = $"Failed to download image: {ex.Message}";
+                        return;
+                    }
+                }
             }
 
             if (IsEditMode && EventId.HasValue)

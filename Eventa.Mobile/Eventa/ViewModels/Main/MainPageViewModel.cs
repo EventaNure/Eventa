@@ -135,6 +135,7 @@ public partial class MainPageViewModel : ObservableObject
 
     private void PopulateBrowseTags(JsonArray json)
     {
+        BrowseTags.Clear();
         foreach (var element in json)
         {
             if (element is not JsonObject obj) continue;

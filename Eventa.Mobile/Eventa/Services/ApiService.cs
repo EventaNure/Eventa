@@ -22,16 +22,27 @@ public class ApiService
 
     static ApiService()
     {
-        var handler = new HttpClientHandler
+        if (OperatingSystem.IsBrowser())
         {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        };
+            _httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+        }
+        else
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
 
-        _httpClient = new HttpClient(handler)
-        {
-            BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
-            Timeout = TimeSpan.FromSeconds(30)
-        };
+            _httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+        }
 
         _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
@@ -293,7 +304,7 @@ public class ApiService
             {
                 { new StringContent(model.Title), "Title" },
                 { new StringContent(model.Description), "Description" },
-                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price" },
                 { new StringContent(model.Duration.ToString()), "Duration" },
                 { new StringContent(model.OrganizerId), "OrganizerId" },
                 { new StringContent(model.PlaceId.ToString()), "PlaceId" }
@@ -359,7 +370,7 @@ public class ApiService
             {
                 { new StringContent(model.Title), "Title" },
                 { new StringContent(model.Description), "Description" },
-                { new StringContent(model.Price.ToString()), "Price" },
+                { new StringContent(model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price" },
                 { new StringContent(model.Duration.ToString()), "Duration" },
                 { new StringContent(model.OrganizerId), "OrganizerId" },
                 { new StringContent(model.PlaceId.ToString()), "PlaceId" }
@@ -468,6 +479,23 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<byte[]?> DownloadImageAsync(string imageUrl)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(imageUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            return null;
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }

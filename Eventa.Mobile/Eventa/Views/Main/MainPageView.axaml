@@ -159,6 +159,8 @@
                                         IsVisible="{Binding IsLoading}"
                                         Spacing="5">
                                         <li:LoadingIndicator
+                                            Width="200"
+                                            Height="200"
                                             Foreground="#FF8181"
                                             IsActive="{Binding IsLoading}"
                                             Mode="Arcs"

@@ -9,6 +9,13 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaResource Remove="Assets\Fonts\Kadwa\ANTQUAB.TTF" />
+    <AvaloniaResource Remove="Assets\Fonts\Kadwa\ANTQUABI.TTF" />
+    <AvaloniaResource Remove="Assets\Fonts\Kadwa\ANTQUAI.TTF" />
+    <AvaloniaResource Remove="Assets\Fonts\Kadwa\BKANT.TTF" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AsyncImageLoader.Avalonia" />
