@@ -10,6 +10,7 @@ namespace Eventa.Application.Services.Events
         Task<Result<EventDto>> GetEventAsync(int eventId);
         Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds);
         Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId);
+        Task<Result<string>> LoadImageAsync(Stream stream, string fileName);
         Task<Result> UpdateEventAsync(UpdateEventDto dto);
     }
 }

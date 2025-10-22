@@ -47,8 +47,29 @@ namespace Eventa.Infrastructure.Services
             }
 
             return new Uri(
-                new Uri(_baseUrl.EndsWith('/') ? _baseUrl : _baseUrl + "/"), 
+                new Uri(_baseUrl.EndsWith('/') ? _baseUrl : _baseUrl + "/"),
                 fileNameWithExtension.Replace("\\", "/")).ToString();
+        }
+
+        public string? GetFileUrlWithSpecificExtension(string fileName)
+        {
+            if (!Exists(fileName))
+            {
+                return null;
+            }
+
+            return new Uri(
+                new Uri(_baseUrl.EndsWith('/') ? _baseUrl : _baseUrl + "/"),
+                fileName.Replace("\\", "/")).ToString();
+        }
+
+        public void ClearFolder(string folderName)
+        {
+            var files = Directory.GetFiles(Path.Combine(_path, folderName));
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
         }
 
         public bool Exists(string fileName)

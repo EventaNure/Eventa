@@ -1,7 +1,9 @@
 ﻿using System.Text;
+using Eventa.Infrastructure.BackgroundServices;
 using Eventa.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +47,8 @@ namespace Eventa.Infrastructure
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
             services.Configure<JwtTokenOptions>(configuration.GetSection("Jwt"));
+
+            services.AddHostedService<DeleteTempImageService>();
 
             return services;
         }

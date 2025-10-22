@@ -78,6 +78,15 @@ namespace Eventa.Application.Services.Events
             return eventEntity.Id;
         }
 
+        public async Task<Result<string>> LoadImageAsync(Stream stream, string fileName)
+        {
+            var fileNameForSave = Guid.NewGuid() + Path.GetExtension(fileName);
+            var path = Path.Combine("preview-events", fileNameForSave);
+            await _fileService.SaveFile(stream, path);
+            var url = _fileService.GetFileUrlWithSpecificExtension(path)!;
+            return Result.Ok(url);
+        }
+
         public async Task<Result> UpdateEventAsync(UpdateEventDto dto)
         {
             if (!_fileService.IsValidExtension(dto.ImageFileName))

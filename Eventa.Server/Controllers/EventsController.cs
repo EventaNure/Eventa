@@ -41,6 +41,22 @@ namespace Eventa.Server.Controllers
             return Ok(result.Value);
         }
 
+        [HttpPost("temp-image")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        public async Task<IActionResult> LoadImage(IFormFile imageFile)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            using var imageBytes = imageFile.OpenReadStream();
+
+            var result = await _eventService.LoadImageAsync(imageBytes, imageFile.FileName);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Value);
+        }
+
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventRequestModel eventRequestModel)
