@@ -454,3 +454,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 /Eventa.Server/wwwroot/uploads/events/*
+/Eventa.Server/wwwroot/uploads/events/preview-events/*

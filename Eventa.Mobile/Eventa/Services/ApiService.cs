@@ -498,4 +498,50 @@ public class ApiService
             return null;
         }
     }
+
+    public async Task<(bool Success, string Message, string? ImageUrl)> UploadTempImageAsync(byte[] imageFile, string fileName, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            using var content = new MultipartFormDataContent();
+
+            var imageContent = new ByteArrayContent(imageFile);
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            var mimeType = extension switch
+            {
+                ".png" => "image/png",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
+            content.Add(imageContent, "ImageFile", fileName);
+
+            var response = await _httpClient.PostAsync("/api/Events/temp-image", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var imageUrl = await response.Content.ReadAsStringAsync();
+                return (true, "Image uploaded successfully!", imageUrl.Trim('"'));
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
 }
