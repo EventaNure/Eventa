@@ -17,8 +17,13 @@ namespace Eventa.Services;
 public class ApiService
 {
     private static readonly HttpClient _httpClient;
-    private const string BaseUrlDesktop = "https://localhost:7293";
-    private const string BaseUrlAndroid = "https://10.0.2.2:7293";
+
+    // LOCAL DEV:
+    // private const string BaseUrlDesktop = "https://localhost:7293";
+    // private const string BaseUrlAndroid = "https://10.0.2.2:7293";
+    //PROD:
+    private const string BaseUrlDesktop = "https://eventa-app.fun:5001";
+    private const string BaseUrlAndroid = "https://eventa-app.fun:5001";
 
     static ApiService()
     {
@@ -26,7 +31,7 @@ public class ApiService
         {
             _httpClient = new HttpClient()
             {
-                BaseAddress = new Uri(OperatingSystem.IsAndroid() ? BaseUrlAndroid : BaseUrlDesktop),
+                BaseAddress = new Uri(BaseUrlDesktop),
                 Timeout = TimeSpan.FromSeconds(30)
             };
         }
