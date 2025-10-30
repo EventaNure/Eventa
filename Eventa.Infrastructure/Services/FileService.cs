@@ -51,6 +51,11 @@ namespace Eventa.Infrastructure.Services
                 fileNameWithExtension.Replace("\\", "/")).ToString();
         }
 
+        public void MoveFile(string oldPath, string newPath)
+        {
+            File.Move(Path.Combine(_path, oldPath), Path.Combine(_path, newPath));
+        }
+
         public string? GetFileUrlWithSpecificExtension(string fileName)
         {
             if (!Exists(fileName))

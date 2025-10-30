@@ -35,6 +35,16 @@ namespace Eventa.Infrastructure
                 .HasForeignKey(edt => edt.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Cart>()
+                .HasOne<ApplicationUser>()
+                .WithMany(u => u.Carts)
+                .HasForeignKey(c => c.UserId);
+
+            builder.Entity<Order>()
+                .HasOne<ApplicationUser>()
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId);
+
             builder.Entity<EventTag>().HasKey(et => new {et.EventId, et.TagId});
         }
 
@@ -47,5 +57,15 @@ namespace Eventa.Infrastructure
         public DbSet<EventDateTime> EventDateTimes { get; set; }
 
         public DbSet<Place> Places { get; set; }
+
+        public DbSet<Seat> Seats { get; set; }
+
+        public DbSet<Row> Rows { get; set; }
+
+        public DbSet<RowType> RowTypes { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<Cart> Carts { get; set; }
     }
 }

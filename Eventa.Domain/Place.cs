@@ -11,5 +11,9 @@ namespace Eventa.Domain
 
         [MaxLength(300)]
         public string Address { get; set; } = string.Empty;
+
+        public ICollection<RowType> RowTypes { get; set; } = [];
+
+        public ICollection<Event> Events { get; set; } = [];
     }
 }

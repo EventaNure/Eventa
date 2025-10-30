@@ -256,34 +256,56 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             {
                 var file = result[0];
 
-                // Validate image dimensions
-                await using (var stream = await file.OpenReadAsync())
+                if (OperatingSystem.IsBrowser())
                 {
-                    using var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+                    // Browser: Upload to server and get URL (skip validation)
+                    await using var sourceStream = await file.OpenReadAsync();
+                    using var memoryStream = new MemoryStream();
+                    await sourceStream.CopyToAsync(memoryStream);
+                    var imageBytes = memoryStream.ToArray();
 
-                    if (bitmap.PixelSize.Width != 256 || bitmap.PixelSize.Height != 256)
+                    var (Success, Message, ImageUrl) = await _apiService.UploadTempImageAsync(imageBytes, file.Name, _jwtToken);
+
+                    if (Success && ImageUrl != null)
                     {
-                        ErrorMessage = $"Image must be exactly 256x256 pixels. Selected image is {bitmap.PixelSize.Width}x{bitmap.PixelSize.Height}.";
-                        return;
+                        EventImage = ImageUrl;
+                        ErrorMessage = string.Empty;
+                    }
+                    else
+                    {
+                        ErrorMessage = Message;
                     }
                 }
-
-                var cacheDirectory = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "Eventa",
-                    "ImageCache"
-                );
-                Directory.CreateDirectory(cacheDirectory);
-                var fileExtension = Path.GetExtension(file.Name) ?? ".jpg";
-                var fileName = $"event_image_{Guid.NewGuid()}{fileExtension}";
-                var destinationPath = Path.Combine(cacheDirectory, fileName);
-                await using (var sourceStream = await file.OpenReadAsync())
-                await using (var destinationStream = File.Create(destinationPath))
+                else
                 {
-                    await sourceStream.CopyToAsync(destinationStream);
+                    // Desktop/Android: Validate and save to local cache
+                    await using (var stream = await file.OpenReadAsync())
+                    {
+                        using var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+                        if (bitmap.PixelSize.Width != 256 || bitmap.PixelSize.Height != 256)
+                        {
+                            ErrorMessage = $"Image must be exactly 256x256 pixels. Selected image is {bitmap.PixelSize.Width}x{bitmap.PixelSize.Height}.";
+                            return;
+                        }
+                    }
+
+                    var cacheDirectory = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "Eventa",
+                        "ImageCache"
+                    );
+                    Directory.CreateDirectory(cacheDirectory);
+                    var fileExtension = Path.GetExtension(file.Name) ?? ".jpg";
+                    var fileName = $"event_image_{Guid.NewGuid()}{fileExtension}";
+                    var destinationPath = Path.Combine(cacheDirectory, fileName);
+                    await using (var sourceStream = await file.OpenReadAsync())
+                    await using (var destinationStream = File.Create(destinationPath))
+                    {
+                        await sourceStream.CopyToAsync(destinationStream);
+                    }
+                    EventImage = destinationPath;
+                    ErrorMessage = string.Empty;
                 }
-                EventImage = destinationPath;
-                ErrorMessage = string.Empty;
             }
         }
         catch (Exception ex)

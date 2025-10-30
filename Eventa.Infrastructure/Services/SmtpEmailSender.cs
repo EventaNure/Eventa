@@ -6,10 +6,10 @@ using MimeKit;
 
 namespace Eventa.Infrastructure.Services
 {
-    public class EmailSender : IEmailSender
+    public class SmtpEmailSender : IEmailSender
     {
-        private readonly EmailOptions _options;
-        public EmailSender(IOptions<EmailOptions> options) {
+        private readonly SmtpEmailOptions _options;
+        public SmtpEmailSender(IOptions<SmtpEmailOptions> options) {
             _options = options.Value;
         }
 
@@ -29,7 +29,7 @@ namespace Eventa.Infrastructure.Services
             };
 
             using SmtpClient smtp = new();
-            await smtp.ConnectAsync(_options.Host, _options.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.ConnectAsync(_options.Host, _options.Port, MailKit.Security.SecureSocketOptions.SslOnConnect);
             await smtp.AuthenticateAsync(_options.Email, _options.Password);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);

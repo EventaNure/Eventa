@@ -26,6 +26,8 @@ namespace Eventa.Infrastructure.Repositories
 
         public ITagRepository GetTagRepository() => new TagRepository(_dbContext);
 
+        public ISeatRepository GetSectionRepository() => new SeatRepository(_dbContext);
+
         public async Task CommitAsync() => await _dbContext.SaveChangesAsync();
 
         public void Dispose()

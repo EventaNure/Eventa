@@ -9,6 +9,7 @@
         string? GetFileUrlWithSpecificExtension(string fileName);
         bool IsValidExtension(string fileName);
         bool IsValidSize(Stream bytes);
+        void MoveFile(string oldPath, string newPath);
         Task<bool> SaveFile(Stream bytes, string fileName);
     }
 }

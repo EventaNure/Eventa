@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Eventa.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Eventa.Infrastructure
@@ -13,5 +14,11 @@ namespace Eventa.Infrastructure
 
         [MaxLength(100)]
         public string? Organization { get; set; }
+
+        public DateTime TicketsExpireAt { get; set; }
+
+        public ICollection<Cart> Carts { get; set; } = [];
+
+        public ICollection<Order> Orders { get; set; } = [];
     }
 }

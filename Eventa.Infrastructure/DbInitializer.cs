@@ -1,4 +1,5 @@
 ﻿using Eventa.Application.Common;
+using Eventa.Application.Services;
 using Eventa.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace Eventa.Infrastructure
 {
     public static class DbInitializer
     {
-        public async static Task Initialize(ApplicationDbContext context)
+        public async static Task Initialize(ApplicationDbContext context, IFileService fileService)
         {
             context.Database.Migrate();
             ApplicationUser[] applicationUsers = new ApplicationUser[]
@@ -124,26 +125,12 @@ namespace Eventa.Infrastructure
                 await context.SaveChangesAsync();
             }
 
-            Place[] places = new Place[] {
+            Place[] places =
+            {
                 new Place
                 {
-                    Name = "МЦКМ",
-                    Address = "м. Київ, Алея Героїв Небесної Сотні, 1"
-                },
-                new Place
-                {
-                    Name = "Палац Спорту",
-                    Address = "м. Київ, Спортивна площа, 1"
-                },
-                new Place
-                {
-                     Name = "Одеський академічний театр опери та балету",
-                     Address = "м. Одеса, пров. Чайковського, 1"
-                },
-                new Place
-                {
-                     Name = "Палац культури ім. Гната Хоткевича",
-                     Address = "м. Львів, вул. Кушевича, 1"
+                    Name = "Національний палац мистецтв «Україна»",
+                    Address = "вулиця Велика Васильківська, 103, Київ"
                 }
             };
 
@@ -151,6 +138,211 @@ namespace Eventa.Infrastructure
             {
                 await context.Places.ExecuteDeleteAsync();
                 context.Places.AddRange(places);
+                await context.SaveChangesAsync();
+            }
+
+            var place = context.Places.FirstOrDefault();
+            if (place != null)
+            {
+                fileService.MoveFile("places/1.jpg", $"places/{place.Id}.jpg");
+            }
+
+            RowType[] rowTypes = {
+                new RowType
+                {
+                    Name = "Партер",
+                    IsSeparatedSeats = false,
+                    Place = places[0]
+                },
+                new RowType
+                {
+                    Name = "Балкон",
+                    IsSeparatedSeats = false,
+                    Place = places[0]
+                }
+            };
+
+            if (rowTypes.Count() > await context.RowTypes.CountAsync())
+            {
+                await context.RowTypes.ExecuteDeleteAsync();
+                context.RowTypes.AddRange(rowTypes);
+                await context.SaveChangesAsync();
+            }
+
+            List<Row> rows = new List<Row>();
+
+            for (int i = 1; i <= 51; i++)
+            {
+                RowType rowType = i > 34 ? rowTypes[1] : rowTypes[0];
+                List<Seat> seats = new List<Seat>();
+                int rowNumber = i > 34 ? i - 34 : i;
+                double priceMultiplier = 0;
+                switch (i)
+                {
+                    case < 10:
+                        priceMultiplier = 3.1;
+                        break;
+                    case < 17:
+                        priceMultiplier = 2.9;
+                        break;
+                    case < 21:
+                        priceMultiplier = 2.7;
+                        break;
+                    case < 25:
+                        priceMultiplier = 2.4;
+                        break;
+                    case < 30:
+                        priceMultiplier = 2.2;
+                        break;
+                    case < 35:
+                        priceMultiplier = 1.6;
+                        break;
+                    case > 34 and < 40:
+                        priceMultiplier = 1.5;
+                        break;
+                    case > 39 and < 45:
+                        priceMultiplier = 1.2;
+                        break;
+                    case > 44:
+                        priceMultiplier = 1;
+                        break;
+                }
+                int seatsCount = 0;
+                switch (i)
+                {
+                    case 1:
+                        seatsCount = 56;
+                        break;
+                    case 2:
+                        seatsCount = 58;
+                        break;
+                    case 3:
+                        seatsCount = 60;
+                        break;
+                    case 4:
+                        seatsCount = 64;
+                        break;
+                    case 5:
+                        seatsCount = 66;
+                        break;
+                    case 6:
+                        seatsCount = 68;
+                        break;
+                    case > 6 and < 11:
+                        seatsCount = 70;
+                        break;
+                    case > 10 and < 14:
+                        seatsCount = 72;
+                        break;
+                    case > 13 and < 16:
+                        seatsCount = 74;
+                        break;
+                    case > 16 and < 20:
+                        seatsCount = 76;
+                        break;
+                    case 20:
+                        seatsCount = 69;
+                        break;
+                    case 21:
+                        seatsCount = 71;
+                        break;
+                    case > 21 and < 25:
+                        seatsCount = 78;
+                        break;
+                    case > 25 and < 30:
+                        seatsCount = 80;
+                        break;
+                    case > 29 and < 34:
+                        seatsCount = 82;
+                        break;
+                    case 34:
+                        seatsCount = 84;
+                        break;
+                    case 35:
+                        seatsCount = 36;
+                        break;
+                    case 36:
+                        seatsCount = 8;
+                        break;
+                    case 37:
+                        seatsCount = 10;
+                        break;
+                    case 38:
+                        seatsCount = 12;
+                        break;
+                    case 39:
+                        seatsCount = 14;
+                        break;
+                    case 40:
+                        seatsCount = 16;
+                        break;
+                    case 41:
+                        seatsCount = 82;
+                        break;
+                    case 42:
+                        seatsCount = 81;
+                        break;
+                    case 43:
+                        seatsCount = 74;
+                        break;
+                    case 44:
+                        seatsCount = 36;
+                        break;
+                    case 45:
+                        seatsCount = 40;
+                        break;
+                    case 46:
+                        seatsCount = 69;
+                        break;
+                    case 47:
+                        seatsCount = 69;
+                        break;
+                    case 48:
+                        seatsCount = 71;
+                        break;
+                    case 49:
+                        seatsCount = 67;
+                        break;
+                    case 50:
+                        seatsCount = 79;
+                        break;
+                    case 51:
+                        seatsCount = 79;
+                        break;
+                    case 52:
+                        seatsCount = 81;
+                        break;
+                    case 53:
+                        seatsCount = 91;
+                        break;
+                    case 54:
+                        seatsCount = 93;
+                        break;
+                    case 55:
+                        seatsCount = 103;
+                        break;
+                }
+                for (int j = 1; j <= seatsCount; j++)
+                {
+                    double priceM = i < 10 & j > 17 && j < 41 ? 3.6 : priceMultiplier;
+                    seats.Add(new Seat
+                    {
+                        PriceMultiplier = priceM,
+                        SeatNumber = j
+                    });
+                }
+                rows.Add(new Row
+                {
+                    RowNumber = i,
+                    RowType = rowType,
+                    Seats = seats
+                });
+            }
+
+            if (rows.Count() > await context.Rows.CountAsync())
+            {
+                await context.Rows.ExecuteDeleteAsync();
+                context.Rows.AddRange(rows);
                 await context.SaveChangesAsync();
             }
 
@@ -162,7 +354,7 @@ namespace Eventa.Infrastructure
                     Description = "12 та 14 листопада 2025 року у Палаці Спорту відбудуться концерти Артема Пивоварова у Києві.",
                     Price = 300,
                     Duration = new TimeSpan(2, 0, 0),
-                    PlaceId = places[0].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[0].Id,
                     IsApproved = true
                 },
@@ -172,7 +364,7 @@ namespace Eventa.Infrastructure
                     Description = "Головний рок-гурт України виступить у Львові на стадіоні «Арена Львів» у червні 2025 року.",
                     Price = 550,
                     Duration = new TimeSpan(2, 30, 0),
-                    PlaceId = places[3].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[1].Id,
                     IsApproved = true
                 },
@@ -182,7 +374,7 @@ namespace Eventa.Infrastructure
                     Description = "Шоу MONATIK «Made With Love and Rhythm» у Палаці Спорту в Києві.",
                     Price = 650,
                     Duration = new TimeSpan(2, 0, 0),
-                    PlaceId = places[1].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[2].Id,
                     IsApproved = true
                 },
@@ -192,7 +384,7 @@ namespace Eventa.Infrastructure
                     Description = "Класичний балет Петра Чайковського у виконанні трупи Національної опери України.",
                     Price = 600,
                     Duration = new TimeSpan(2, 15, 0),
-                    PlaceId = places[0].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[3].Id,
                     IsApproved = true
                 },
@@ -202,7 +394,7 @@ namespace Eventa.Infrastructure
                     Description = "Популярні коміки з «Дизель Шоу» виступлять з новою програмою у Львові.",
                     Price = 550,
                     Duration = new TimeSpan(1, 30, 0),
-                    PlaceId = places[3].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[4].Id,
                     IsApproved = true
                 },
@@ -212,7 +404,7 @@ namespace Eventa.Infrastructure
                     Description = "Всеукраїнський тур гурту «Без обмежень» із новою програмою у підтримку ЗСУ.",
                     Price = 450,
                     Duration = new TimeSpan(2, 0, 0),
-                    PlaceId = places[1].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[5].Id,
                     IsApproved = true
                 },
@@ -222,7 +414,7 @@ namespace Eventa.Infrastructure
                     Description = "Постановка легендарного роману Булгакова на сцені театру у Києві.",
                     Price = 500,
                     Duration = new TimeSpan(2, 30, 0),
-                    PlaceId = places[0].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[6].Id,
                     IsApproved = true
                 },
@@ -232,7 +424,7 @@ namespace Eventa.Infrastructure
                     Description = "Концерт симфонічного оркестру з найвідомішими саундтреками у виконанні музикантів Одеської філармонії.",
                     Price = 750,
                     Duration = new TimeSpan(2, 0, 0),
-                    PlaceId = places[2].Id,
+                    Place = places[0],
                     OrganizerId = applicationUsers[7].Id,
                     IsApproved = true
                 }

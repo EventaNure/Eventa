@@ -1,3 +1,4 @@
+using Eventa.Application.Services;
 using Eventa.Infrastructure;
 using System.Globalization;
 
@@ -34,7 +35,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await DbInitializer.Initialize(context);
+    var fileService = scope.ServiceProvider.GetRequiredService<IFileService>();
+    await DbInitializer.Initialize(context, fileService);
 }
 
 // Configure the HTTP request pipeline.

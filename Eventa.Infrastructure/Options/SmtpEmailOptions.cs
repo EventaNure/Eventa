@@ -1,6 +1,6 @@
 ﻿namespace Eventa.Infrastructure.Options
 {
-    public class EmailOptions
+    public class SmtpEmailOptions
     {
         public string Host { get; set; } = string.Empty;
 

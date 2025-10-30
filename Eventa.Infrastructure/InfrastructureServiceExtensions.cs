@@ -45,7 +45,8 @@ namespace Eventa.Infrastructure
                     };
                 });
 
-            services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
+            services.Configure<SmtpEmailOptions>(configuration.GetSection("SmtpEmailOptions"));
+            services.Configure<SendGridEmailOptions>(configuration.GetSection("SendGrid"));
             services.Configure<JwtTokenOptions>(configuration.GetSection("Jwt"));
 
             services.AddHostedService<DeleteTempImageService>();
