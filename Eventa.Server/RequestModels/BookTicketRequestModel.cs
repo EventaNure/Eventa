@@ -2,7 +2,7 @@
 {
     public class BookTicketRequestModel
     {
-        public int EventId { get; set; }
+        public int EventDateTimeId { get; set; }
 
         public int SeatId { get; set; }
     }

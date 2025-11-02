@@ -90,7 +90,11 @@ namespace Eventa.Infrastructure.Repositories
                         .Where(u => u.Id == e.OrganizerId)
                         .Select(u => u.Name)
                         .First(),
-                    DateTimes = e.EventDateTimes.Select(e => e.StartDateTime),
+                    DateTimes = e.EventDateTimes.Select(e => new EventDateTimeDto
+                    {
+                        Id = e.Id,
+                        DateTime = e.StartDateTime,
+                    }),
                     Tags = e.EventTags.Select(et => new TagDto
                     {
                         Id = et.TagId,

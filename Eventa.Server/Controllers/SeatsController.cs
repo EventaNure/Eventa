@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Eventa.Application.Services.Events;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Eventa.Application.Services.Sections;
-using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers
@@ -21,9 +19,10 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpGet("free-with-hall-plan")]
-        public async Task<IActionResult> GetFreeSeatsWithHallPlan(int eventId)
+        public async Task<IActionResult> GetFreeSeatsWithHallPlan(int eventDateTimeId)
         {
-            var sectionType = await _seatService.GetFreeSeatsWithHallPlan(eventId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sectionType = await _seatService.GetFreeSeatsWithHallPlan(eventDateTimeId, userId);
 
             return Ok(sectionType.Value);
         }

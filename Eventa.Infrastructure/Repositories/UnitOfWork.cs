@@ -26,7 +26,11 @@ namespace Eventa.Infrastructure.Repositories
 
         public ITagRepository GetTagRepository() => new TagRepository(_dbContext);
 
-        public ISeatRepository GetSectionRepository() => new SeatRepository(_dbContext);
+        public ISeatRepository GetSeatRepository() => new SeatRepository(_dbContext);
+
+        public ICartRepository GetCartRepository() => new TicketInCartRepository(_dbContext);
+
+        public IOrderRepository GetOrderRepository() => new OrderRepository(_dbContext);
 
         public async Task CommitAsync() => await _dbContext.SaveChangesAsync();
 

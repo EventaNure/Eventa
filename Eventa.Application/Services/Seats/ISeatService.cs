@@ -6,6 +6,6 @@ namespace Eventa.Application.Services.Sections
 {
     public interface ISeatService
     {
-        Task<Result<FreeSeatsWithHallPlan>> GetFreeSeatsWithHallPlan(int eventId);
+        Task<Result<FreeSeatsWithHallPlan>> GetFreeSeatsWithHallPlan(int eventId, string? userId);
     }
 }

@@ -73,11 +73,13 @@ namespace Eventa.Infrastructure.Services
 
         public async Task<Result> ResendRegistrationEmailAsync(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
             {
-                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+                return Result.Fail(getUserResult.Errors[0]);
             }
+
+            var user = getUserResult.Value;
 
             var code = GenerateVerificationCode();
             user.VerificationCode = code;
@@ -91,11 +93,13 @@ namespace Eventa.Infrastructure.Services
 
         public async Task<Result<ConfirmEmailResultDto>> ConfirmEmailAsync(ConfirmEmailDto dto)
         {
-            var user = await _userManager.FindByIdAsync(dto.UserId);
-            if (user == null)
+            var getUserResult = await GetUserAsync(dto.UserId);
+            if (!getUserResult.IsSuccess)
             {
-                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+                return Result.Fail(getUserResult.Errors[0]);
             }
+
+            var user = getUserResult.Value;
 
             if (user.EmailConfirmed)
             {
@@ -147,6 +151,69 @@ namespace Eventa.Infrastructure.Services
                 EmailConfirmed = emailConfirmed, 
                 Role = (await _userManager.GetRolesAsync(user)).First() 
             });
+        }
+
+        private async Task<Result<ApplicationUser>> GetUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+            }
+
+            return Result.Ok(user);
+        }
+
+        public async Task<Result<DateTime>> GetBookingDateTimeExpireAsync(string userId)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+
+            var user = getUserResult.Value;
+
+            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            {
+                return Result.Fail(new Error("Cart is empty").WithMetadata("Code", "CartEmpty"));
+            }
+
+            return user.TicketsExpireAt;
+        }
+
+        public async Task<Result<TimeSpan>> GetBookingTimeLeftAsync(string userId)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+
+            var user = getUserResult.Value;
+
+            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            {
+                return Result.Fail(new Error("Tickets not booked").WithMetadata("Code", "TicketsNotBooked"));
+            }
+
+            return user.TicketsExpireAt - DateTime.UtcNow;
+        }
+
+        public async Task<Result> ChangeBookingExpireTimeAsync(string userId, int eventDateTimeId)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+
+            var user = getUserResult.Value;
+            user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromMinutes(15);
+            user.EventDateTimeId = eventDateTimeId;
+            await _userManager.UpdateAsync(user);
+
+            return Result.Ok();
         }
 
         private string GenerateVerificationCode()

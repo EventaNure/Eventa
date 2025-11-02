@@ -15,15 +15,15 @@ namespace Eventa.Application.Services.Sections
             _fileService = fileService;
         }
 
-        public async Task<Result<FreeSeatsWithHallPlan>> GetFreeSeatsWithHallPlan(int eventId)
+        public async Task<Result<FreeSeatsWithHallPlan>> GetFreeSeatsWithHallPlan(int eventDateTimeId, string? userId)
         {
-            var sectionRepository = _unitOfWork.GetSectionRepository();
+            var sectionRepository = _unitOfWork.GetSeatRepository();
 
-            var getFreeSeatsResultDto = await sectionRepository.GetFreeSeatsAsync(eventId);
+            var getFreeSeatsResultDto = await sectionRepository.GetFreeSeatsAsync(eventDateTimeId, userId);
 
             if (getFreeSeatsResultDto == null)
             {
-                return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
+                return Result.Fail(new Error("Event date time not found").WithMetadata("Code", "EventDateTimeNotFound"));
             }
 
             var hallPlanUrl = _fileService.GetFileUrl($"places/{getFreeSeatsResultDto.PlaceId}");

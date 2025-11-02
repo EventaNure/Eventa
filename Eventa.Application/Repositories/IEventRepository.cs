@@ -3,7 +3,7 @@ using Eventa.Domain;
 
 namespace Eventa.Application.Repositories
 {
-    public interface IEventRepository
+    public interface IEventRepository : IRepository<Event>
     {
         Task<EventDto?> GetEventAsync(int id);
         Task<Event?> GetByIdAsync(int id);

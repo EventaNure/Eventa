@@ -35,15 +35,17 @@ namespace Eventa.Infrastructure
                 .HasForeignKey(edt => edt.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Cart>()
+            builder.Entity<TicketInCart>()
                 .HasOne<ApplicationUser>()
-                .WithMany(u => u.Carts)
+                .WithMany(u => u.TicketsInCart)
                 .HasForeignKey(c => c.UserId);
 
             builder.Entity<Order>()
                 .HasOne<ApplicationUser>()
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId);
+
+            builder.Entity<TicketInCart>().HasKey(tic => new { tic.UserId, tic.SeatId});
 
             builder.Entity<EventTag>().HasKey(et => new {et.EventId, et.TagId});
         }
@@ -66,6 +68,8 @@ namespace Eventa.Infrastructure
 
         public DbSet<Order> Orders { get; set; }
 
-        public DbSet<Cart> Carts { get; set; }
+        public DbSet<TicketInCart> TicketsInCart { get; set; }
+
+        public DbSet<TicketInOrder> TicketsInOrder { get; set; }
     }
 }

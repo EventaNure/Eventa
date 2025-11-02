@@ -3,9 +3,11 @@
     public interface IUnitOfWork
     {
         Task CommitAsync();
+        ICartRepository GetCartRepository();
         IRepository<T> GetDbSet<T>() where T : class;
         IEventRepository GetEventRepository();
-        ISeatRepository GetSectionRepository();
+        IOrderRepository GetOrderRepository();
+        ISeatRepository GetSeatRepository();
         ITagRepository GetTagRepository();
     }
 }

@@ -17,7 +17,11 @@ namespace Eventa.Infrastructure
 
         public DateTime TicketsExpireAt { get; set; }
 
-        public ICollection<Cart> Carts { get; set; } = [];
+        public int? EventDateTimeId { get; set; }
+
+        public EventDateTime? EventDateTime { get; set; } = default!;
+
+        public ICollection<TicketInCart> TicketsInCart { get; set; } = [];
 
         public ICollection<Order> Orders { get; set; } = [];
     }

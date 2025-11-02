@@ -6,12 +6,16 @@
 
         public string UserId { get; set; } = string.Empty;
 
-        public int SeatId { get; set; }
+        public int EventDateTimeId { get; set; }
 
-        public Seat Seat { get; set; } = default!;
+        public EventDateTime EventDateTime { get; set; } = default!;
 
-        public int EventId { get; set; }
+        public bool IsPurcharsed { get; set; }
 
-        public Event Event { get; set; } = default!;
+        public DateTime ExpireAt { get; set; }
+
+        public DateTime? CreationDateTime { get; set; }
+
+        public ICollection<TicketInOrder> Tickets { get; set; } = [];
     }
 }

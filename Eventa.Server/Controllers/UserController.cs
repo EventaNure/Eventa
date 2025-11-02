@@ -1,8 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers
@@ -146,6 +149,20 @@ namespace Eventa.Server.Controllers
             }
 
             return Ok(new SignInResponseModel { JwtToken = jwtToken, EmailConfirmed = loginResult.Value.EmailConfirmed, UserId = loginResult.Value.UserId });
+        }
+
+        [HttpGet("tickets-in-cart/time-left")]
+        [Authorize]
+        public async Task<IActionResult> GetTicketsInCartTimeLeft()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var getCartsResult = await _userService.GetBookingTimeLeftAsync(userId);
+            if (!getCartsResult.IsSuccess)
+            {
+                return BadRequest(getCartsResult.Errors);
+            }
+
+            return Ok(getCartsResult.Value);
         }
     }
 }

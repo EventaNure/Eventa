@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using Eventa.Infrastructure.BackgroundServices;
 using Eventa.Infrastructure.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 namespace Eventa.Infrastructure
 {
@@ -33,7 +35,12 @@ namespace Eventa.Infrastructure
             var issuer = configuration.GetSection("Jwt:Issuer").Value ?? throw new InvalidOperationException("Issuer not found");
             var audience = configuration.GetSection("Jwt:Audience").Value ?? throw new InvalidOperationException("Audience not found");
 
-            services.AddAuthentication()
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(opt =>
                 {
                     opt.TokenValidationParameters = new TokenValidationParameters
@@ -48,8 +55,14 @@ namespace Eventa.Infrastructure
             services.Configure<SmtpEmailOptions>(configuration.GetSection("SmtpEmailOptions"));
             services.Configure<SendGridEmailOptions>(configuration.GetSection("SendGrid"));
             services.Configure<JwtTokenOptions>(configuration.GetSection("Jwt"));
+            services.Configure<PaymentOptions>(configuration.GetSection("Stripe"));
 
             services.AddHostedService<DeleteTempImageService>();
+            services.AddHostedService<DeleteExpireTicketsInCartService>();
+            services.AddHostedService<DeleteExpireOrdersService>();
+
+            var stripeSettings = configuration.GetSection("Stripe");
+            StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
             return services;
         }

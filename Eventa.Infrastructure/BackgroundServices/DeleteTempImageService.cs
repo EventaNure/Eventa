@@ -1,5 +1,4 @@
 ﻿using Eventa.Application.Services;
-using Eventa.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -7,6 +6,8 @@ namespace Eventa.Infrastructure.BackgroundServices
 {
     public class DeleteTempImageService : BackgroundService
     {
+        private const int intervalInDays = 1;
+
         private IServiceProvider _serviceProvider;
 
         public DeleteTempImageService(IServiceProvider serviceProvider)
@@ -19,9 +20,17 @@ namespace Eventa.Infrastructure.BackgroundServices
             var fileService = scope.ServiceProvider.GetRequiredService<IFileService>();
             while (!stoppingToken.IsCancellationRequested)
             {
-                fileService.ClearFolder("preview-events");
+                try
+                {
+                    fileService.ClearFolder("preview-events");
+                }
+                catch (IOException ex)
+                {
+                    {
 
-                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+                    }
+                }
+                await Task.Delay(TimeSpan.FromDays(intervalInDays), stoppingToken);
             }
         }
     }

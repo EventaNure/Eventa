@@ -12,8 +12,8 @@
 
         public Row Row { get; set; } = default!;
 
-        public Cart[] Carts { get; set; } = [];
+        public ICollection<TicketInCart> TicketsInCart { get; set; } = [];
 
-        public Order[] Orders { get; set; } = [];
+        public ICollection<TicketInOrder> TicketsInOrder { get; set; } = [];
     }
 }

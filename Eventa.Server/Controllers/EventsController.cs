@@ -25,7 +25,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        [Authorize(Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> CreateEvent(EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -42,7 +42,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPost("temp-image")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        [Authorize(Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> LoadImage(IFormFile imageFile)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -58,7 +58,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        [Authorize(Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> UpdateEvent(int id, [FromForm] EventRequestModel eventRequestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -81,7 +81,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        [Authorize(Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -108,7 +108,7 @@ namespace Eventa.Server.Controllers
                 return NotFound(getEventResult.Errors);
             }
 
-            return Ok(_mapper.Map<EventResponseModel>(getEventResult.Value));
+            return Ok(getEventResult.Value);
         }
 
         [HttpGet]
@@ -121,7 +121,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpGet("by-organizer")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = DefaultRoles.OrganizerRole)]
+        [Authorize(Roles = DefaultRoles.OrganizerRole)]
         public async Task<IActionResult> GetEventsByOrganizer([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;

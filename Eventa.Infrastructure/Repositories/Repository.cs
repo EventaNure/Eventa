@@ -9,12 +9,19 @@ namespace Eventa.Infrastructure.Repositories
 
         protected readonly DbSet<T> _dbSet;
 
-        public Repository(ApplicationDbContext dbContext) {
+        public Repository(ApplicationDbContext dbContext)
+        {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
         }
 
         public void Add(T entity) => _dbSet.Add(entity);
+
+        public async Task<bool> Exists(params object[] keyValues)
+        {
+            var entity = await _dbSet.FindAsync(keyValues);
+            return entity != null;
+        }
 
         public void AddRange(IEnumerable<T> entities) => _dbSet.AddRange(entities);
 

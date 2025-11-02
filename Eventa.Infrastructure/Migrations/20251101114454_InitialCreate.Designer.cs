@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventa.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251030094732_InitialCreate")]
+    [Migration("20251101114454_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,35 +24,6 @@ namespace Eventa.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("Eventa.Domain.Cart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("SeatId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Carts");
-                });
 
             modelBuilder.Entity("Eventa.Domain.Event", b =>
                 {
@@ -139,11 +110,17 @@ namespace Eventa.Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EventId")
+                    b.Property<DateTime?>("CreationDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EventDateTimeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("ExpireAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsPurcharsed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -151,9 +128,7 @@ namespace Eventa.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("SeatId");
+                    b.HasIndex("EventDateTimeId");
 
                     b.HasIndex("UserId");
 
@@ -330,6 +305,55 @@ namespace Eventa.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Eventa.Domain.TicketInCart", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EventDateTimeId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.HasKey("UserId", "SeatId");
+
+                    b.HasIndex("EventDateTimeId");
+
+                    b.HasIndex("SeatId");
+
+                    b.ToTable("TicketsInCart");
+                });
+
+            modelBuilder.Entity("Eventa.Domain.TicketInOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SeatId");
+
+                    b.ToTable("TicketsInOrder");
+                });
+
             modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -348,6 +372,9 @@ namespace Eventa.Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("EventDateTimeId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -399,6 +426,8 @@ namespace Eventa.Infrastructure.Migrations
                         .HasColumnType("varchar(6)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventDateTimeId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -560,31 +589,6 @@ namespace Eventa.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Eventa.Domain.Cart", b =>
-                {
-                    b.HasOne("Eventa.Domain.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Eventa.Domain.Seat", "Seat")
-                        .WithMany("Carts")
-                        .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Seat");
-                });
-
             modelBuilder.Entity("Eventa.Domain.Event", b =>
                 {
                     b.HasOne("Eventa.Domain.Place", "Place")
@@ -628,15 +632,9 @@ namespace Eventa.Infrastructure.Migrations
 
             modelBuilder.Entity("Eventa.Domain.Order", b =>
                 {
-                    b.HasOne("Eventa.Domain.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Eventa.Domain.Seat", "Seat")
+                    b.HasOne("Eventa.Domain.EventDateTime", "EventDateTime")
                         .WithMany("Orders")
-                        .HasForeignKey("SeatId")
+                        .HasForeignKey("EventDateTimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -646,9 +644,7 @@ namespace Eventa.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Event");
-
-                    b.Navigation("Seat");
+                    b.Navigation("EventDateTime");
                 });
 
             modelBuilder.Entity("Eventa.Domain.Row", b =>
@@ -682,6 +678,57 @@ namespace Eventa.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Row");
+                });
+
+            modelBuilder.Entity("Eventa.Domain.TicketInCart", b =>
+                {
+                    b.HasOne("Eventa.Domain.EventDateTime", null)
+                        .WithMany("TicketsInCart")
+                        .HasForeignKey("EventDateTimeId");
+
+                    b.HasOne("Eventa.Domain.Seat", "Seat")
+                        .WithMany("TicketsInCart")
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                        .WithMany("TicketsInCart")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Seat");
+                });
+
+            modelBuilder.Entity("Eventa.Domain.TicketInOrder", b =>
+                {
+                    b.HasOne("Eventa.Domain.Order", "Order")
+                        .WithMany("Tickets")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Eventa.Domain.Seat", "Seat")
+                        .WithMany("TicketsInOrder")
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Seat");
+                });
+
+            modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
+                {
+                    b.HasOne("Eventa.Domain.EventDateTime", "EventDateTime")
+                        .WithMany()
+                        .HasForeignKey("EventDateTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventDateTime");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -742,6 +789,18 @@ namespace Eventa.Infrastructure.Migrations
                     b.Navigation("EventTags");
                 });
 
+            modelBuilder.Entity("Eventa.Domain.EventDateTime", b =>
+                {
+                    b.Navigation("Orders");
+
+                    b.Navigation("TicketsInCart");
+                });
+
+            modelBuilder.Entity("Eventa.Domain.Order", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("Eventa.Domain.Place", b =>
                 {
                     b.Navigation("Events");
@@ -761,9 +820,9 @@ namespace Eventa.Infrastructure.Migrations
 
             modelBuilder.Entity("Eventa.Domain.Seat", b =>
                 {
-                    b.Navigation("Carts");
+                    b.Navigation("TicketsInCart");
 
-                    b.Navigation("Orders");
+                    b.Navigation("TicketsInOrder");
                 });
 
             modelBuilder.Entity("Eventa.Domain.Tag", b =>
@@ -773,9 +832,9 @@ namespace Eventa.Infrastructure.Migrations
 
             modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
                 {
-                    b.Navigation("Carts");
-
                     b.Navigation("Orders");
+
+                    b.Navigation("TicketsInCart");
                 });
 #pragma warning restore 612, 618
         }

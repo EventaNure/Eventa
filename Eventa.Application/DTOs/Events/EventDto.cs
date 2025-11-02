@@ -22,7 +22,7 @@ namespace Eventa.Application.DTOs.Events
 
         public IEnumerable<TagDto> Tags { get; set; } = [];
 
-        public IEnumerable<DateTime> DateTimes { get; set; } = [];
+        public IEnumerable<EventDateTimeDto> DateTimes { get; set; } = [];
 
         public string? ImageUrl { get; set; }
     }

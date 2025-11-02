@@ -12,7 +12,6 @@ namespace Eventa.Server.Profiles
             CreateMap<EventListItemDto, EventListItemResponseModel>();
             CreateMap<EventRequestModel, CreateEventDto>();
             CreateMap<EventRequestModel, UpdateEventDto>();
-            CreateMap<EventDto, EventResponseModel>();
         }
     }
 }

@@ -3,7 +3,7 @@ using Eventa.Domain;
 
 namespace Eventa.Application.Repositories
 {
-    public interface ITagRepository
+    public interface ITagRepository : IRepository<Tag>
     {
         Task<IEnumerable<Tag>> GetByIdsAsync(IEnumerable<int> tagIds);
         Task<IEnumerable<TagDto>> GetMainTagsAsync();
