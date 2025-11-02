@@ -452,6 +452,5 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-/Eventa.Server/appsettings.json
-/Eventa.Server/appsettings.json
-/Eventa.Server/appsettings.Development.json
+
+/Eventa.Server/wwwroot/uploads/events/*
