@@ -15,5 +15,9 @@ namespace Eventa.Domain
         public ICollection<RowType> RowTypes { get; set; } = [];
 
         public ICollection<Event> Events { get; set; } = [];
+
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
     }
 }

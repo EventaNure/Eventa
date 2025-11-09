@@ -72,21 +72,21 @@ namespace Eventa.Infrastructure.Services
 
         public bool IsCheckoutSessionSuccess(string payload, string signature)
         {
-            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret, throwOnApiVersionMismatch: false);
+            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret);
 
             return stripeEvent.Type == "checkout.session.completed";
         }
 
         public bool IsPaymentIntentSuccess(string payload, string signature)
         {
-            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret, throwOnApiVersionMismatch: false);
+            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret);
 
             return stripeEvent.Type == "payment_intent.succeeded";
         }
 
         public string? GetMetadataFromPayment(string payload, string signature, string metadataName)
         {
-            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret, throwOnApiVersionMismatch: false);
+            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret);
 
             var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
 
@@ -104,7 +104,7 @@ namespace Eventa.Infrastructure.Services
 
         public string? GetMetadataFromSession(string payload, string signature, string metadataName)
         {
-            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret, throwOnApiVersionMismatch: false);
+            var stripeEvent = EventUtility.ConstructEvent(payload, signature, _options.WebhookSecret);
 
             var paymentIntent = stripeEvent.Data.Object as Session;
 

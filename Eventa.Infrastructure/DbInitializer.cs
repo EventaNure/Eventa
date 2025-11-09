@@ -130,223 +130,246 @@ namespace Eventa.Infrastructure
                 new Place
                 {
                     Name = "Національний палац мистецтв «Україна»",
-                    Address = "вулиця Велика Васильківська, 103, Київ"
-                }
-            };
-
-            if (places.Count() > await context.Places.CountAsync())
-            {
-                await context.Places.ExecuteDeleteAsync();
-                context.Places.AddRange(places);
-                await context.SaveChangesAsync();
-            }
-
-            var place = context.Places.FirstOrDefault();
-            if (place != null)
-            {
-                fileService.MoveFile("places/1.jpg", $"places/{place.Id}.jpg");
-            }
-
-            RowType[] rowTypes = {
-                new RowType
-                {
-                    Name = "Партер",
-                    IsSeparatedSeats = false,
-                    Place = places[0]
+                    Address = "вулиця Велика Васильківська, 103, Київ",
+                    Latitude = 50.422280197756535,
+                    Longitude = 30.520940255567332
                 },
-                new RowType
+                new Place
                 {
-                    Name = "Балкон",
-                    IsSeparatedSeats = false,
-                    Place = places[0]
+                    Name = "Національний академічний театр опери та балету України імені Тараса Шевченка",
+                    Address = "вулиця Володимирська, 50, Київ",
+                    Latitude = 50.44673045546744,
+                    Longitude = 30.51236950063882
+                },
+                new Place
+                {
+                    Name = "Львівський національний академічний театр опери та балету імені Соломії Крушельницької",
+                    Address = "проспект Свободи, 28, Львів",
+                    Latitude = 49.844047776957396,
+                    Longitude = 24.02622302985318
+                },
+                new Place
+                {
+                    Name = "Одеський національний академічний театр опери та балету",
+                    Address = "провулок Чайковського, 1, Одеса",
+                    Latitude = 46.485486087190566,
+                    Longitude = 30.74111502698567
                 }
             };
 
-            if (rowTypes.Count() > await context.RowTypes.CountAsync())
+
+            await context.Places.ExecuteDeleteAsync();
+            context.Places.AddRange(places);
+            await context.SaveChangesAsync();
+
+            if (await context.Places.CountAsync() == 0)
+            for (int i = 0; i < places.Length; i++)
             {
-                await context.RowTypes.ExecuteDeleteAsync();
+                if (i == 2)
+                {
+                    fileService.MoveFile($"places/{i + 1}.gif", $"places/{places[i].Id}.gif");
+                } else if (i == 3)
+                {
+                    fileService.MoveFile($"places/{i + 1}.png", $"places/{places[i].Id}.png");
+                } else
+                {
+                    fileService.MoveFile($"places/{i + 1}.jpg", $"places/{places[i].Id}.jpg");
+                }
+
+                RowType[] rowTypes = {
+                        new RowType
+                        {
+                            Name = "Партер",
+                            IsSeparatedSeats = false,
+                            Place = places[i]
+                        },
+                        new RowType
+                        {
+                            Name = "Балкон",
+                            IsSeparatedSeats = false,
+                            Place = places[i]
+                        }
+                    };
+
                 context.RowTypes.AddRange(rowTypes);
                 await context.SaveChangesAsync();
-            }
 
-            List<Row> rows = new List<Row>();
+                List<Row> rows = new List<Row>();
 
-            for (int i = 1; i <= 51; i++)
-            {
-                RowType rowType = i > 34 ? rowTypes[1] : rowTypes[0];
-                List<Seat> seats = new List<Seat>();
-                int rowNumber = i > 34 ? i - 34 : i;
-                double priceMultiplier = 0;
-                switch (i)
+                for (int j = 1; j <= 51; j++)
                 {
-                    case < 10:
-                        priceMultiplier = 3.1;
-                        break;
-                    case < 17:
-                        priceMultiplier = 2.9;
-                        break;
-                    case < 21:
-                        priceMultiplier = 2.7;
-                        break;
-                    case < 25:
-                        priceMultiplier = 2.4;
-                        break;
-                    case < 30:
-                        priceMultiplier = 2.2;
-                        break;
-                    case < 35:
-                        priceMultiplier = 1.6;
-                        break;
-                    case > 34 and < 40:
-                        priceMultiplier = 1.5;
-                        break;
-                    case > 39 and < 45:
-                        priceMultiplier = 1.2;
-                        break;
-                    case > 44:
-                        priceMultiplier = 1;
-                        break;
-                }
-                int seatsCount = 0;
-                switch (i)
-                {
-                    case 1:
-                        seatsCount = 56;
-                        break;
-                    case 2:
-                        seatsCount = 58;
-                        break;
-                    case 3:
-                        seatsCount = 60;
-                        break;
-                    case 4:
-                        seatsCount = 64;
-                        break;
-                    case 5:
-                        seatsCount = 66;
-                        break;
-                    case 6:
-                        seatsCount = 68;
-                        break;
-                    case > 6 and < 11:
-                        seatsCount = 70;
-                        break;
-                    case > 10 and < 14:
-                        seatsCount = 72;
-                        break;
-                    case > 13 and < 16:
-                        seatsCount = 74;
-                        break;
-                    case > 16 and < 20:
-                        seatsCount = 76;
-                        break;
-                    case 20:
-                        seatsCount = 69;
-                        break;
-                    case 21:
-                        seatsCount = 71;
-                        break;
-                    case > 21 and < 25:
-                        seatsCount = 78;
-                        break;
-                    case > 25 and < 30:
-                        seatsCount = 80;
-                        break;
-                    case > 29 and < 34:
-                        seatsCount = 82;
-                        break;
-                    case 34:
-                        seatsCount = 84;
-                        break;
-                    case 35:
-                        seatsCount = 36;
-                        break;
-                    case 36:
-                        seatsCount = 8;
-                        break;
-                    case 37:
-                        seatsCount = 10;
-                        break;
-                    case 38:
-                        seatsCount = 12;
-                        break;
-                    case 39:
-                        seatsCount = 14;
-                        break;
-                    case 40:
-                        seatsCount = 16;
-                        break;
-                    case 41:
-                        seatsCount = 82;
-                        break;
-                    case 42:
-                        seatsCount = 81;
-                        break;
-                    case 43:
-                        seatsCount = 74;
-                        break;
-                    case 44:
-                        seatsCount = 36;
-                        break;
-                    case 45:
-                        seatsCount = 40;
-                        break;
-                    case 46:
-                        seatsCount = 69;
-                        break;
-                    case 47:
-                        seatsCount = 69;
-                        break;
-                    case 48:
-                        seatsCount = 71;
-                        break;
-                    case 49:
-                        seatsCount = 67;
-                        break;
-                    case 50:
-                        seatsCount = 79;
-                        break;
-                    case 51:
-                        seatsCount = 79;
-                        break;
-                    case 52:
-                        seatsCount = 81;
-                        break;
-                    case 53:
-                        seatsCount = 91;
-                        break;
-                    case 54:
-                        seatsCount = 93;
-                        break;
-                    case 55:
-                        seatsCount = 103;
-                        break;
-                }
-                for (int j = 1; j <= seatsCount; j++)
-                {
-                    double priceM = i < 10 & j > 17 && j < 41 ? 3.6 : priceMultiplier;
-                    seats.Add(new Seat
+                    RowType rowType = j > 34 ? rowTypes[1] : rowTypes[0];
+                    List<Seat> seats = new List<Seat>();
+                    int rowNumber = j > 34 ? j - 34 : j;
+                    double priceMultiplier = 0;
+                    switch (j)
                     {
-                        PriceMultiplier = priceM,
-                        SeatNumber = j
+                        case < 10:
+                            priceMultiplier = 3.1;
+                            break;
+                        case < 17:
+                            priceMultiplier = 2.9;
+                            break;
+                        case < 21:
+                            priceMultiplier = 2.7;
+                            break;
+                        case < 25:
+                            priceMultiplier = 2.4;
+                            break;
+                        case < 30:
+                            priceMultiplier = 2.2;
+                            break;
+                        case < 35:
+                            priceMultiplier = 1.6;
+                            break;
+                        case > 34 and < 40:
+                            priceMultiplier = 1.5;
+                            break;
+                        case > 39 and < 45:
+                            priceMultiplier = 1.2;
+                            break;
+                        case > 44:
+                            priceMultiplier = 1;
+                            break;
+                    }
+                    int seatsCount = 0;
+                    switch (j)
+                    {
+                        case 1:
+                            seatsCount = 56;
+                            break;
+                        case 2:
+                            seatsCount = 58;
+                            break;
+                        case 3:
+                            seatsCount = 60;
+                            break;
+                        case 4:
+                            seatsCount = 64;
+                            break;
+                        case 5:
+                            seatsCount = 66;
+                            break;
+                        case 6:
+                            seatsCount = 68;
+                            break;
+                        case > 6 and < 11:
+                            seatsCount = 70;
+                            break;
+                        case > 10 and < 14:
+                            seatsCount = 72;
+                            break;
+                        case > 13 and < 16:
+                            seatsCount = 74;
+                            break;
+                        case > 16 and < 20:
+                            seatsCount = 76;
+                            break;
+                        case 20:
+                            seatsCount = 69;
+                            break;
+                        case 21:
+                            seatsCount = 71;
+                            break;
+                        case > 21 and < 25:
+                            seatsCount = 78;
+                            break;
+                        case > 25 and < 30:
+                            seatsCount = 80;
+                            break;
+                        case > 29 and < 34:
+                            seatsCount = 82;
+                            break;
+                        case 34:
+                            seatsCount = 84;
+                            break;
+                        case 35:
+                            seatsCount = 36;
+                            break;
+                        case 36:
+                            seatsCount = 8;
+                            break;
+                        case 37:
+                            seatsCount = 10;
+                            break;
+                        case 38:
+                            seatsCount = 12;
+                            break;
+                        case 39:
+                            seatsCount = 14;
+                            break;
+                        case 40:
+                            seatsCount = 16;
+                            break;
+                        case 41:
+                            seatsCount = 82;
+                            break;
+                        case 42:
+                            seatsCount = 81;
+                            break;
+                        case 43:
+                            seatsCount = 74;
+                            break;
+                        case 44:
+                            seatsCount = 36;
+                            break;
+                        case 45:
+                            seatsCount = 40;
+                            break;
+                        case 46:
+                            seatsCount = 69;
+                            break;
+                        case 47:
+                            seatsCount = 69;
+                            break;
+                        case 48:
+                            seatsCount = 71;
+                            break;
+                        case 49:
+                            seatsCount = 67;
+                            break;
+                        case 50:
+                            seatsCount = 79;
+                            break;
+                        case 51:
+                            seatsCount = 79;
+                            break;
+                        case 52:
+                            seatsCount = 81;
+                            break;
+                        case 53:
+                            seatsCount = 91;
+                            break;
+                        case 54:
+                            seatsCount = 93;
+                            break;
+                        case 55:
+                            seatsCount = 103;
+                            break;
+                    }
+                    for (int k = 1; k <= seatsCount; k++)
+                    {
+                        double priceM = k < 10 & k > 17 && k < 41 ? 3.6 : priceMultiplier;
+                        seats.Add(new Seat
+                        {
+                            PriceMultiplier = priceM,
+                            SeatNumber = k
+                        });
+                    }
+                    rows.Add(new Row
+                    {
+                        RowNumber = j,
+                        RowType = rowType,
+                        Seats = seats
                     });
                 }
-                rows.Add(new Row
-                {
-                    RowNumber = i,
-                    RowType = rowType,
-                    Seats = seats
-                });
-            }
 
-            if (rows.Count() > await context.Rows.CountAsync())
-            {
-                await context.Rows.ExecuteDeleteAsync();
                 context.Rows.AddRange(rows);
                 await context.SaveChangesAsync();
             }
 
-            Event[] events = 
+
+            Event[] events =
             {
                 new Event
                 {

@@ -11,7 +11,7 @@ namespace Eventa.Infrastructure.Services
 
         private const int maxFileSize = 256;
 
-        private static readonly string[] _validFileExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+        private static readonly string[] _validFileExtensions = { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
 
         private readonly string _path = string.Empty;
 

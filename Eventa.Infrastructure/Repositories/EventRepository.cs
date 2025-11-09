@@ -1,4 +1,5 @@
-﻿using Eventa.Application.DTOs.Events;
+﻿using System;
+using Eventa.Application.DTOs.Events;
 using Eventa.Application.DTOs.Tags;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
@@ -12,12 +13,16 @@ namespace Eventa.Infrastructure.Repositories
         {
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds, DateOnly? startDate, DateOnly? endDate, string? subName)
         {
             return await _dbSet
                 .AsNoTracking()
                 .Where(e => e.EventTags
-                    .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count())
+                    .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count() &&
+                    (startDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) >= startDate)) &&
+                    (endDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) <= endDate)) &&
+                    (subName == null || e.Title.Contains(subName)) &&
+                    e.IsApproved)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto

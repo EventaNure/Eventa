@@ -248,10 +248,10 @@ namespace Eventa.Application.Services.Events
             return eventDto;
         }
 
-        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds)
+        public async Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds, DateOnly? startDate, DateOnly? endDate, string? subName)
         {
             var eventRepository = _unitOfWork.GetEventRepository();
-            var events = await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds);
+            var events = await eventRepository.GetEventsAsync(pageNumber, pageSize, tagIds, startDate, endDate, subName);
             foreach (var eventDto in events)
             {
                 eventDto.ImageUrl = AddImageUrl(eventDto.Id);
