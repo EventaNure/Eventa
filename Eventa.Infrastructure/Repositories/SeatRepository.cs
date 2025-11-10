@@ -37,7 +37,7 @@ namespace Eventa.Infrastructure.Repositories
                                 {
                                     Id = s.Id,
                                     SeatNumber = s.SeatNumber,
-                                    Price = s.PriceMultiplier,
+                                    Price = s.PriceMultiplier * e.Event.Price,
                                 }).ToArray()
                         }).ToArray()
                     }).ToList()
