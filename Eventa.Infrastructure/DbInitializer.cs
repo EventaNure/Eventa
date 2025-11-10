@@ -162,7 +162,7 @@ namespace Eventa.Infrastructure
             context.Places.AddRange(places);
             await context.SaveChangesAsync();
 
-            if (await context.Places.CountAsync() == 0)
+            if (await context.RowTypes.CountAsync() == 0)
             for (int i = 0; i < places.Length; i++)
             {
                 if (i == 2)
