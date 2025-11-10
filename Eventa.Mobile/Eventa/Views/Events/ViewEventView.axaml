@@ -1,0 +1,212 @@
+<UserControl
+    x:Class="Eventa.Views.Events.ViewEventView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:converters="clr-namespace:Eventa.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:li="using:LoadingIndicators.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Events;assembly=Eventa"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:ViewEventViewModel"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <StreamGeometry x:Key="CalendarIcon">M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19Z</StreamGeometry>
+        <StreamGeometry x:Key="LocationIcon">M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z</StreamGeometry>
+        <StreamGeometry x:Key="DollarSign">M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z</StreamGeometry>
+        <StreamGeometry x:Key="ChevronRight">M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z</StreamGeometry>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+
+        <Style Selector="Button.BuyButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="20,8" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+
+        <Style Selector="Button.BuyButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="*, Auto">
+        <!--  Main Content  -->
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Margin="16" Spacing="16">
+                <!--  Event Card  -->
+                <Border
+                    Background="White"
+                    BoxShadow="0 2 8 0 #20000000"
+                    ClipToBounds="True"
+                    CornerRadius="12">
+                    <Grid RowDefinitions="200, Auto">
+                        <!--  Event Image  -->
+                        <Border
+                            Grid.Row="0"
+                            Background="#E0E0E0"
+                            ClipToBounds="True"
+                            CornerRadius="12,12,0,0">
+                            <asyncImageLoader:AdvancedImage Source="{Binding Image}" Stretch="UniformToFill" />
+                        </Border>
+
+                        <!--  Event Info  -->
+                        <StackPanel Grid.Row="1" Spacing="12">
+                            <!--  Event Name  -->
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="#333333"
+                                Text="{Binding Title}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+
+                            <!--  Event Date  -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource CalendarIcon}"
+                                    Foreground="#666666" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="#666666"
+                                    Text="{Binding Date, StringFormat='{}{0:dd MMM yyyy}'}">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform Y="1" />
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!--  Price  -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource DollarSign}"
+                                    Foreground="#666666" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="#666666"
+                                    Text="{Binding Prices, StringFormat='Prices: [{0}]'}}">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform Y="1" />
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!--  Location  -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource LocationIcon}"
+                                    Foreground="#666666" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="#666666"
+                                    Text="{Binding Address}"
+                                    TextWrapping="Wrap">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform Y="1" />
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <ScrollViewer
+                                Height="95"
+                                HorizontalScrollBarVisibility="Auto"
+                                VerticalScrollBarVisibility="Disabled">
+                                <ItemsControl ItemsSource="{Binding DateTimes}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Margin="1" Rows="1" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                MinWidth="120"
+                                                Margin="0,0,5,0"
+                                                Padding="12,8"
+                                                Background="White"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="1"
+                                                CornerRadius="8">
+                                                <StackPanel Spacing="8">
+                                                    <!--  Date & Time  -->
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <PathIcon
+                                                            Width="14"
+                                                            Height="14"
+                                                            Data="{StaticResource CalendarIcon}"
+                                                            Foreground="#999999" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="11"
+                                                            Foreground="#666666"
+                                                            Text="{Binding DateTime, StringFormat='{}{0:dd MMM, HH:mm}'}">
+                                                            <TextBlock.RenderTransform>
+                                                                <TranslateTransform Y="1" />
+                                                            </TextBlock.RenderTransform>
+                                                        </TextBlock>
+                                                    </StackPanel>
+
+                                                    <!--  Buy Tickets Button  -->
+                                                    <Button
+                                                        HorizontalAlignment="Stretch"
+                                                        Classes="BuyButton"
+                                                        Command="{Binding $parent[UserControl].((vm:ViewEventViewModel)DataContext).SelectDateTimeCommand}"
+                                                        CommandParameter="{Binding}">
+                                                        <TextBlock FontWeight="SemiBold" Text="Buy tickets" />
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!--  About Event Card  -->
+                <Border
+                    Padding="16"
+                    Background="White"
+                    BoxShadow="0 2 8 0 #20000000"
+                    CornerRadius="12">
+                    <StackPanel Spacing="12">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#333333"
+                            Text="About event" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="#666666"
+                            LineHeight="18"
+                            Text="{Binding Description}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

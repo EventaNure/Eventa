@@ -34,9 +34,8 @@ public class EventDetailsResponseModel
     public List<TagResponseModel> Tags { get; set; } = [];
 
     [JsonPropertyName("dateTimes")]
-    public List<DateTime> DateTimes { get; set; } = [];
+    public List<EventDateTimes> DateTimes { get; set; } = [];
 
     [JsonPropertyName("imageUrl")]
     public string? ImageUrl { get; set; }
-
 }

@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Events;
 using Eventa.Services;
+using Eventa.Views.Events;
+using Eventa.Views.Main;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,8 +31,6 @@ public partial class BrowseEventsViewModel : ObservableObject
     private AsyncRelayCommand _loadTagsCommand;
     [ObservableProperty]
     private AsyncRelayCommand _applyFiltersCommand;
-    [ObservableProperty]
-    private AsyncRelayCommand _buyTicketCommand;
 
     public BrowseEventsViewModel()
     {
@@ -40,7 +40,6 @@ public partial class BrowseEventsViewModel : ObservableObject
 
         _loadTagsCommand = new AsyncRelayCommand(LoadTagsAsync);
         _applyFiltersCommand = new AsyncRelayCommand(ApplyFiltersAsync);
-        _buyTicketCommand = new AsyncRelayCommand(BuyTicketAsync);
 
         Tags.CollectionChanged += (s, e) =>
         {
@@ -178,9 +177,25 @@ public partial class BrowseEventsViewModel : ObservableObject
         */
     }
 
-    private async Task BuyTicketAsync()
+    [RelayCommand]
+    public async Task BuyTicketCommandAsync(EventResponseModel? eventModel)
     {
-        // Implement ticket buying logic here
-        await Task.CompletedTask;
+        if (eventModel == null)
+            return;
+
+        var (Success, Message, Data) = await _apiService.GetEventByIdAsync(eventModel.Id, MainPageView.Instance.mainPageViewModel.JwtToken);
+        if (!Success || Data == null)
+        {
+            ErrorMessage = Message;
+            return;
+        }
+        
+        var resultData = Data;
+        ViewEventView.Instance.viewEventViewModel.InsertFormData(resultData.Title, resultData.Description, resultData.DateTimes[0].DateTime, 
+            resultData.ImageUrl, resultData.PlaceAddress, resultData.Price.ToString(), resultData.DateTimes);
+
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = ViewEventView.Instance;
     }
 }
