@@ -54,6 +54,9 @@
     <Compile Update="Views\Authentication\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Events\ViewEventView.axaml.cs">
+      <DependentUpon>ViewEventView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Events\CreateEditDeleteOrganizerEventView.axaml.cs">
       <DependentUpon>CreateEditDeleteOrganizerEventView.axaml</DependentUpon>
     </Compile>

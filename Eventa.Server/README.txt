@@ -57,12 +57,6 @@ For production:
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost;Port=3306;Database=EventaDb;User=root;Password=77228Gl"
   },
-  "EmailOptions": {
-    "Host": "smtp.gmail.com",
-    "Port": 587,
-    "Email": "titarenkonik1@gmail.com",
-    "Password": "ryrr nzzv wnyq zdta"
-  },
   "Jwt": {
     "Audience": "https://0.0.0.0:5001",
     "Issuer": "https://0.0.0.0:5001",

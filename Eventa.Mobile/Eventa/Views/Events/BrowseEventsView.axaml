@@ -330,6 +330,8 @@
                                             Padding="0"
                                             HorizontalAlignment="Stretch"
                                             Classes="BuyButton"
+                                            Command="{Binding $parent[UserControl].((vm:BrowseEventsViewModel)DataContext).BuyTicketCommandAsync}"
+                                            CommandParameter="{Binding}"
                                             CornerRadius="20">
                                             <TextBlock
                                                 FontWeight="Bold"

@@ -168,17 +168,16 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             if (eventData.DateTimes != null && eventData.DateTimes.Count > 0)
             {
                 var firstDateTime = eventData.DateTimes[0];
-                SelectedEventDate = firstDateTime.Date;
-                EventTime = firstDateTime.ToString("HH:mm");
-
+                SelectedEventDate = firstDateTime.DateTime.Date;
+                EventTime = firstDateTime.DateTime.ToString("HH:mm");
                 AdditionalDates.Clear();
                 for (int i = 1; i < eventData.DateTimes.Count; i++)
                 {
                     var additionalDateTime = eventData.DateTimes[i];
                     AdditionalDates.Add(new AdditionalDateModel
                     {
-                        Date = additionalDateTime.Date,
-                        Time = additionalDateTime.ToString("HH:mm"),
+                        Date = additionalDateTime.DateTime.Date,
+                        Time = additionalDateTime.DateTime.ToString("HH:mm"),
                         Duration = ((int)eventData.Duration.TotalMinutes).ToString()
                     });
                 }

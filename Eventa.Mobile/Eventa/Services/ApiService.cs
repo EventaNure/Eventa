@@ -1,7 +1,11 @@
 ﻿using Eventa.Converters;
 using Eventa.Models.Authentication;
+using Eventa.Models.Booking;
+using Eventa.Models.Carting;
 using Eventa.Models.Events;
 using Eventa.Models.Events.Organizer;
+using Eventa.Models.Ordering;
+using Eventa.Models.Seats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,11 +23,11 @@ public class ApiService
     private static readonly HttpClient _httpClient;
 
     // LOCAL DEV:
-    // private const string BaseUrlDesktop = "https://localhost:7293";
-    // private const string BaseUrlAndroid = "https://10.0.2.2:7293";
+    private const string BaseUrlDesktop = "https://localhost:7293";
+    private const string BaseUrlAndroid = "https://10.0.2.2:7293";
     //PROD:
-    private const string BaseUrlDesktop = "https://eventa-app.fun:5001";
-    private const string BaseUrlAndroid = "https://eventa-app.fun:5001";
+    // private const string BaseUrlDesktop = "https://eventa-app.fun:5001";
+    // private const string BaseUrlAndroid = "https://eventa-app.fun:5001";
 
     static ApiService()
     {
@@ -531,6 +535,232 @@ public class ApiService
             {
                 var imageUrl = await response.Content.ReadAsStringAsync();
                 return (true, "Image uploaded successfully!", imageUrl.Trim('"'));
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    // Orders methods
+    public async Task<(bool Success, string Message, OrderResponseModel? Data)> CreateOrderAsync(string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.PostAsync("/api/Orders", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var order = await response.Content.ReadFromJsonAsync<OrderResponseModel>();
+                return (true, "Order created successfully!", order);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<OrderListItemResponseModel>? Data)> GetOrdersByUserAsync(string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.GetAsync("/api/Orders/by-user");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var orders = await response.Content.ReadFromJsonAsync<List<OrderListItemResponseModel>>();
+                return (true, "Orders fetched successfully!", orders);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    // Seats methods
+    public async Task<(bool Success, string Message, FreeSeatsWithHallPlanResponseModel? Data)> GetFreeSeatsWithHallPlanAsync(int eventDateTimeId, string? jwtToken = null)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            var response = await _httpClient.GetAsync($"/api/Seats/free-with-hall-plan?eventDateTimeId={eventDateTimeId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var seats = await response.Content.ReadFromJsonAsync<FreeSeatsWithHallPlanResponseModel>();
+                return (true, "Seats fetched successfully!", seats);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+    }
+
+    // Tickets in Cart methods
+    public async Task<(bool Success, string Message, CartResponseModel? Data)> AddTicketToCartAsync(BookTicketRequestModel model, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.PostAsJsonAsync("/api/TicketsInCart", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var cart = await response.Content.ReadFromJsonAsync<CartResponseModel>();
+                return (true, "Ticket added to cart successfully!", cart);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, CartResponseModel? Data)> GetTicketsInCartByUserAsync(string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.GetAsync("/api/TicketsInCart/by-user");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var cart = await response.Content.ReadFromJsonAsync<CartResponseModel>();
+                return (true, "Cart fetched successfully!", cart);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, CartResponseModel? Data)> DeleteTicketFromCartAsync(int ticketId, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.DeleteAsync($"/api/TicketsInCart/{ticketId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var cart = await response.Content.ReadFromJsonAsync<CartResponseModel>();
+                return (true, "Ticket removed from cart successfully!", cart);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, TimeSpan? Data)> GetBookingTimeLeftAsync(string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.GetAsync("/api/User/tickets-in-cart/time-left");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var timeLeft = await response.Content.ReadFromJsonAsync<TimeSpan>();
+                return (true, "Time left fetched successfully!", timeLeft);
             }
 
             var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
