@@ -157,10 +157,12 @@ namespace Eventa.Infrastructure
                 }
             };
 
-
-            await context.Places.ExecuteDeleteAsync();
-            context.Places.AddRange(places);
-            await context.SaveChangesAsync();
+            if (await context.Places.CountAsync() == 0)
+            {
+                await context.Places.ExecuteDeleteAsync();
+                context.Places.AddRange(places);
+                await context.SaveChangesAsync();
+            }
 
             if (await context.RowTypes.CountAsync() == 0)
             for (int i = 0; i < places.Length; i++)
