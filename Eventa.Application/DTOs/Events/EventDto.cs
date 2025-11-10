@@ -10,7 +10,9 @@ namespace Eventa.Application.DTOs.Events
 
         public string Description { get; set; } = string.Empty;
 
-        public double Price { get; set; }
+        public double MinPrice { get; set; }
+
+        public double MaxPrice { get; set; }
 
         public TimeSpan Duration { get; set; }
 

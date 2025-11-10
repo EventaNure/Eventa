@@ -85,7 +85,8 @@ namespace Eventa.Infrastructure.Repositories
                 .Select(e => new EventDto
                 {
                     Id = e.Id,
-                    Price = e.Price,
+                    MinPrice = e.Price * e.Place.RowTypes.Min(rt => rt.Rows.Min(r => r.Seats.Min(s => s.PriceMultiplier))),
+                    MaxPrice = e.Price * e.Place.RowTypes.Max(rt => rt.Rows.Max(r => r.Seats.Max(s => s.PriceMultiplier))),
                     Title = e.Title,
                     Description = e.Description,
                     Duration = e.Duration,

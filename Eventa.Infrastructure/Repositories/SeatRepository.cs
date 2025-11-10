@@ -19,34 +19,51 @@ namespace Eventa.Infrastructure.Repositories
                 .Where(u => u.EventDateTimeId == eventDateTimeId)
                 .Select(u => u.Id)
                 .ToListAsync();
-            var freeSeats = await _dbContext.EventDateTimes
-                .Where(e => e.Id == eventDateTimeId)
-                .Select(e => new GetFreeSeatsResultDto
+
+            var eventDateTime = await _dbContext.EventDateTimes
+                .Include(e => e.Event)
+                    .ThenInclude(ev => ev.Place)
+                        .ThenInclude(p => p.RowTypes)
+                            .ThenInclude(rt => rt.Rows)
+                                .ThenInclude(r => r.Seats)
+                                    .ThenInclude(s => s.TicketsInCart)
+                .Include(e => e.Event.Place.RowTypes)
+                    .ThenInclude(rt => rt.Rows)
+                        .ThenInclude(r => r.Seats)
+                            .ThenInclude(s => s.TicketsInOrder)
+                                .ThenInclude(tio => tio.Order)
+                .FirstOrDefaultAsync(e => e.Id == eventDateTimeId);
+
+            if (eventDateTime == null)
+                return null;
+
+            var freeSeats = new GetFreeSeatsResultDto
+            {
+                PlaceId = eventDateTime.Event.PlaceId,
+                RowTypes = eventDateTime.Event.Place.RowTypes.Select(rt => new RowTypeDto
                 {
-                    PlaceId = e.Event.PlaceId,
-                    RowTypes = e.Event.Place.RowTypes.Select(rt => new RowTypeDto
+                    Name = rt.Name,
+                    Rows = rt.Rows.Select(r => new RowDto
                     {
-                        Name = rt.Name,
-                        Rows = rt.Rows.Select(r => new RowDto
-                        {
-                            Id = r.Id,
-                            RowNumber = r.RowNumber,
-                            Seats = r.Seats
-                                .Where(s =>
-                                    !s.TicketsInCart.Any(c => usersWithEvent.Contains(c.UserId)) &&
-                                    !s.TicketsInOrder.Any(tInO =>
-                                        tInO.Order.EventDateTimeId == eventDateTimeId &&
-                                        (tInO.Order.IsPurcharsed ||
-                                        (!tInO.Order.IsPurcharsed && tInO.Order.UserId != userId))))
-                                .Select(s => new SeatDto
-                                {
-                                    Id = s.Id,
-                                    SeatNumber = s.SeatNumber,
-                                    Price = s.PriceMultiplier * e.Event.Price,
-                                }).ToArray()
-                        }).ToArray()
-                    }).ToList()
-                }).FirstOrDefaultAsync();
+                        Id = r.Id,
+                        RowNumber = r.RowNumber,
+                        Seats = r.Seats
+                            .Where(s =>
+                                !s.TicketsInCart.Any(c => usersWithEvent.Contains(c.UserId)) &&
+                                !s.TicketsInOrder.Any(tInO =>
+                                    tInO.Order.EventDateTimeId == eventDateTimeId &&
+                                    (tInO.Order.IsPurcharsed ||
+                                     (!tInO.Order.IsPurcharsed && tInO.Order.UserId != userId))))
+                            .Select(s => new SeatDto
+                            {
+                                Id = s.Id,
+                                SeatNumber = s.SeatNumber,
+                                Price = s.PriceMultiplier * eventDateTime.Event.Price
+                            })
+                            .ToArray()
+                    }).ToArray()
+                }).ToList()
+            };
 
             return freeSeats;
         }
