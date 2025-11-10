@@ -15,6 +15,10 @@ namespace Eventa.Infrastructure.Repositories
 
         public async Task<GetFreeSeatsResultDto?> GetFreeSeatsAsync(int eventDateTimeId, string? userId)
         {
+            var usersWithEvent = await _dbContext.Users
+                .Where(u => u.EventDateTimeId == eventDateTimeId)
+                .Select(u => u.Id)
+                .ToListAsync();
             var freeSeats = await _dbContext.EventDateTimes
                 .Where(e => e.Id == eventDateTimeId)
                 .Select(e => new GetFreeSeatsResultDto
@@ -28,11 +32,12 @@ namespace Eventa.Infrastructure.Repositories
                             Id = r.Id,
                             RowNumber = r.RowNumber,
                             Seats = r.Seats
-                                .Where(s => !s.TicketsInCart.Any(c => 
-                                    _dbContext.Users.Any(u => 
-                                    u.EventDateTimeId == eventDateTimeId && u.Id == c.UserId))
-                                    && !s.TicketsInOrder.Any(tInO =>
-                                    tInO.Order.EventDateTimeId == eventDateTimeId && (tInO.Order.IsPurcharsed || (!tInO.Order.IsPurcharsed && tInO.Order.UserId != userId))))
+                                .Where(s =>
+                                    !s.TicketsInCart.Any(c => usersWithEvent.Contains(c.UserId)) &&
+                                    !s.TicketsInOrder.Any(tInO =>
+                                        tInO.Order.EventDateTimeId == eventDateTimeId &&
+                                        (tInO.Order.IsPurcharsed ||
+                                        (!tInO.Order.IsPurcharsed && tInO.Order.UserId != userId))))
                                 .Select(s => new SeatDto
                                 {
                                     Id = s.Id,
@@ -41,9 +46,9 @@ namespace Eventa.Infrastructure.Repositories
                                 }).ToArray()
                         }).ToArray()
                     }).ToList()
-                }
-           ).FirstOrDefaultAsync();
-           return freeSeats;
+                }).FirstOrDefaultAsync();
+
+            return freeSeats;
         }
 
         public async Task<double> GetSeatPriceAsync(int seatId, int eventDateTimeId, string userId)
