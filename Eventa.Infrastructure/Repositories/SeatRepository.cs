@@ -56,7 +56,7 @@ namespace Eventa.Infrastructure.Repositories
                     tInO.Order.EventDateTimeId == eventDateTimeId && (tInO.Order.IsPurcharsed || (!tInO.Order.IsPurcharsed && tInO.Order.UserId != userId))))
                 .Select(s => 
                     s.PriceMultiplier * s.Row.RowType.Place.Events
-                    .First(e => e.Id == eventDateTimeId).Price
+                    .First(e => e.EventDateTimes.Any(edt => edt.Id == eventDateTimeId)).Price
                 )
                 .FirstOrDefaultAsync();
         }
