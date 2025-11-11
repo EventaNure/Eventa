@@ -7,7 +7,6 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Text.Json.Serialization;
 using System.Linq;
 
 namespace Eventa.Controls;
@@ -167,6 +166,7 @@ public partial class TagContainer : UserControl
         var textBlock = new TextBlock
         {
             Text = tag.Name,
+            FontFamily = new FontFamily("avares://Eventa/Assets/Fonts/Kadwa#Kadwa"),
             VerticalAlignment = VerticalAlignment.Center,
             FontSize = 12
         };
@@ -220,6 +220,7 @@ public partial class TagContainer : UserControl
         {
             Text = tag.Name,
             VerticalAlignment = VerticalAlignment.Center,
+            FontFamily = new FontFamily("avares://Eventa/Assets/Fonts/Kadwa#Kadwa"),
             FontSize = 12
         };
 
@@ -228,6 +229,7 @@ public partial class TagContainer : UserControl
             Text = "+",
             Margin = new Thickness(4, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center,
+            FontFamily = new FontFamily("avares://Eventa/Assets/Fonts/Kadwa#Kadwa"),
             FontSize = 14,
             FontWeight = FontWeight.Bold,
             Foreground = new SolidColorBrush(Color.Parse("#666666"))

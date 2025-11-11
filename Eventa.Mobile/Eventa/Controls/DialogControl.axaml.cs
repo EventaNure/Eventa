@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Eventa.Views.Main;
 using System.Threading.Tasks;
 
 namespace Eventa.Controls;
@@ -26,6 +27,8 @@ public partial class DialogControl : UserControl
     public Task<bool> Show(string title, string description, string noButton, string okButton)
     {
         // Create a new TaskCompletionSource for this dialog instance
+        MainView.Instance.mainViewModel.ShowDialog();
+
         _taskCompletionSource = new TaskCompletionSource<bool>();
 
         // Set the text content

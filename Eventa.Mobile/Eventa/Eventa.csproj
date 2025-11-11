@@ -30,9 +30,13 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="LoadingIndicators.Avalonia" />
+    <PackageReference Include="Mapsui.Avalonia" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\ZoomImageDialog.axaml.cs">
+      <DependentUpon>ZoomImageDialog.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\ImageCarousel.axaml.cs">
       <DependentUpon>ImageCarousel.axaml</DependentUpon>
     </Compile>
@@ -54,6 +58,9 @@
     <Compile Update="Views\Authentication\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Events\SelectPlacesEventView.axaml.cs">
+      <DependentUpon>SelectPlacesEventView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Events\ViewEventView.axaml.cs">
       <DependentUpon>ViewEventView.axaml</DependentUpon>
     </Compile>
@@ -71,6 +78,9 @@
     </Compile>
     <Compile Update="Views\Main\MainWindowView.axaml.cs">
       <DependentUpon>MainWindowView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Ordering\SeatOrderView.axaml.cs">
+      <DependentUpon>SeatOrderView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

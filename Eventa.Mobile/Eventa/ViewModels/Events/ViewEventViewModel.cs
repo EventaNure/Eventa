@@ -1,14 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Events.Organizer;
+using Eventa.Services;
+using Eventa.Views.Events;
+using Eventa.Views.Main;
+using Eventa.Views.Ordering;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace Eventa.ViewModels.Events;
 
 public partial class ViewEventViewModel : ObservableObject
 {
+    private readonly ApiService _apiService = new();
+
     [ObservableProperty]
     private string? _title;
     [ObservableProperty]
@@ -21,6 +28,10 @@ public partial class ViewEventViewModel : ObservableObject
     private string? _address;
     [ObservableProperty]
     private string? prices;
+    [ObservableProperty]
+    private string? _errorMessage;
+    [ObservableProperty]
+    private bool _nothingFound;
     [ObservableProperty]
     private ObservableCollection<EventDateTimes> _dateTimes = new();
 
@@ -39,12 +50,39 @@ public partial class ViewEventViewModel : ObservableObject
         }
     }
 
+    public void ClearFormData()
+    {
+        Title = null;
+        Description = null;
+        Date = null;
+        Image = null;
+        Address = null;
+        Prices = null;
+        DateTimes.Clear();
+        ErrorMessage = null;
+        NothingFound = false;
+    }
+
     [RelayCommand]
-    public void SelectDateTime(EventDateTimes? selectedDateTime)
+    public async Task SelectDateTime(EventDateTimes? selectedDateTime)
     {
         if (selectedDateTime == null)
             return;
 
+        NothingFound = false;
 
+        var (Success, Message, Data) = await _apiService.GetFreeSeatsWithHallPlanAsync(selectedDateTime.Id, MainPageView.Instance.mainPageViewModel.JwtToken);
+        if (!Success || Data == null)
+        {
+            ErrorMessage = Message;
+            NothingFound = true;
+            return;
+        }
+
+        SeatOrderView.Instance.seatOrderViewModel.InsertFormData(Data, Title!, Description!, selectedDateTime.DateTime, Address!);
+
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = SeatOrderView.Instance;
     }
 }
