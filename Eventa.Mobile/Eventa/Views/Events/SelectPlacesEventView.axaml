@@ -1,0 +1,107 @@
+<UserControl
+    x:Class="Eventa.Views.Events.SelectPlacesEventView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Events;assembly=Eventa"
+    d:DesignHeight="600"
+    d:DesignWidth="800"
+    x:CompileBindings="True"
+    x:DataType="vm:SelectPlacesEventViewModel"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+
+        <Style Selector="Button.SelectButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="32,12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.SelectButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
+
+        <Style Selector="Button.CloseButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+
+        <Style Selector="Button.CloseButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FCE0E0" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Map Container  -->
+        <Border
+            Grid.Row="0"
+            Margin="10,10,10,0"
+            Background="#F5F5F5"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1"
+            ClipToBounds="True"
+            CornerRadius="12">
+            <Grid Name="MapGrid" />
+        </Border>
+
+        <!--  Place Info Card (Bottom)  -->
+        <Border
+            Grid.Row="1"
+            Margin="10"
+            Padding="24,20"
+            Background="White"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1"
+            BoxShadow="0 -4 12 0 #15000000"
+            CornerRadius="12">
+            <StackPanel HorizontalAlignment="Center" Spacing="16">
+                <!--  Place Info  -->
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Foreground="#333333"
+                        Text="{Binding SelectedPlaceName}"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="13"
+                        Foreground="#999999"
+                        Text="{Binding SelectedPlaceAddress}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!--  Select Button  -->
+                <Button
+                    Classes="SelectButton"
+                    Command="{Binding SelectPlaceCommand}"
+                    IsEnabled="{Binding HasSelectedPlace}">
+                    <TextBlock Text="Select" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -192,7 +192,7 @@ public partial class BrowseEventsViewModel : ObservableObject
         
         var resultData = Data;
         ViewEventView.Instance.viewEventViewModel.InsertFormData(resultData.Title, resultData.Description, resultData.DateTimes[0].DateTime, 
-            resultData.ImageUrl, resultData.PlaceAddress, resultData.Price.ToString(), resultData.DateTimes);
+            resultData.ImageUrl, resultData.PlaceAddress, $"{resultData.MinPrice} - {resultData.MaxPrice}", resultData.DateTimes);
 
         MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
         MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;

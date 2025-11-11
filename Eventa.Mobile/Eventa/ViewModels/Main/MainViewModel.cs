@@ -11,8 +11,13 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private UserControl? _currentDialog;
 
-    public MainViewModel()
+    public void ShowDialog()
     {
-        _currentDialog = DialogControl.Instance;
+        CurrentDialog = DialogControl.Instance;
+    }
+
+    public void ShowImageDialog()
+    {
+        CurrentDialog = ZoomImageDialog.Instance;
     }
 }

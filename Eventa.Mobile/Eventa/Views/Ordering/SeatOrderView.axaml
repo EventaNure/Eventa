@@ -1,0 +1,273 @@
+<UserControl
+    x:Class="Eventa.Views.Ordering.SeatOrderView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Ordering;assembly=Eventa"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:SeatOrderViewModel"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+
+        <Style Selector="Button.SeatButton">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style Selector="Button.SeatButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Opacity" Value="0.8" />
+        </Style>
+
+        <Style Selector="Button.BuyButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="40,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.BuyButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="16" Spacing="16">
+            <!--  Hall Plan Image  -->
+            <Border
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                ClipToBounds="True"
+                CornerRadius="12"
+                Cursor="Hand"
+                PointerPressed="OnImageClick">
+                <Grid>
+                    <asyncImageLoader:AdvancedImage
+                        Height="250"
+                        Source="{Binding HallPlanUrl}"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        Margin="8"
+                        Padding="6,3"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Background="#AA000000"
+                        FontSize="10"
+                        Foreground="White"
+                        Text="🔍 Click to zoom" />
+                </Grid>
+            </Border>
+
+            <!--  Seat Selection Area  -->
+            <Border
+                Padding="16"
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                CornerRadius="12">
+                <StackPanel Spacing="16">
+                    <!--  Legend  -->
+                    <ItemsControl ItemsSource="{Binding RowTypes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel HorizontalAlignment="Center" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel
+                                    Margin="8,0"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <Ellipse
+                                        Width="12"
+                                        Height="12"
+                                        VerticalAlignment="Center"
+                                        Fill="{Binding Color}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="#666666"
+                                        Text="{Binding Name}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="#999999"
+                                        Text="{Binding PriceRange}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Seat Grid by Row Type  -->
+                    <ScrollViewer
+                        MaxHeight="300"
+                        HorizontalScrollBarVisibility="Auto"
+                        ScrollViewer.IsScrollChainingEnabled="False">
+                        <ItemsControl ItemsSource="{Binding RowTypes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,12,0,0" Spacing="8">
+                                        <!--  Row Type Name  -->
+                                        <TextBlock
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="#333333"
+                                            Text="{Binding Name}" />
+
+                                        <!--  Rows  -->
+                                        <ItemsControl ItemsSource="{Binding Rows}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel
+                                                        Margin="0,4"
+                                                        Orientation="Horizontal"
+                                                        Spacing="4">
+                                                        <!--  Row Number Label  -->
+                                                        <TextBlock
+                                                            Width="60"
+                                                            VerticalAlignment="Center"
+                                                            FontSize="11"
+                                                            Foreground="#999999"
+                                                            Text="{Binding RowNumber, StringFormat='Row {0}'}"
+                                                            TextAlignment="Right" />
+
+                                                        <!--  Seats in Row  -->
+                                                        <ItemsControl ItemsSource="{Binding Seats}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Button
+                                                                        Classes="SeatButton"
+                                                                        Command="{Binding SelectSeatCommand}"
+                                                                        CommandParameter="{Binding}">
+                                                                        <Button.Background>
+                                                                            <SolidColorBrush Color="{Binding BackgroundColor}" />
+                                                                        </Button.Background>
+                                                                        <Button.BorderBrush>
+                                                                            <SolidColorBrush Color="{Binding BorderColor}" />
+                                                                        </Button.BorderBrush>
+                                                                        <TextBlock
+                                                                            HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
+                                                                            Text="{Binding SeatNumber}"
+                                                                            TextAlignment="Center" />
+                                                                    </Button>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
+            <!--  Order Summary Card  -->
+            <Border
+                Padding="16"
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                CornerRadius="12">
+                <StackPanel Spacing="12">
+                    <!--  Event Name  -->
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="#FFB5B5"
+                        Text="{Binding EventName}"
+                        TextAlignment="Center" />
+
+                    <!--  Date & Time  -->
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="#666666"
+                        Text="{Binding EventDateTime, StringFormat='[{0}]'}"
+                        TextAlignment="Center" />
+
+                    <StackPanel Spacing="4">
+                        <ItemsControl ItemsSource="{Binding SelectedSeats}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            FontSize="11"
+                                            Foreground="#666666">
+                                            <Run Text="Sector:" />
+                                            <Run Text="{Binding RowTypeName}" />
+                                            <Run Text=" | Row:" />
+                                            <Run Text="{Binding RowNumber}" />
+                                            <Run Text=" | Place:" />
+                                            <Run Text="{Binding SeatNumber}" />
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            FontSize="11"
+                                            Foreground="#666666"
+                                            Text="{Binding Price, StringFormat='[{0:F2}]'}" />
+
+                                        <Button
+                                            Grid.Column="2"
+                                            Padding="4,0"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            Command="{Binding $parent[ItemsControl].DataContext.RemoveSeatCommand}"
+                                            CommandParameter="{Binding}"
+                                            Content="×"
+                                            FontSize="12"
+                                            Foreground="#AA0000" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!--  Separator  -->
+                    <Border Height="1" Background="#E0E0E0" />
+
+                    <!--  Total Price  -->
+                    <TextBlock
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="#333333"
+                        Text="{Binding TotalPrice, StringFormat='Total price: [{0:F2}]'}"
+                        TextAlignment="Center" />
+
+                    <!--  Buy Button  -->
+                    <Button Classes="BuyButton" Command="{Binding BuyCommand}">
+                        <TextBlock FontWeight="SemiBold" Text="Buy" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

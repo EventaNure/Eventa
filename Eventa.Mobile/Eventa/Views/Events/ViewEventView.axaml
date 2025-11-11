@@ -206,6 +206,19 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
+                <ScrollViewer
+                    MaxWidth="200"
+                    MaxHeight="100"
+                    IsScrollChainingEnabled="False"
+                    IsVisible="{Binding NothingFound}">
+                    <TextBlock
+                        FontFamily="{StaticResource Kadwa}"
+                        Foreground="#FF8181"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                        Text="{Binding ErrorMessage}"
+                        TextAlignment="Center"
+                        TextWrapping="WrapWithOverflow" />
+                </ScrollViewer>
             </StackPanel>
         </ScrollViewer>
     </Grid>

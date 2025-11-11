@@ -30,7 +30,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
     private string? _selectedPlace;
 
     [ObservableProperty]
-    private string _eventTime = string.Empty;
+    private TimeSpan _eventTime = new(12, 0, 0);
 
     [ObservableProperty]
     private string _eventDuration = string.Empty;
@@ -77,6 +77,12 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         AvailablePlaces = [];
         AvailableTags = [];
         AdditionalDates = [];
+
+        SelectPlacesEventView.Instance.selectPlacesEventViewModel.OnPlaceSelected = (selectedPlace) =>
+        {
+            SelectedPlace = $"{selectedPlace.Name} - {selectedPlace.Address}";
+            MainPageView.Instance.mainPageViewModel.CurrentPage = BrowseOrganizerEventsView.Instance;
+        };
     }
 
     public async Task LoadPlacesAndTagsAsync()
@@ -152,7 +158,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             EventId = eventData.Id;
             EventName = eventData.Title;
             Description = eventData.Description;
-            TicketPrice = eventData.Price.ToString("F2");
+            TicketPrice = eventData.MinPrice.ToString("F2");
 
             // Handle duration - it comes as TimeSpan
             EventDuration = ((int)eventData.Duration.TotalMinutes).ToString();
@@ -169,7 +175,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             {
                 var firstDateTime = eventData.DateTimes[0];
                 SelectedEventDate = firstDateTime.DateTime.Date;
-                EventTime = firstDateTime.DateTime.ToString("HH:mm");
+                EventTime = TimeSpan.Parse(firstDateTime.DateTime.ToString("HH:mm"));
                 AdditionalDates.Clear();
                 for (int i = 1; i < eventData.DateTimes.Count; i++)
                 {
@@ -210,7 +216,7 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         EventId = null;
         EventName = string.Empty;
         SelectedPlace = null;
-        EventTime = string.Empty;
+        EventTime = new TimeSpan(12, 0, 0);
         EventDuration = string.Empty;
         Description = string.Empty;
         TicketPrice = string.Empty;
@@ -363,12 +369,6 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(EventTime))
-        {
-            ErrorMessage = "Event time is required";
-            return;
-        }
-
         if (string.IsNullOrWhiteSpace(EventDuration))
         {
             ErrorMessage = "Event duration is required";
@@ -404,12 +404,6 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         if (SelectedTags == null || SelectedTags.Count == 0)
         {
             ErrorMessage = "At least one tag is required";
-            return;
-        }
-
-        if (!TimeSpan.TryParse(EventTime, out _))
-        {
-            ErrorMessage = "Invalid time format. Use HH:MM";
             return;
         }
 
@@ -668,5 +662,12 @@ public partial class CreateEditDeleteOrganizerEventViewModel : ObservableObject
         {
             _ = LoadEventAsync(eventId.Value);
         }
+    }
+
+    [RelayCommand]
+    private void ShowLocationMap()
+    {
+        SelectPlacesEventView.Instance.selectPlacesEventViewModel.LoadPlaces(_placesData);
+        MainPageView.Instance.mainPageViewModel.CurrentPage = SelectPlacesEventView.Instance;
     }
 }

@@ -310,6 +310,7 @@ public partial class MainPageViewModel : ObservableObject
         IsBrowsingOrganizerEvents = false;
         IsBrowsingEventsAsOrganizer = true;
 
+        ViewEventView.Instance.viewEventViewModel.ClearFormData();
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
         await BrowseEventsView.Instance.browseEventsViewModel.SelectTagByNameAsync(tag.TagName);
 
@@ -339,6 +340,7 @@ public partial class MainPageViewModel : ObservableObject
 
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.CancelCommand.Execute(null);
+        ViewEventView.Instance.viewEventViewModel.ClearFormData();
         ResetPages();
     }
 

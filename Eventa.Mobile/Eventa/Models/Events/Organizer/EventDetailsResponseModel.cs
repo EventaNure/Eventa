@@ -15,8 +15,10 @@ public class EventDetailsResponseModel
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
 
-    [JsonPropertyName("price")]
-    public decimal Price { get; set; }
+    [JsonPropertyName("minPrice")]
+    public double MinPrice { get; set; }
+    [JsonPropertyName("maxPrice")]
+    public double MaxPrice { get; set; }
 
     [JsonPropertyName("duration")]
     public TimeSpan Duration { get; set; }
