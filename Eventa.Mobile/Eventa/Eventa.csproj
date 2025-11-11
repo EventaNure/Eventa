@@ -86,5 +86,8 @@
     <Compile Update="Views\Ordering\SeatOrderView.axaml.cs">
       <DependentUpon>SeatOrderView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Tickets\ViewPurchasedTicketsView.axaml.cs">
+      <DependentUpon>ViewPurchasedTicketsView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

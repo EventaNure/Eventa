@@ -12,6 +12,7 @@ using Eventa.Views.Authentication;
 using Eventa.Views.Events;
 using Eventa.Views.Main;
 using Eventa.Views.Ordering;
+using Eventa.Views.Tickets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -307,6 +308,7 @@ public partial class MainPageViewModel : ObservableObject
         ViewEventView.Instance.viewEventViewModel.ClearFormData();
         SeatOrderView.Instance.seatOrderViewModel.ClearFormData();
         TicketOrderView.Instance.ticketOrderViewModel.ClearFormData();
+        ViewPurchasedTicketsView.Instance.viewPurchasedTicketsViewModel.ClearFormData();
     }
 
     [RelayCommand]
@@ -331,10 +333,12 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToMyTickets()
+    private async Task NavigateToMyTickets()
     {
-        // TODO: Implement navigation to My Tickets page
-        // CurrentPage = new MyTicketsView();
+        await ViewPurchasedTicketsView.Instance.viewPurchasedTicketsViewModel.LoadTicketsAsync();
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = ViewPurchasedTicketsView.Instance;
     }
 
     [RelayCommand]

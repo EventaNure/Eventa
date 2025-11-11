@@ -250,42 +250,6 @@
                     Background="#E0E0E0" />
             </Grid>
 
-            <!--  Google Pay Button  -->
-            <Button
-                Classes="GooglePayButton"
-                Command="{Binding PayWithGooglePayCommand}"
-                IsEnabled="{Binding !IsProcessing}"
-                IsVisible="{Binding HasTickets}">
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0" Text="Pay with" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#4285F4"
-                        Text="G" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#EA4335"
-                        Text="o" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#FBBC05"
-                        Text="o" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#4285F4"
-                        Text="g" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#34A853"
-                        Text="l" />
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="#EA4335"
-                        Text="e" />
-                    <TextBlock FontWeight="SemiBold" Text=" Pay" />
-                </StackPanel>
-            </Button>
-
             <!--  Empty Cart Message  -->
             <Border
                 Padding="40,60"

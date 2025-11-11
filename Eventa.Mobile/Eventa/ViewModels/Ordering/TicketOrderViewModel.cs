@@ -214,7 +214,7 @@ public partial class TicketOrderViewModel : ObservableObject
                 ExpiryYear = year,
                 Cvc = Cvc,
                 Amount = (decimal)TotalPrice,
-                Currency = "usd", // Change based on your needs
+                Currency = "uah",
                 Description = $"Ticket purchase for {EventName}",
                 Metadata = new Dictionary<string, string>
             {
@@ -239,30 +239,12 @@ public partial class TicketOrderViewModel : ObservableObject
             }
             else
             {
-                await DialogControl.Instance.Show("Payment Failed", result.Message, "OK");
+                await DialogControl.Instance.Show("Payment Failed", result.Message!, "OK");
             }
         }
         catch (Exception ex)
         {
             await DialogControl.Instance.Show("Payment Failed", $"Payment failed: {ex.Message}", "OK");
-        }
-        finally
-        {
-            IsProcessing = false;
-            SubmitButtonText = "Submit";
-        }
-    }
-
-    [RelayCommand]
-    private async Task PayWithGooglePay()
-    {
-        IsProcessing = true;
-        SubmitButtonText = "Processing...";
-
-        try
-        {
-            await Task.Delay(1500);
-            await DialogControl.Instance.Show("Coming Soon", "Google Pay integration coming soon!", "OK");
         }
         finally
         {
