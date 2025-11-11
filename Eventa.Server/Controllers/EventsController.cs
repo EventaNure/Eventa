@@ -112,7 +112,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEvents(int pageNumber = 1, int pageSize = 10, int[] tagIds = null!, DateOnly? startDate = null!, DateOnly? endDate = null!, string? subName = null!)
+        public async Task<IActionResult> GetEvents(int pageNumber = 1, int pageSize = 10, [FromQuery] int[] tagIds = null!, DateOnly? startDate = null!, DateOnly? endDate = null!, string? subName = null!)
         {
             tagIds = tagIds ?? Array.Empty<int>();
             var events = await _eventService.GetEventsAsync(pageNumber, pageSize, tagIds, startDate, endDate, subName);
