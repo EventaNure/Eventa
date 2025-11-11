@@ -12,8 +12,6 @@ namespace Eventa.ViewModels.Events;
 
 public partial class BrowseOrganizerEventsViewModel : ObservableObject
 {
-    private readonly ApiService _apiService;
-    
     [ObservableProperty]
     private ObservableCollection<OrganizerEventResponseModel> _events = [];
 
@@ -37,7 +35,6 @@ public partial class BrowseOrganizerEventsViewModel : ObservableObject
 
     public BrowseOrganizerEventsViewModel()
     {
-        _apiService = new ApiService();
         _createPage = CreateEditDeleteOrganizerEventView.Instance;
         _editEventCommand = new AsyncRelayCommand<OrganizerEventResponseModel>(EditEventAsync);
     }

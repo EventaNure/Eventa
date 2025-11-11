@@ -212,6 +212,13 @@
                         Text="{Binding EventDateTime, StringFormat='[{0}]'}"
                         TextAlignment="Center" />
 
+                    <TextBlock
+                        FontSize="16"
+                        Foreground="#666666"
+                        IsVisible="{Binding HasSelectedSeats}"
+                        Text="{Binding TimeLeftDisplay}"
+                        TextAlignment="Center" />
+
                     <StackPanel Spacing="4">
                         <ItemsControl ItemsSource="{Binding SelectedSeats}">
                             <ItemsControl.ItemTemplate>

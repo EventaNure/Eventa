@@ -10,7 +10,7 @@ public partial class RowTypeViewModel : ObservableObject
     private string _name = string.Empty;
 
     [ObservableProperty]
-    private IBrush _color = Brushes.Gray;
+    private Color _color = Colors.Gray;
 
     [ObservableProperty]
     private string _priceRange = "[price]";

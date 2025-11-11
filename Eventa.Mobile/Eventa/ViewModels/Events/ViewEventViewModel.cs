@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Events.Organizer;
 using Eventa.Services;
-using Eventa.Views.Events;
 using Eventa.Views.Main;
 using Eventa.Views.Ordering;
 using System;
@@ -33,7 +32,7 @@ public partial class ViewEventViewModel : ObservableObject
     [ObservableProperty]
     private bool _nothingFound;
     [ObservableProperty]
-    private ObservableCollection<EventDateTimes> _dateTimes = new();
+    private ObservableCollection<EventDateTimes> _dateTimes = [];
 
     public void InsertFormData(string title, string description, DateTime date, string? image, string address, string prices, List<EventDateTimes> dateTimes)
     {
@@ -69,9 +68,11 @@ public partial class ViewEventViewModel : ObservableObject
         if (selectedDateTime == null)
             return;
 
+        string jwtToken = MainPageView.Instance.mainPageViewModel.JwtToken;
+
         NothingFound = false;
 
-        var (Success, Message, Data) = await _apiService.GetFreeSeatsWithHallPlanAsync(selectedDateTime.Id, MainPageView.Instance.mainPageViewModel.JwtToken);
+        var (Success, Message, Data) = await _apiService.GetFreeSeatsWithHallPlanAsync(selectedDateTime.Id, jwtToken);
         if (!Success || Data == null)
         {
             ErrorMessage = Message;
@@ -79,7 +80,7 @@ public partial class ViewEventViewModel : ObservableObject
             return;
         }
 
-        SeatOrderView.Instance.seatOrderViewModel.InsertFormData(Data, Title!, Description!, selectedDateTime.DateTime, Address!);
+        await SeatOrderView.Instance.seatOrderViewModel.InsertFormData(Data, Title!, selectedDateTime, jwtToken);
 
         MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
         MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
