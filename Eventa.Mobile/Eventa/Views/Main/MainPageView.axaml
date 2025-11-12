@@ -259,6 +259,11 @@
                                             <Separator Background="#E0E0E0" />
                                             <Button
                                                 Classes="DropdownItem"
+                                                Command="{Binding NavigateToMyCartCommand}"
+                                                Content="My Cart" />
+                                            <Separator Background="#E0E0E0" />
+                                            <Button
+                                                Classes="DropdownItem"
                                                 Command="{Binding LogoutCommand}"
                                                 Content="Log Out"
                                                 Foreground="#FF8181" />

@@ -31,6 +31,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="LoadingIndicators.Avalonia" />
     <PackageReference Include="Mapsui.Avalonia" />
+    <PackageReference Include="Stripe.net" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,8 +80,14 @@
     <Compile Update="Views\Main\MainWindowView.axaml.cs">
       <DependentUpon>MainWindowView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Ordering\TicketOrderView.axaml.cs">
+      <DependentUpon>TicketOrderView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Ordering\SeatOrderView.axaml.cs">
       <DependentUpon>SeatOrderView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tickets\ViewPurchasedTicketsView.axaml.cs">
+      <DependentUpon>ViewPurchasedTicketsView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

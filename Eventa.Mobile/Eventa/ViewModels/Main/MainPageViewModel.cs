@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Config;
+using Eventa.Controls;
 using Eventa.Converters;
 using Eventa.Models.Authentication;
 using Eventa.Models.Events;
@@ -10,6 +11,8 @@ using Eventa.Services;
 using Eventa.Views.Authentication;
 using Eventa.Views.Events;
 using Eventa.Views.Main;
+using Eventa.Views.Ordering;
+using Eventa.Views.Tickets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -301,6 +304,11 @@ public partial class MainPageViewModel : ObservableObject
         OrganizerEvents = null;
         CurrentPage = BrowseEventsView.Instance;
         OrganizerEvents = BrowseOrganizerEventsView.Instance;
+
+        ViewEventView.Instance.viewEventViewModel.ClearFormData();
+        SeatOrderView.Instance.seatOrderViewModel.ClearFormData();
+        TicketOrderView.Instance.ticketOrderViewModel.ClearFormData();
+        ViewPurchasedTicketsView.Instance.viewPurchasedTicketsViewModel.ClearFormData();
     }
 
     [RelayCommand]
@@ -325,10 +333,71 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToMyTickets()
+    private async Task NavigateToMyTickets()
     {
-        // TODO: Implement navigation to My Tickets page
-        // CurrentPage = new MyTicketsView();
+        await ViewPurchasedTicketsView.Instance.viewPurchasedTicketsViewModel.LoadTicketsAsync();
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = ViewPurchasedTicketsView.Instance;
+    }
+
+    [RelayCommand]
+    private async Task NavigateToMyCart()
+    {
+        string jwtToken = MainPageView.Instance.mainPageViewModel.JwtToken;
+
+        if (string.IsNullOrEmpty(jwtToken))
+        {
+            await DialogControl.Instance.Show("Not Logged In", "You must be logged in to view your cart.", "OK");
+            return;
+        }
+
+        var (success, message, cartData) = await _apiService.GetTicketsInCartByUserAsync(jwtToken);
+
+        if (!success)
+        {
+            await DialogControl.Instance.Show("Cart Error", message, "OK");
+            return;
+        }
+
+        if (cartData == null || cartData.Tickets.Count == 0)
+        {
+            await DialogControl.Instance.Show("Empty Cart", "You have no tickets in your cart.", "OK");
+            return;
+        }
+
+        int eventDateTimeId = cartData.EventDateTimeId;
+
+        var (hallSuccess, hallMessage, hallData) = await _apiService.GetFreeSeatsWithHallPlanAsync(eventDateTimeId, jwtToken);
+        if (!hallSuccess || hallData == null)
+        {
+            await DialogControl.Instance.Show("Load Failed", hallMessage, "OK");
+            return;
+        }
+
+        var settings = await _settingsService.LoadAsync();
+
+        string eventName = cartData.EventName ?? "My Event";
+
+        DateTime dateTime = DateTime.Now;
+        if (DateTime.TryParse(settings.CartDateTime, out DateTime result))
+        {
+            dateTime = result;
+        }
+
+        var eventDateTimes = new EventDateTimes
+        {
+            Id = eventDateTimeId,
+            DateTime = dateTime
+        };
+
+        var seatOrderVm = SeatOrderView.Instance.seatOrderViewModel;
+
+        await seatOrderVm.InsertFormData(hallData, eventName, eventDateTimes, jwtToken);
+
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = SeatOrderView.Instance;
     }
 
     [RelayCommand]
@@ -340,7 +409,7 @@ public partial class MainPageViewModel : ObservableObject
 
         BrowseOrganizerEventsView.Instance.browseOrganizerEventsViewModel.IsCompact = true;
         CreateEditDeleteOrganizerEventView.Instance.createEditDeleteOrganizerEventViewModel.CancelCommand.Execute(null);
-        ViewEventView.Instance.viewEventViewModel.ClearFormData();
+
         ResetPages();
     }
 

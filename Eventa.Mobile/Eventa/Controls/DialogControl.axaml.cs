@@ -24,7 +24,7 @@ public partial class DialogControl : UserControl
         InitializeComponent();
     }
 
-    public Task<bool> Show(string title, string description, string noButton, string okButton)
+    public Task<bool> Show(string title, string description, string noButton, string? okButton = null)
     {
         // Create a new TaskCompletionSource for this dialog instance
         MainView.Instance.mainViewModel.ShowDialog();
@@ -35,7 +35,15 @@ public partial class DialogControl : UserControl
         TitleTextBlock.Text = title;
         DescriptionTextBlock.Text = description;
         NoButton.Content = noButton;
-        OkButton.Content = okButton;
+        if (string.IsNullOrEmpty(okButton))
+        {
+            OkButton.IsVisible = false;
+        }
+        else
+        {
+            OkButton.IsVisible = true;
+            OkButton.Content = okButton;
+        }
 
         // Show the dialog
         DialogOverlay.IsVisible = true;

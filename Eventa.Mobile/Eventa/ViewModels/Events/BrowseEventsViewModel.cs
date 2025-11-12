@@ -28,6 +28,15 @@ public partial class BrowseEventsViewModel : ObservableObject
     private string _errorMessage = "";
 
     [ObservableProperty]
+    private string _selectedDateFilter = "TopEvents";
+
+    [ObservableProperty]
+    private DateTimeOffset? _customStartDate;
+
+    [ObservableProperty]
+    private DateTimeOffset? _customEndDate;
+
+    [ObservableProperty]
     private AsyncRelayCommand _loadTagsCommand;
     [ObservableProperty]
     private AsyncRelayCommand _applyFiltersCommand;
@@ -122,11 +131,62 @@ public partial class BrowseEventsViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task SetDateFilter(string filterType)
+    {
+        SelectedDateFilter = filterType;
+        CustomStartDate = null;
+        CustomEndDate = null;
+
+        var now = DateTime.Now;
+
+        switch (filterType)
+        {
+            case "TopEvents":
+                // No date filter, just top events
+                break;
+            case "AnyDate":
+                // No date restriction
+                break;
+            case "Today":
+                CustomStartDate = new DateTimeOffset(now.Date);
+                CustomEndDate = new DateTimeOffset(now.Date.AddDays(1).AddSeconds(-1));
+                break;
+            case "ThisWeek":
+                var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+                var endOfWeek = startOfWeek.AddDays(7).AddSeconds(-1);
+                CustomStartDate = new DateTimeOffset(startOfWeek);
+                CustomEndDate = new DateTimeOffset(endOfWeek);
+                break;
+            case "OnWeekend":
+                var daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)now.DayOfWeek + 7) % 7;
+                if (daysUntilSaturday == 0 && now.DayOfWeek != DayOfWeek.Saturday)
+                    daysUntilSaturday = 7;
+
+                var nextSaturday = now.Date.AddDays(daysUntilSaturday);
+                var nextSunday = nextSaturday.AddDays(1).AddSeconds(-1);
+                CustomStartDate = new DateTimeOffset(nextSaturday);
+                CustomEndDate = new DateTimeOffset(nextSunday);
+                break;
+            case "Custom":
+                // Will be set via date pickers
+                return; // Don't apply filters yet
+        }
+
+        await ApplyFiltersAsync();
+    }
+
+    [RelayCommand]
+    private async Task ApplyCustomDateRange()
+    {
+        SelectedDateFilter = "Custom";
+        await ApplyFiltersAsync();
+    }
+
     private async Task ApplyFiltersAsync()
     {
         try
         {
-            // IsLoading = true;
             ErrorMessage = string.Empty;
 
             var selectedTagIds = Tags
@@ -138,7 +198,9 @@ public partial class BrowseEventsViewModel : ObservableObject
             {
                 PageNumber = 1,
                 PageSize = 50,
-                TagIds = selectedTagIds.Any() ? selectedTagIds : null
+                TagIds = selectedTagIds.Any() ? selectedTagIds : null,
+                StartDate = CustomStartDate?.DateTime.ToString("yyyy-MM-dd"),
+                EndDate = CustomEndDate?.DateTime.ToString("yyyy-MM-dd")
             };
 
             (bool Success, string Message, List<EventResponseModel>? Data) = await _apiService.GetEventsAsync(request);
@@ -169,12 +231,6 @@ public partial class BrowseEventsViewModel : ObservableObject
         {
             ErrorMessage = $"Error applying filters: {ex.Message}";
         }
-        /*
-        finally
-        {
-            IsLoading = false;
-        }
-        */
     }
 
     [RelayCommand]
@@ -189,9 +245,9 @@ public partial class BrowseEventsViewModel : ObservableObject
             ErrorMessage = Message;
             return;
         }
-        
+
         var resultData = Data;
-        ViewEventView.Instance.viewEventViewModel.InsertFormData(resultData.Title, resultData.Description, resultData.DateTimes[0].DateTime, 
+        ViewEventView.Instance.viewEventViewModel.InsertFormData(resultData.Title, resultData.Description, resultData.DateTimes[0].DateTime,
             resultData.ImageUrl, resultData.PlaceAddress, $"{resultData.MinPrice} - {resultData.MaxPrice}", resultData.DateTimes);
 
         MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;

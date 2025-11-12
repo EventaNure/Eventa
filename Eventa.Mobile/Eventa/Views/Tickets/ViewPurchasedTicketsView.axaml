@@ -1,0 +1,156 @@
+<UserControl
+    x:Class="Eventa.Views.Tickets.ViewPurchasedTicketsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:li="using:LoadingIndicators.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Tickets;assembly=Eventa"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:ViewPurchasedTicketsViewModel"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+
+        <Style Selector="Button.ViewQRButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="140" />
+        </Style>
+
+        <Style Selector="Button.ViewQRButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <!--  Loading Indicator  -->
+        <li:LoadingIndicator
+            Width="50"
+            Height="50"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="#FFB5B5"
+            IsActive="{Binding IsLoading}"
+            IsVisible="{Binding IsLoading}"
+            Mode="Wave"
+            SpeedRatio="1" />
+
+        <!--  Main Content  -->
+        <ScrollViewer IsVisible="{Binding !IsLoading}">
+            <StackPanel Margin="20" Spacing="16">
+                <!--  Page Title  -->
+                <TextBlock
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Foreground="#666666"
+                    Text="My Tickets"
+                    TextAlignment="Center" />
+
+                <!--  Tickets List  -->
+                <ItemsControl ItemsSource="{Binding Orders}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Margin="0,0,0,16"
+                                Padding="20"
+                                Background="White"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="1"
+                                CornerRadius="12">
+                                <StackPanel Spacing="12">
+                                    <!--  Event Name  -->
+                                    <TextBlock
+                                        FontSize="15"
+                                        FontWeight="SemiBold"
+                                        Foreground="#FFB5B5"
+                                        Text="{Binding EventName}"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+
+                                    <!--  Date and Time (placeholder - you'll need to fetch this)  -->
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="#999999"
+                                        Text="[Date, time]"
+                                        TextAlignment="Center" />
+
+                                    <!--  Ticket Details Background  -->
+                                    <Border
+                                        Padding="12"
+                                        Background="#F5F5F5"
+                                        CornerRadius="8">
+                                        <StackPanel Spacing="4">
+                                            <ItemsControl ItemsSource="{Binding Tickets}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Spacing="2">
+                                                            <TextBlock
+                                                                FontSize="11"
+                                                                Foreground="#666666"
+                                                                Text="{Binding RowTypeName, StringFormat='Section: {0}'}" />
+                                                            <TextBlock FontSize="11" Foreground="#666666">
+                                                                <Run Text="Row:" />
+                                                                <Run Text="{Binding Row}" />
+                                                                <Run Text=" | Place:" />
+                                                                <Run Text="{Binding SeatNumber}" />
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!--  View QR Code Button  -->
+                                    <Button
+                                        Classes="ViewQRButton"
+                                        Command="{Binding $parent[UserControl].((vm:ViewPurchasedTicketsViewModel)DataContext).ViewQRCodeCommand}"
+                                        CommandParameter="{Binding}">
+                                        <TextBlock FontWeight="SemiBold" Text="View QR code" />
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--  No Tickets Message  -->
+                <Border Padding="40" IsVisible="{Binding NoTickets}">
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="#999999"
+                        Text="You haven't purchased any tickets yet."
+                        TextAlignment="Center" />
+                </Border>
+
+                <!--  Error Message  -->
+                <Border
+                    Padding="20"
+                    Background="#FFF5F5"
+                    BorderBrush="#FFB5B5"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    IsVisible="{Binding HasError}">
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="#FF8181"
+                        Text="{Binding ErrorMessage}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

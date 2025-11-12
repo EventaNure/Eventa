@@ -18,6 +18,7 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="LoadingIndicators.Avalonia" Version="11.0.11.1" />
     <PackageVersion Include="Mapsui.Avalonia" Version="5.0.0" />
+    <PackageVersion Include="Stripe.net" Version="49.2.0" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
   </ItemGroup>
 </Project>
