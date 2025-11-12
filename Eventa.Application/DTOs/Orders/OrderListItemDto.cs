@@ -15,5 +15,7 @@ namespace Eventa.Application.DTOs.Orders
         public IEnumerable<TicketDto> Tickets { get; set; } = [];
 
         public double TotalCost { get; set; }
+
+        public bool IsQrTokenUsed { get; set; }
     }
 }

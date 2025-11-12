@@ -14,6 +14,8 @@
 
         public string Address { get; set; } = string.Empty;
 
+        public int TicketsSold { get; set; }
+
         public string? ImageUrl { get; set; } = string.Empty;
     }
 }

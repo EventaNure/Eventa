@@ -64,6 +64,7 @@ namespace Eventa.Infrastructure.Repositories
                         .OrderByDescending(edt => edt.StartDateTime)
                         .Select(edt => edt.StartDateTime)
                         .First(),
+                    TicketsSold = e.EventDateTimes.SelectMany(edt => edt.Orders.Where(o => o.IsPurcharsed).SelectMany(o => o.Tickets)).Count()
                 })
                 .ToListAsync();
         }

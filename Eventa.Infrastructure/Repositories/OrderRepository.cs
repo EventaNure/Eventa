@@ -22,12 +22,14 @@ namespace Eventa.Infrastructure.Repositories
                     EventName = o.EventDateTime.Event.Title,
                     OrderId = o.Id,
                     EventDateTime = o.EventDateTime.StartDateTime,
+                    IsQrTokenUsed = o.IsQrTokenUsed,
                     Tickets = o.Tickets.Select(t => new TicketDto
                     {
                         Price = t.Price,
                         Row = t.Seat.Row.RowNumber,
                         RowTypeName = t.Seat.Row.RowType.Name,
-                        SeatNumber = t.Seat.SeatNumber
+                        SeatNumber = t.Seat.SeatNumber,
+                        SeatId = t.SeatId
                     }),
                     TotalCost = o.Tickets.Sum(t => t.Price)
                 })
@@ -39,6 +41,29 @@ namespace Eventa.Infrastructure.Repositories
             await _dbSet
                 .Where(o => !o.IsPurcharsed && o.ExpireAt < DateTime.UtcNow)
                 .ExecuteDeleteAsync();
+        }
+
+        public async Task<OrderListItemDto?> GetOrderByQrTokenAsync(Guid qrToken)
+        {
+            return await _dbSet
+                .Where(o => o.QrToken == qrToken)
+                .Select(o => new OrderListItemDto
+                {
+                    EventDateTimeId = o.EventDateTimeId,
+                    EventName = o.EventDateTime.Event.Title,
+                    OrderId = o.Id,
+                    IsQrTokenUsed = o.IsQrTokenUsed,
+                    TotalCost = o.Tickets.Sum(t => t.Price),
+                    Tickets = o.Tickets.Select(t => new TicketDto
+                    {
+                        Price = t.Price,
+                        Row = t.Seat.Row.RowNumber,
+                        RowTypeName = t.Seat.Row.RowType.Name,
+                        SeatNumber = t.Seat.SeatNumber,
+                        SeatId = t.SeatId
+                    }),
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

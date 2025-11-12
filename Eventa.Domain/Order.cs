@@ -17,5 +17,9 @@
         public DateTime? CreationDateTime { get; set; }
 
         public ICollection<TicketInOrder> Tickets { get; set; } = [];
+
+        public Guid QrToken { get; set; }
+
+        public bool IsQrTokenUsed { get; set; }
     }
 }

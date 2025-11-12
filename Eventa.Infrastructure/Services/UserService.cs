@@ -176,7 +176,7 @@ namespace Eventa.Infrastructure.Services
 
             var user = getUserResult.Value;
 
-            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            if (user.TicketsExpireAt == null || user.TicketsExpireAt <= DateTime.UtcNow)
             {
                 return Result.Fail(new Error("Cart is empty").WithMetadata("Code", "CartEmpty"));
             }
@@ -194,7 +194,7 @@ namespace Eventa.Infrastructure.Services
 
             var user = getUserResult.Value;
 
-            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            if (user.TicketsExpireAt == null || user.TicketsExpireAt <= DateTime.UtcNow)
             {
                 return Result.Fail(new Error("Tickets not booked").WithMetadata("Code", "TicketsNotBooked"));
             }
@@ -214,7 +214,7 @@ namespace Eventa.Infrastructure.Services
 
             bool isUpdated = false;
 
-            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            if (user.TicketsExpireAt == null || user.TicketsExpireAt <= DateTime.UtcNow)
             {
                 user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromMinutes(bookingTimeInMinutes);
                 isUpdated = true;
@@ -230,6 +230,23 @@ namespace Eventa.Infrastructure.Services
             {
                 await _userManager.UpdateAsync(user);
             }
+
+            return Result.Ok();
+        }
+
+        public async Task<Result> DeleteInformationAboutCartAsync(string userId)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+
+            var user = getUserResult.Value;
+
+            user.EventDateTimeId = null;
+            user.TicketsExpireAt = null;
+            await _userManager.UpdateAsync(user);
 
             return Result.Ok();
         }

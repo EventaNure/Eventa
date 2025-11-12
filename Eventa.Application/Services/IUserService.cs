@@ -7,6 +7,7 @@ namespace Eventa.Application.Services
     {
         Task<Result> ChangeBookingExpireTimeAsync(string userId, int eventDateTime);
         Task<Result<ConfirmEmailResultDto>> ConfirmEmailAsync(ConfirmEmailDto dto);
+        Task<Result> DeleteInformationAboutCartAsync(string userId);
         Task<Result<DateTime>> GetBookingDateTimeExpireAsync(string userId);
         Task<Result<TimeSpan>> GetBookingTimeLeftAsync(string userId);
         Task<Result<LoginResultDto>> LoginAsync(LoginUserDto dto);

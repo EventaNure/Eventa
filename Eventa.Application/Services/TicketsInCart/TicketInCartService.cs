@@ -29,9 +29,10 @@ namespace Eventa.Application.Services.TicketsInCart
                 return Result.Fail(new Error("Seat for this event not exists or already taken").WithMetadata("Code", "SeatForThisEventNotExists"));
             }
 
-            await _userService.ChangeBookingExpireTimeAsync(userId, eventDateTimeId);
-
             await cartRepository.DeleteTicketsForOtherEventDateTimeAsync(userId, eventDateTimeId);
+
+            await _userService.ChangeBookingExpireTimeAsync(userId, eventDateTimeId);
+            
             var cart = await cartRepository.GetAsync(userId, seatId);
             if (cart == null)
             {

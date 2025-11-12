@@ -70,5 +70,32 @@ namespace Eventa.Server.Controllers
 
             return Ok(result.Value);
         }
+
+        [HttpGet("QR-code")]
+        [Authorize]
+        public async Task<IActionResult> GenerateQRCode(int orderId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _orderService.GenerateQRCodeAsync(orderId, userId);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("check-QR-code")]
+        [Authorize]
+        public async Task<IActionResult> CheckQRCode(Guid qrToken)
+        {
+            var result = await _orderService.CheckOrderQRCode(qrToken);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Value);
+        }
     }
 }

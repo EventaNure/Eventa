@@ -41,7 +41,7 @@ namespace Eventa.Infrastructure.Repositories
                         SeatId = c.Seat.Id,
                         SeatNumber = c.Seat.SeatNumber
                     }),
-                    ExpireDateTime = u.TicketsExpireAt,
+                    ExpireDateTime = u.TicketsExpireAt ?? new DateTime(),
                     TotalCost = u.TicketsInCart.Sum(c => c.Price)
                 })
                 .FirstOrDefaultAsync();

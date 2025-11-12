@@ -3,6 +3,7 @@ using Eventa.Application.DTOs.Orders;
 using Eventa.Application.DTOs.TicketInCarts;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
+using Eventa.Infrastructure.Services;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
@@ -17,13 +18,15 @@ namespace Eventa.Application.Services.Orders
         private readonly IUserService _userService;
         private readonly ILogger<Order> _logger;
         private readonly IMapper _mapper;
+        private readonly IQRCodeService _qRCodeService;
 
-        public OrderService(IUnitOfWork unitOfWork, IPaymentService paymentService, IUserService userService, ILogger<Order> logger, IMapper mapper) {
+        public OrderService(IUnitOfWork unitOfWork, IPaymentService paymentService, IUserService userService, ILogger<Order> logger, IMapper mapper, IQRCodeService qRCodeService) {
             _unitOfWork = unitOfWork;
             _paymentService = paymentService;
             _userService = userService;
             _logger = logger;
             _mapper = mapper;
+            _qRCodeService = qRCodeService;
         }
 
         public async Task<Result<OrderDto>> CreateOrderAsync(string userId, string successUrl, string cancleUrl)
@@ -83,6 +86,7 @@ namespace Eventa.Application.Services.Orders
                     Price = t.Price,
                     SeatId = t.SeatId
                 }).ToList(),
+                QrToken = Guid.NewGuid(),
                 ExpireAt = getBookingDateTimeExpireResult.Value
             };
             orderDbSet.Add(order);
@@ -126,9 +130,26 @@ namespace Eventa.Application.Services.Orders
             order.IsPurcharsed = true;
             var cartRepository = _unitOfWork.GetCartRepository();
             await cartRepository.DeleteTicketsForOtherEventDateTimeAsync(order.UserId, 0);
+            await _userService.DeleteInformationAboutCartAsync(order.UserId);
             await _unitOfWork.CommitAsync();
             _logger.LogError("IsPurcharsed change");
             return Result.Ok();
+        }
+
+        public async Task<Result<string>> GenerateQRCodeAsync(int orderId, string userId)
+        {
+            var orderRepository = _unitOfWork.GetDbSet<Order>();
+
+            var order = await orderRepository.GetAsync(orderId);
+
+            if (order == null)
+            {
+                return Result.Fail(new Error("Order not found").WithMetadata("Code", "OrderNotFound"));
+            }
+
+            var qrCOde = _qRCodeService.GenerateQrCode(order.QrToken);
+
+            return Result.Ok(qrCOde);
         }
 
         public async Task<Result> DeleteExpireOrdersAsync()
@@ -163,6 +184,28 @@ namespace Eventa.Application.Services.Orders
             var orders = await orderRepository.GetOrdersByUserAsync(userId);
 
             return Result.Ok(orders);
+        }
+
+        public async Task<Result<OrderListItemDto>> CheckOrderQRCode(Guid qrToken)
+        {
+            var orderRepository = _unitOfWork.GetOrderRepository();
+
+            var order = await orderRepository.GetOrderByQrTokenAsync(qrToken);
+
+            if (order == null)
+            {
+                return Result.Fail(new Error("Order not found").WithMetadata("Code", "OrderNotFound"));
+            }
+
+            if (order.IsQrTokenUsed)
+            {
+                return Result.Fail(new Error("QR code already used").WithMetadata("Code", "QRCodeAlreadyUsed"));
+            }
+            var o = await orderRepository.GetAsync(order.OrderId);
+            o.IsQrTokenUsed = true;
+            await _unitOfWork.CommitAsync();
+
+            return order;
         }
     }
 }

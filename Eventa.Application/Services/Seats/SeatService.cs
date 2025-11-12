@@ -9,14 +9,22 @@ namespace Eventa.Application.Services.Sections
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
+        private readonly IUserService _userService;
 
-        public SeatService(IUnitOfWork unitOfWork, IFileService fileService) {
+        public SeatService(IUnitOfWork unitOfWork, IFileService fileService, IUserService userService) {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
+            _userService = userService;
         }
 
         public async Task<Result<FreeSeatsWithHallPlan>> GetFreeSeatsWithHallPlan(int eventDateTimeId, string? userId)
         {
+            if (userId != null)
+            {
+                var cartRepository = _unitOfWork.GetCartRepository();
+                await cartRepository.DeleteTicketsForOtherEventDateTimeAsync(userId, eventDateTimeId);
+                await _userService.DeleteInformationAboutCartAsync(userId);
+            }
             var sectionRepository = _unitOfWork.GetSeatRepository();
 
             var getFreeSeatsResultDto = await sectionRepository.GetFreeSeatsAsync(eventDateTimeId, userId);

@@ -15,7 +15,7 @@ namespace Eventa.Infrastructure
         [MaxLength(100)]
         public string? Organization { get; set; }
 
-        public DateTime TicketsExpireAt { get; set; }
+        public DateTime? TicketsExpireAt { get; set; }
 
         public int? EventDateTimeId { get; set; }
 
