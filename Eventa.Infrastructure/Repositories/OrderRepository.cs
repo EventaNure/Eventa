@@ -14,12 +14,14 @@ namespace Eventa.Infrastructure.Repositories
 
         public async Task<IEnumerable<OrderListItemDto>> GetOrdersByUserAsync(string userId)
         {
-            return await _dbSet.Where(o => o.UserId == userId)
+            return await _dbSet
+                .Where(o => o.UserId == userId && o.IsPurcharsed)
                 .Select(o => new OrderListItemDto
                 {
                     EventDateTimeId = o.EventDateTimeId,
                     EventName = o.EventDateTime.Event.Title,
                     OrderId = o.Id,
+                    EventDateTime = o.EventDateTime.StartDateTime,
                     Tickets = o.Tickets.Select(t => new TicketDto
                     {
                         Price = t.Price,

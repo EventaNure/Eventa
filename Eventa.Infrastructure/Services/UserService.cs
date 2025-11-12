@@ -9,6 +9,8 @@ namespace Eventa.Infrastructure.Services
 {
     public class UserService : IUserService
     {
+        private const int bookingTimeInMinutes = 15;
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -209,9 +211,25 @@ namespace Eventa.Infrastructure.Services
             }
 
             var user = getUserResult.Value;
-            user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromMinutes(15);
-            user.EventDateTimeId = eventDateTimeId;
-            await _userManager.UpdateAsync(user);
+
+            bool isUpdated = false;
+
+            if (user.TicketsExpireAt <= DateTime.UtcNow)
+            {
+                user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                isUpdated = true;
+            }
+
+            if (user.EventDateTimeId != eventDateTimeId)
+            {
+                user.EventDateTimeId = eventDateTimeId;
+                isUpdated = true;
+            }
+
+            if (isUpdated)
+            {
+                await _userManager.UpdateAsync(user);
+            }
 
             return Result.Ok();
         }

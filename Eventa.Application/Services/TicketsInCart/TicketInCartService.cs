@@ -29,16 +29,21 @@ namespace Eventa.Application.Services.TicketsInCart
                 return Result.Fail(new Error("Seat for this event not exists or already taken").WithMetadata("Code", "SeatForThisEventNotExists"));
             }
 
-            var cart = new TicketInCart
-            {
-                SeatId = seatId,
-                UserId = userId,
-                Price = price
-            };
-            cartRepository.Add(cart);
             await _userService.ChangeBookingExpireTimeAsync(userId, eventDateTimeId);
+
             await cartRepository.DeleteTicketsForOtherEventDateTimeAsync(userId, eventDateTimeId);
-            await _unitOfWork.CommitAsync();
+            var cart = await cartRepository.GetAsync(userId, seatId);
+            if (cart == null)
+            {
+                cart = new TicketInCart
+                {
+                    SeatId = seatId,
+                    UserId = userId,
+                    Price = price
+                };
+                cartRepository.Add(cart);
+                await _unitOfWork.CommitAsync();
+            }
 
             var cartDataDto = await cartRepository.GetCartsByUserAsync(userId);
             if (cartDataDto == null)

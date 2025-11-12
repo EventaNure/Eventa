@@ -28,7 +28,7 @@ namespace Eventa.Infrastructure.Repositories
         public async Task<CartDataDto?> GetCartsByUserAsync(string userId)
         {
             return await _dbContext.Users
-                .Where(u => u.Id == userId && u.EventDateTime != null)
+                .Where(u => u.Id == userId && u.EventDateTime != null && u.TicketsExpireAt > DateTime.UtcNow)
                 .Select(u => new CartDataDto
                 {
                     EventDateTimeId = u.EventDateTime!.Id,
@@ -57,7 +57,8 @@ namespace Eventa.Infrastructure.Repositories
         public async Task DeleteTicketsForOtherEventDateTimeAsync(string userId, int eventDateTimeId)
         {
             await _dbContext.TicketsInCart
-                .Where(cart => _dbContext.Users.Any(u => u.Id == cart.UserId && u.EventDateTimeId != eventDateTimeId))
+                .Where(cart => _dbContext.Users.Any(u => u.Id == cart.UserId && u.Id == userId && 
+                u.EventDateTimeId != eventDateTimeId))
                 .ExecuteDeleteAsync();
         }
     }

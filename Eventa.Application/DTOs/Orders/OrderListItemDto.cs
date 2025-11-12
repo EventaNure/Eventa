@@ -8,6 +8,8 @@ namespace Eventa.Application.DTOs.Orders
 
         public int EventDateTimeId { get; set; }
 
+        public DateTime EventDateTime { get; set; }
+
         public string EventName { get; set; } = string.Empty;
 
         public IEnumerable<TicketDto> Tickets { get; set; } = [];
