@@ -8,7 +8,6 @@ using Eventa.Models.Carting;
 using Eventa.Models.Events.Organizer;
 using Eventa.Models.Seats;
 using Eventa.Services;
-using Eventa.Views.Events;
 using Eventa.Views.Main;
 using Eventa.Views.Ordering;
 using System;
@@ -93,7 +92,7 @@ public partial class SeatOrderViewModel : ObservableObject
 
         RebuildRowTypes(data);
 
-        var (cartSuccess, cartMessage, cartData) = await _apiService.GetTicketsInCartByUserAsync(jwtToken);
+        var (cartSuccess, _, cartData) = await _apiService.GetTicketsInCartByUserAsync(jwtToken);
 
         if (cartSuccess && cartData != null && cartData.Tickets.Count > 0)
         {
@@ -381,7 +380,7 @@ public partial class SeatOrderViewModel : ObservableObject
 
             var ticketOrderView = TicketOrderView.Instance;
 
-            await ticketOrderView.ticketOrderViewModel.LoadOrderDataAsync(_jwtToken, EventDateTime, orderData.ExpireAt);
+            await ticketOrderView.ticketOrderViewModel.LoadOrderDataAsync(_jwtToken, EventDateTime, orderData.ExpireAt, orderData.SessionId);
 
             MainPageView.Instance.mainPageViewModel.CurrentPage = ticketOrderView;
         }

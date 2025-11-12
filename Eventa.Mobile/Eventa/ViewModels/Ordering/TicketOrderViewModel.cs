@@ -19,7 +19,7 @@ public partial class TicketOrderViewModel : ObservableObject
     private readonly ApiService _apiService = new();
     private string _jwtToken = string.Empty;
     private CancellationTokenSource? _timerCancellation;
-    private StripePaymentService _stripeService;
+    private readonly StripePaymentService _stripeService;
 
     [ObservableProperty]
     private string _eventName = string.Empty;
@@ -54,6 +54,8 @@ public partial class TicketOrderViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasTickets = false;
 
+    private string _sessionId = string.Empty;
+
     public TicketOrderViewModel()
     {
         _stripeService = new StripePaymentService(
@@ -62,23 +64,23 @@ public partial class TicketOrderViewModel : ObservableObject
           );
     }
 
-    public async Task LoadOrderDataAsync(string jwtToken, string eventDateTime, TimeSpan expireDate)
+    public async Task LoadOrderDataAsync(string jwtToken, string eventDateTime, TimeSpan expireDate, string sessionId)
     {
         _jwtToken = jwtToken;
         EventDateTime = eventDateTime;
-
+        _sessionId = sessionId;
         try
         {
-            var (success, message, ordersData) = await _apiService.GetOrdersByUserAsync(_jwtToken);
+            var (success, message, ordersData) = await _apiService.GetTicketsInCartByUserAsync(_jwtToken);
 
-            if (!success || ordersData == null || ordersData.Count == 0)
+            if (!success || ordersData == null || ordersData == null)
             {
                 await DialogControl.Instance.Show("Error", $"Failed to load order: {message}", "OK");
                 ClearFormData();
                 return;
             }
 
-            var latestOrder = ordersData[ordersData.Count - 1];
+            var latestOrder = ordersData;
 
             TicketsInOrder.Clear();
 
@@ -224,7 +226,7 @@ public partial class TicketOrderViewModel : ObservableObject
             }
             };
 
-            var result = await _stripeService.ProcessCardPayment(paymentRequest);
+            var result = await _stripeService.ProcessCardPayment(paymentRequest, _sessionId);
 
             if (result.Success)
             {
