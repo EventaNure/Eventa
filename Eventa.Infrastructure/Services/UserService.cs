@@ -216,7 +216,7 @@ namespace Eventa.Infrastructure.Services
 
             if (user.TicketsExpireAt <= DateTime.UtcNow)
             {
-                user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                user.TicketsExpireAt = DateTime.UtcNow + TimeSpan.FromMinutes(bookingTimeInMinutes);
                 isUpdated = true;
             }
 
