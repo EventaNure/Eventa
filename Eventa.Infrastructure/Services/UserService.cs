@@ -9,7 +9,7 @@ namespace Eventa.Infrastructure.Services
 {
     public class UserService : IUserService
     {
-        private const int bookingTimeInMinutes = 15;
+        private const int bookingTimeInMinutes = 1;
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;

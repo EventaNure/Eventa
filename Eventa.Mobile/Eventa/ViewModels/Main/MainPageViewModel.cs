@@ -354,13 +354,7 @@ public partial class MainPageViewModel : ObservableObject
 
         var (success, message, cartData) = await _apiService.GetTicketsInCartByUserAsync(jwtToken);
 
-        if (!success)
-        {
-            await DialogControl.Instance.Show("Cart Error", message, "OK");
-            return;
-        }
-
-        if (cartData == null || cartData.Tickets.Count == 0)
+        if (!success || cartData == null || cartData.Tickets.Count == 0)
         {
             await DialogControl.Instance.Show("Empty Cart", "You have no tickets in your cart.", "OK");
             return;

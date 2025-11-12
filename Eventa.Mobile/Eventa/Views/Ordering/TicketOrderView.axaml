@@ -228,28 +228,6 @@
                 <TextBlock Text="{Binding SubmitButtonText}" />
             </Button>
 
-            <!--  Or Divider  -->
-            <Grid
-                ColumnDefinitions="*,Auto,*"
-                ColumnSpacing="12"
-                IsVisible="{Binding HasTickets}">
-                <Border
-                    Grid.Column="0"
-                    Height="1"
-                    VerticalAlignment="Center"
-                    Background="#E0E0E0" />
-                <TextBlock
-                    Grid.Column="1"
-                    FontSize="12"
-                    Foreground="#999999"
-                    Text="or" />
-                <Border
-                    Grid.Column="2"
-                    Height="1"
-                    VerticalAlignment="Center"
-                    Background="#E0E0E0" />
-            </Grid>
-
             <!--  Empty Cart Message  -->
             <Border
                 Padding="40,60"
