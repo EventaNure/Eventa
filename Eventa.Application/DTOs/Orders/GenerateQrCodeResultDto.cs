@@ -2,7 +2,7 @@
 {
     public class GenerateQrCodeResultDto
     {
-        public string? QrCode { get; set; }
+        public Guid? QrToken { get; set; }
 
         public DateTime? QrCodeUsingDateTime { get; set; }
 

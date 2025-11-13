@@ -29,7 +29,6 @@ namespace Eventa.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEmailSender, SendGridEmailSender>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IQRCodeService, QRCodeService>();
             services.AddAutoMapper((e) => { }, AppDomain.CurrentDomain.GetAssemblies());
             return services;
         }

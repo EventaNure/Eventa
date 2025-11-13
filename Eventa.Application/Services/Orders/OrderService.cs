@@ -3,7 +3,6 @@ using Eventa.Application.DTOs.Orders;
 using Eventa.Application.DTOs.TicketInCarts;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
-using Eventa.Infrastructure.Services;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
@@ -18,15 +17,14 @@ namespace Eventa.Application.Services.Orders
         private readonly IUserService _userService;
         private readonly ILogger<Order> _logger;
         private readonly IMapper _mapper;
-        private readonly IQRCodeService _qRCodeService;
 
-        public OrderService(IUnitOfWork unitOfWork, IPaymentService paymentService, IUserService userService, ILogger<Order> logger, IMapper mapper, IQRCodeService qRCodeService) {
+        public OrderService(IUnitOfWork unitOfWork, IPaymentService paymentService, IUserService userService, ILogger<Order> logger, IMapper mapper)
+        {
             _unitOfWork = unitOfWork;
             _paymentService = paymentService;
             _userService = userService;
             _logger = logger;
             _mapper = mapper;
-            _qRCodeService = qRCodeService;
         }
 
         public async Task<Result<OrderDto>> CreateOrderAsync(string userId, string successUrl, string cancleUrl)
@@ -136,7 +134,7 @@ namespace Eventa.Application.Services.Orders
             return Result.Ok();
         }
 
-        public async Task<Result<GenerateQrCodeResultDto>> GenerateQRCodeAsync(int orderId, string userId)
+        public async Task<Result<GenerateQrCodeResultDto>> GenerateQRTokenAsync(int orderId, string userId)
         {
             var orderRepository = _unitOfWork.GetDbSet<Order>();
 
@@ -147,11 +145,9 @@ namespace Eventa.Application.Services.Orders
                 return Result.Fail(new Error("Order not found").WithMetadata("Code", "OrderNotFound"));
             }
 
-            var qrCOde = _qRCodeService.GenerateQrCode(order.QrToken);
-
             return Result.Ok(new GenerateQrCodeResultDto
             {
-                QrCode = order.IsQrTokenUsed ? null : qrCOde,
+                QrToken = order.IsQrTokenUsed ? null : order.QrToken,
                 IsQrTokenUsed = order.IsQrTokenUsed,
                 QrCodeUsingDateTime = order.QrCodeUsingDateTime
             });
@@ -191,7 +187,7 @@ namespace Eventa.Application.Services.Orders
             return Result.Ok(orders);
         }
 
-        public async Task<Result<OrderListItemDto>> CheckOrderQRCodeAsync(Guid qrToken)
+        public async Task<Result<OrderListItemDto>> CheckOrderQRTokenAsync(Guid qrToken)
         {
             var orderRepository = _unitOfWork.GetOrderRepository();
 

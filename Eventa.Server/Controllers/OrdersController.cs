@@ -71,12 +71,12 @@ namespace Eventa.Server.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("QR-code")]
+        [HttpGet("QR-token")]
         [Authorize]
-        public async Task<IActionResult> GenerateQRCode(int orderId)
+        public async Task<IActionResult> GenerateQRToken(int orderId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var result = await _orderService.GenerateQRCodeAsync(orderId, userId);
+            var result = await _orderService.GenerateQRTokenAsync(orderId, userId);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
@@ -85,11 +85,11 @@ namespace Eventa.Server.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("check-QR-code")]
+        [HttpGet("check-QR-token")]
         [Authorize]
-        public async Task<IActionResult> CheckQRCode(Guid qrToken)
+        public async Task<IActionResult> CheckQRToken(Guid qrToken)
         {
-            var result = await _orderService.CheckOrderQRCodeAsync(qrToken);
+            var result = await _orderService.CheckOrderQRTokenAsync(qrToken);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
