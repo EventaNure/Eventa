@@ -89,7 +89,7 @@ namespace Eventa.Server.Controllers
         [Authorize]
         public async Task<IActionResult> CheckQRCode(Guid qrToken)
         {
-            var result = await _orderService.CheckOrderQRCode(qrToken);
+            var result = await _orderService.CheckOrderQRCodeAsync(qrToken);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);

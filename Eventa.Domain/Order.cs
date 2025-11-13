@@ -20,6 +20,8 @@
 
         public Guid QrToken { get; set; }
 
+        public DateTime? QrCodeUsingDateTime { get; set; }
+
         public bool IsQrTokenUsed { get; set; }
     }
 }

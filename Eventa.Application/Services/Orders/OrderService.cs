@@ -136,7 +136,7 @@ namespace Eventa.Application.Services.Orders
             return Result.Ok();
         }
 
-        public async Task<Result<string>> GenerateQRCodeAsync(int orderId, string userId)
+        public async Task<Result<GenerateQrCodeResultDto>> GenerateQRCodeAsync(int orderId, string userId)
         {
             var orderRepository = _unitOfWork.GetDbSet<Order>();
 
@@ -149,7 +149,12 @@ namespace Eventa.Application.Services.Orders
 
             var qrCOde = _qRCodeService.GenerateQrCode(order.QrToken);
 
-            return Result.Ok(qrCOde);
+            return Result.Ok(new GenerateQrCodeResultDto
+            {
+                QrCode = order.IsQrTokenUsed ? null : qrCOde,
+                IsQrTokenUsed = order.IsQrTokenUsed,
+                QrCodeUsingDateTime = order.QrCodeUsingDateTime
+            });
         }
 
         public async Task<Result> DeleteExpireOrdersAsync()
@@ -186,7 +191,7 @@ namespace Eventa.Application.Services.Orders
             return Result.Ok(orders);
         }
 
-        public async Task<Result<OrderListItemDto>> CheckOrderQRCode(Guid qrToken)
+        public async Task<Result<OrderListItemDto>> CheckOrderQRCodeAsync(Guid qrToken)
         {
             var orderRepository = _unitOfWork.GetOrderRepository();
 
@@ -202,7 +207,12 @@ namespace Eventa.Application.Services.Orders
                 return Result.Fail(new Error("QR code already used").WithMetadata("Code", "QRCodeAlreadyUsed"));
             }
             var o = await orderRepository.GetAsync(order.OrderId);
+            if (o == null)
+            {
+                return Result.Fail(new Error("Order not found").WithMetadata("Code", "OrderNotFound"));
+            }
             o.IsQrTokenUsed = true;
+            o.QrCodeUsingDateTime = DateTime.UtcNow;
             await _unitOfWork.CommitAsync();
 
             return order;
