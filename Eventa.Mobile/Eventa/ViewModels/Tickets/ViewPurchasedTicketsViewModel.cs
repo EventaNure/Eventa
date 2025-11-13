@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Controls;
 using Eventa.Models.Ordering;
 using Eventa.Services;
 using Eventa.Views.Main;
@@ -72,8 +73,18 @@ public partial class ViewPurchasedTicketsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ViewQRCode(OrderListItemResponseModel order)
+    private async Task ViewQRCode(OrderListItemResponseModel order)
     {
+        var (Success, Message, Data) = await _apiService.GenerateOrderQrCodeAsync(order.OrderId, MainPageView.Instance.mainPageViewModel.JwtToken);
+
+        if (!Success || Data == null)
+        {
+            HasError = true;
+            ErrorMessage = Message;
+            return;
+        }
+
+        QRCodeDialog.Instance.Show(order, Data);
     }
 
     public void ClearFormData()

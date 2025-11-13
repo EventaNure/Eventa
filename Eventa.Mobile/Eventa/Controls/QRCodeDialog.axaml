@@ -1,0 +1,128 @@
+<UserControl
+    x:Class="Eventa.Controls.QRCodeDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="600"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+        <Panel
+            Name="DialogOverlay"
+            Background="#80000000"
+            IsVisible="False">
+            <Border
+                Width="360"
+                Padding="24"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="White"
+                BoxShadow="0 4 20 0 #30000000"
+                CornerRadius="16">
+                <StackPanel Spacing="16">
+                    <!--  Event Name  -->
+                    <TextBlock
+                        Name="EventNameTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="#333333"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+
+                    <!--  Event Date  -->
+                    <TextBlock
+                        Name="EventDateTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="14"
+                        Foreground="#666666"
+                        TextAlignment="Center" />
+
+                    <!--  Tickets Section  -->
+                    <Border
+                        Padding="12"
+                        MaxHeight="100"
+                        CornerRadius="8">
+                        <Border.Background>
+                            <SolidColorBrush Color="#F8F8F8" />
+                        </Border.Background>
+                        <ScrollViewer IsScrollChainingEnabled="False">
+                            <StackPanel Name="TicketsStackPanel" Spacing="8" />
+                        </ScrollViewer>
+                    </Border>
+
+                    <!--  QR Code Container  -->
+                    <Border
+                        Padding="20"
+                        HorizontalAlignment="Center"
+                        Background="White"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="2"
+                        CornerRadius="12">
+                        <StackPanel HorizontalAlignment="Center" Spacing="12">
+                            <!--  QR Code Image  -->
+                            <Image
+                                Name="QRCodeImage"
+                                Width="250"
+                                Height="250"
+                                Stretch="Uniform" />
+
+                            <!--  Status Message  -->
+                            <TextBlock
+                                Name="StatusTextBlock"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="12"
+                                Foreground="#999999"
+                                IsVisible="False"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Total Cost  -->
+                    <Border
+                        Padding="12"
+                        Background="#FFF8E1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="14"
+                                Foreground="#666666"
+                                Text="Total Cost"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Name="TotalCostTextBlock"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="22"
+                                FontWeight="Bold"
+                                Foreground="#FF6B35"
+                                TextAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Close Button  -->
+                    <Button
+                        Name="CloseButton"
+                        Padding="0,14"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#FFB5B5"
+                        BorderThickness="0"
+                        Click="OnCloseClick"
+                        CornerRadius="8"
+                        Cursor="Hand"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="16"
+                        Foreground="White">
+                        <TextBlock Text="Close" />
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#FF9999" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Panel>
+</UserControl>
