@@ -82,7 +82,16 @@ namespace Eventa.Server.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok(result.Value);
+            return Ok(new GenerateQrTokenResultResponseModel
+            {
+                CheckQrTokenUrl = Url.Action(
+                    nameof(CheckQRToken),
+                    nameof(OrdersController).Replace("Controller", ""),
+                    new { qrToken = result.Value.QrToken},
+                    Request.Scheme),
+                IsQrTokenUsed = result.Value.IsQrTokenUsed,
+                QrCodeUsingDateTime = result.Value.QrCodeUsingDateTime
+            });
         }
 
         [HttpGet("check-QR-token")]
