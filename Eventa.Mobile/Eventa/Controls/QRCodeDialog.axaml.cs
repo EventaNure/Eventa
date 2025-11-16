@@ -47,7 +47,7 @@ public partial class QRCodeDialog : UserControl
         }
 
         // Generate and display QR code
-        GenerateQRCode(qrCodeData.QrToken);
+        GenerateQRCode(qrCodeData.CheckQrTokenUrl);
 
         // Show status if already used
         if (qrCodeData.IsQrTokenUsed && qrCodeData.QrCodeUsingDateTime.HasValue)
@@ -140,11 +140,11 @@ public partial class QRCodeDialog : UserControl
         return border;
     }
 
-    private void GenerateQRCode(Guid? qrToken)
+    private void GenerateQRCode(string qrToken)
     {
         try
         {
-            string? qrCode = qrToken.ToString();
+            string? qrCode = qrToken;
 
             if (string.IsNullOrEmpty(qrCode))
             {
