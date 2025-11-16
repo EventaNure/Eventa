@@ -4,7 +4,7 @@ namespace Eventa.Models.Ordering;
 
 public class GenerateQRCodeResponse
 {
-    public Guid? QrToken { get; set; }
+    public string CheckQrTokenUrl { get; set; } = string.Empty;
 
     public DateTime? QrCodeUsingDateTime { get; set; }
 

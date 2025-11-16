@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eventa.Models.Events.Organizer;
-using Eventa.Services;
 using Eventa.Views.Events;
 using Eventa.Views.Main;
 using System.Collections.ObjectModel;

@@ -172,6 +172,8 @@
                                                     <Button
                                                         HorizontalAlignment="Stretch"
                                                         Classes="BuyButton"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center"
                                                         Command="{Binding $parent[UserControl].((vm:ViewEventViewModel)DataContext).SelectDateTimeCommand}"
                                                         CommandParameter="{Binding}">
                                                         <TextBlock FontWeight="SemiBold" Text="Buy tickets" />
