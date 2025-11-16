@@ -50,6 +50,7 @@ namespace Eventa.Infrastructure.Repositories
                 .Select(o => new OrderListItemDto
                 {
                     EventDateTimeId = o.EventDateTimeId,
+                    EventDateTime = o.EventDateTime.StartDateTime,
                     EventName = o.EventDateTime.Event.Title,
                     OrderId = o.Id,
                     IsQrTokenUsed = o.IsQrTokenUsed,

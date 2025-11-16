@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.IO;
+using System.Text;
 
 namespace Eventa.Server.Controllers
 {
@@ -14,11 +16,13 @@ namespace Eventa.Server.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly PaymentOptions _options;
 
-        public OrdersController(IOrderService paymentService, IOptions<PaymentOptions> options)
+        public OrdersController(IOrderService paymentService, IOptions<PaymentOptions> options, IWebHostEnvironment webHostEnvironment)
         {
             _orderService = paymentService;
+            _webHostEnvironment = webHostEnvironment;
             _options = options.Value;
         }
 
@@ -95,16 +99,41 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpGet("check-QR-token")]
-        [Authorize]
         public async Task<IActionResult> CheckQRToken(Guid qrToken)
         {
             var result = await _orderService.CheckOrderQRTokenAsync(qrToken);
             if (!result.IsSuccess)
             {
-                return BadRequest(result.Errors);
+                string errorCheckPath = Path.Combine(_webHostEnvironment.WebRootPath, "pages", "error-check.html");
+                string errorCheckHtml = System.IO.File.ReadAllText(errorCheckPath);
+
+                return Content(errorCheckHtml, "text/html");
             }
 
-            return Ok(result.Value);
+            string validCheckPath = Path.Combine(_webHostEnvironment.WebRootPath, "pages", "valid-check.html");
+
+            string ticketPath = Path.Combine(_webHostEnvironment.WebRootPath, "pages", "ticket.html");
+
+            string checkHtml = System.IO.File.ReadAllText(validCheckPath);
+
+            string ticketHtml = System.IO.File.ReadAllText(ticketPath);
+
+            StringBuilder ticketsHtml = new StringBuilder();
+
+            foreach (var ticket in result.Value.Tickets)
+            {
+                ticketsHtml.Append(ticketHtml
+                    .Replace("{RowType}", ticket.RowTypeName.ToString())
+                    .Replace("{Row}", ticket.Row.ToString())
+                    .Replace("{SeatNumber}", ticket.SeatNumber.ToString()));
+            }
+
+            checkHtml = checkHtml
+                .Replace("{EventName}", result.Value.EventName)
+                .Replace("{EventDateTime}", result.Value.EventDateTime.ToString("dd-MM-yyyy hh:mm"))
+                .Replace("{Tickets}", ticketsHtml.ToString());
+
+            return Content(checkHtml, "text/html");
         }
     }
 }
