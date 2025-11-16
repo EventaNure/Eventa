@@ -1,6 +1,5 @@
 ﻿using Eventa.Models.Payment;
 using Stripe;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Eventa.Services

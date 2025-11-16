@@ -20,4 +20,9 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentDialog = ZoomImageDialog.Instance;
     }
+
+    public void ShowQRCodeDialog()
+    {
+        CurrentDialog = QRCodeDialog.Instance;
+    }
 }

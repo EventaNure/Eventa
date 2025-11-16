@@ -31,10 +31,14 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="LoadingIndicators.Avalonia" />
     <PackageReference Include="Mapsui.Avalonia" />
+    <PackageReference Include="SkiaSharp.QrCode" />
     <PackageReference Include="Stripe.net" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\QRCodeDialog.axaml.cs">
+      <DependentUpon>QRCodeDialog.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\ZoomImageDialog.axaml.cs">
       <DependentUpon>ZoomImageDialog.axaml</DependentUpon>
     </Compile>

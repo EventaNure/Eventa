@@ -83,7 +83,7 @@
                                     <TextBlock
                                         FontSize="12"
                                         Foreground="#999999"
-                                        Text="{Binding EventDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm'}"
+                                        Text="{Binding EventDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm}'}"
                                         TextAlignment="Center" />
 
                                     <!--  Ticket Details Background  -->
@@ -116,6 +116,8 @@
                                     <!--  View QR Code Button  -->
                                     <Button
                                         Classes="ViewQRButton"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
                                         Command="{Binding $parent[UserControl].((vm:ViewPurchasedTicketsViewModel)DataContext).ViewQRCodeCommand}"
                                         CommandParameter="{Binding}">
                                         <TextBlock FontWeight="SemiBold" Text="View QR code" />

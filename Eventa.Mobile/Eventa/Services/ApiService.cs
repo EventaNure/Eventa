@@ -779,4 +779,75 @@ public class ApiService
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }
+
+    public async Task<(bool Success, string Message, GenerateQRCodeResponse? Data)> GenerateOrderQrCodeAsync(int orderId, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            var response = await _httpClient.GetAsync($"/api/Orders/QR-token?orderId={orderId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var qrCodeResult = await response.Content.ReadFromJsonAsync<GenerateQRCodeResponse>();
+                return (true, "QR code generated successfully!", qrCodeResult);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, bool Data)> CheckOrderQrCodeAsync(string qrToken, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            var response = await _httpClient.GetAsync($"/api/Orders/check-QR-token?qrToken={qrToken}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var orderData = await response.Content.ReadFromJsonAsync<GenerateQRCodeResponse>();
+
+                if (orderData?.IsQrTokenUsed == true)
+                {
+                    return (true, "Warning: This QR code was already scanned!", false);
+                }
+
+                return (true, "QR code validated successfully!", true);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, false);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", false);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", false);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, bool? Data)> CheckOrderQrCodeAsync(Guid qrToken, string jwtToken)
+    {
+        return await CheckOrderQrCodeAsync(qrToken.ToString(), jwtToken);
+    }
 }
