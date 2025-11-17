@@ -106,6 +106,7 @@ namespace Eventa.Server.Controllers
             {
                 string errorCheckPath = Path.Combine(_webHostEnvironment.WebRootPath, "pages", "error-check.html");
                 string errorCheckHtml = System.IO.File.ReadAllText(errorCheckPath);
+                errorCheckHtml = errorCheckHtml.Replace("{ErrorMessage}", result.Errors.FirstOrDefault()?.Message ?? string.Empty);
 
                 return Content(errorCheckHtml, "text/html");
             }
