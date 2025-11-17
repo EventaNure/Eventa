@@ -43,6 +43,7 @@
                     <Button
                         Name="NoButton"
                         Padding="0,12"
+                        Margin="0,0,12,0"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
                         Background="#FFB5B5"

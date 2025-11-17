@@ -456,6 +456,7 @@ public partial class MainPageViewModel : ObservableObject
     private async Task ClearAuthenticationDataAsync()
     {
         UserId = string.Empty;
+        JwtToken = string.Empty;
 
         var settings = await _settingsService.LoadAsync();
         settings.JwtToken = string.Empty;
