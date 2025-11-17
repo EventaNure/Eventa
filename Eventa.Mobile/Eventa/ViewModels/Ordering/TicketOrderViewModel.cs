@@ -61,7 +61,7 @@ public partial class TicketOrderViewModel : ObservableObject
         _stripeService = new StripePaymentService(
               "",
               ""
-          );
+        );
     }
 
     public async Task LoadOrderDataAsync(string jwtToken, string eventDateTime, TimeSpan expireDate, string sessionId)

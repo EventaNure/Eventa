@@ -170,38 +170,6 @@
                         MaxLength="19"
                         Text="{Binding CardNumber}"
                         Watermark="1234 1234 1234 1234" />
-                    <StackPanel
-                        Margin="0,0,12,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Spacing="4">
-                        <Border
-                            Width="24"
-                            Height="16"
-                            Background="#1A1F71"
-                            CornerRadius="2">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="8"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                Text="VISA" />
-                        </Border>
-                        <Border
-                            Width="24"
-                            Height="16"
-                            CornerRadius="2">
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-                                    <GradientStop Offset="0" Color="#EB001B" />
-                                    <GradientStop Offset="0.5" Color="#F79E1B" />
-                                    <GradientStop Offset="1" Color="#FF5F00" />
-                                </LinearGradientBrush>
-                            </Border.Background>
-                        </Border>
-                    </StackPanel>
                 </Grid>
 
                 <!--  MM/YY and CVC  -->
