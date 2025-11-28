@@ -21,8 +21,8 @@ namespace Eventa.Infrastructure.Repositories
                     .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count() &&
                     (startDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) >= startDate)) &&
                     (endDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) <= endDate)) &&
-                    (subName == null || e.Title.Contains(subName)) &&
-                    e.IsApproved)
+                    (subName == null || e.Title.Contains(subName))
+                    )
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto
