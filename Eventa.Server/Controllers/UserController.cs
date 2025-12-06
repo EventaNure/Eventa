@@ -169,6 +169,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPost("user-google-login")]
+        [ProducesResponseType(typeof(GoogleLoginResponseModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> UserGoogleLogin(GoogleLoginRequest request)
         {
             var googleLoginResult = await _userService.HandleUserGoogleLoginAsync(request.IdToken);
@@ -191,6 +192,7 @@ namespace Eventa.Server.Controllers
         }
 
         [HttpPost("organizer-google-login")]
+        [ProducesResponseType(typeof(GoogleLoginResponseModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> OrganizerGoogleLogin(GoogleLoginRequest request)
         {
             var googleLoginResult = await _userService.HandleOrganizerGoogleLoginAsync(request.IdToken);

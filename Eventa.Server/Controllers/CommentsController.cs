@@ -3,6 +3,7 @@ using AutoMapper;
 using Eventa.Application.DTOs.Comments;
 using Eventa.Application.Services.Comments;
 using Eventa.Server.RequestModels;
+using Eventa.Server.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace Eventa.Server.Controllers
 
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(typeof(CommentDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateComment(CreateCommentRequestModel requestModel)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;

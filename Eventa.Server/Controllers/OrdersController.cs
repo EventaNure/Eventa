@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.IO;
 using System.Text;
+using Eventa.Application.DTOs.Orders;
 
 namespace Eventa.Server.Controllers
 {
@@ -63,6 +64,7 @@ namespace Eventa.Server.Controllers
 
         [HttpGet("by-user")]
         [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<OrderListItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetOrdersByUser()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
