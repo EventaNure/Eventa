@@ -66,5 +66,12 @@ namespace Eventa.Infrastructure.Repositories
                 })
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Order?> GetOrderWithCommentAsync(int orderId)
+        {
+            return await _dbSet
+                .Include(o => o.Comment)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
     }
 }

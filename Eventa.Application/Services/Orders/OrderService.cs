@@ -202,13 +202,13 @@ namespace Eventa.Application.Services.Orders
             {
                 return Result.Fail(new Error("QR code already used").WithMetadata("Code", "QRCodeAlreadyUsed"));
             }
-            var o = await orderRepository.GetAsync(order.OrderId);
-            if (o == null)
+            var orderEntity = await orderRepository.GetAsync(order.OrderId);
+            if (orderEntity == null)
             {
                 return Result.Fail(new Error("Order not found").WithMetadata("Code", "OrderNotFound"));
             }
-            o.IsQrTokenUsed = true;
-            o.QrCodeUsingDateTime = DateTime.UtcNow;
+            orderEntity.IsQrTokenUsed = true;
+            orderEntity.QrCodeUsingDateTime = DateTime.UtcNow;
             await _unitOfWork.CommitAsync();
 
             return order;

@@ -1,5 +1,6 @@
 ﻿using Eventa.Application.Repositories;
 using Eventa.Application.Services;
+using Eventa.Application.Services.Comments;
 using Eventa.Application.Services.Events;
 using Eventa.Application.Services.Orders;
 using Eventa.Application.Services.Places;
@@ -24,6 +25,7 @@ namespace Eventa.Infrastructure
             services.AddScoped<ITicketInCartService, TicketInCartService>();
             services.AddScoped<ISeatService, SeatService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IPaymentService, StripePaymentService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -1,4 +1,5 @@
-﻿using Eventa.Application.DTOs.TicketInCarts;
+﻿using Eventa.Application.DTOs.Comments;
+using Eventa.Application.DTOs.TicketInCarts;
 
 namespace Eventa.Application.DTOs.Orders
 {
@@ -17,5 +18,7 @@ namespace Eventa.Application.DTOs.Orders
         public double TotalCost { get; set; }
 
         public bool IsQrTokenUsed { get; set; }
+
+        public CommentDto? Comment { get; set; }
     }
 }

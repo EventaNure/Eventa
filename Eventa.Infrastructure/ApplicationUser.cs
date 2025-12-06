@@ -24,5 +24,7 @@ namespace Eventa.Infrastructure
         public ICollection<TicketInCart> TicketsInCart { get; set; } = [];
 
         public ICollection<Order> Orders { get; set; } = [];
+
+        public string GoogleId { get; set; } = string.Empty;
     }
 }

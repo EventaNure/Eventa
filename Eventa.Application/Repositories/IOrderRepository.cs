@@ -10,5 +10,6 @@ namespace Eventa.Application.Repositories
         Task DeleteExpireOrdersAsync();
         Task<OrderListItemDto?> GetOrderByQrTokenAsync(Guid qrToken);
         Task<IEnumerable<OrderListItemDto>> GetOrdersByUserAsync(string userId);
+        Task<Order?> GetOrderWithCommentAsync(int orderId);
     }
 }

@@ -4,6 +4,9 @@ using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -163,6 +166,78 @@ namespace Eventa.Server.Controllers
             }
 
             return Ok(getCartsResult.Value);
+        }
+
+        [HttpPost("user-google-login")]
+        public async Task<IActionResult> UserGoogleLogin(GoogleLoginRequest request)
+        {
+            var googleLoginResult = await _userService.HandleUserGoogleLoginAsync(request.IdToken);
+
+            if (!googleLoginResult.IsSuccess)
+            {
+                return BadRequest(googleLoginResult.Errors);
+            }
+
+            var googleLoginData = googleLoginResult.Value;
+
+            var jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
+
+            return Ok(new GoogleLoginResponseModel {
+                JwtToken = jwt,
+                Name = googleLoginData.Name,
+                UserId = googleLoginData.UserId,
+                IsLogin = googleLoginData.IsLogin
+            });
+        }
+
+        [HttpPost("organizer-google-login")]
+        public async Task<IActionResult> OrganizerGoogleLogin(GoogleLoginRequest request)
+        {
+            var googleLoginResult = await _userService.HandleOrganizerGoogleLoginAsync(request.IdToken);
+
+            if (!googleLoginResult.IsSuccess)
+            {
+                return BadRequest(googleLoginResult.Errors);
+            }
+
+            var googleLoginData = googleLoginResult.Value;
+
+            var jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
+
+            return Ok(new GoogleLoginResponseModel
+            {
+                JwtToken = jwt,
+                Name = googleLoginData.Name,
+                UserId = googleLoginData.UserId
+            });
+        }
+
+        [Authorize]
+        [HttpPut("user")]
+        public async Task<IActionResult> SetPersonalUserData(PersonalUserDataRequestModel requestModel)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _userService.SetPersonalUserDataAsync(userId, _mapper.Map<PersonalUserDataDto>(requestModel));
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPut("organizer")]
+        public async Task<IActionResult> SetPersonalOrganizerData(PersonalOrganizerDataRequestModel requestModel)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _userService.SetOrganizerUserDataAsync(userId, _mapper.Map<PersonalOrganizerDataDto>(requestModel));
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -23,5 +23,7 @@
         public DateTime? QrCodeUsingDateTime { get; set; }
 
         public bool IsQrTokenUsed { get; set; }
+
+        public Comment? Comment { get; set; }
     }
 }

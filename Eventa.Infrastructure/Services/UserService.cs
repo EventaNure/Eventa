@@ -1,7 +1,9 @@
-﻿using Eventa.Application.Common;
+﻿using System.Security.Claims;
+using Eventa.Application.Common;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using FluentResults;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
@@ -64,7 +66,7 @@ namespace Eventa.Infrastructure.Services
             }
 
             await _userManager.AddToRoleAsync(user, role);
-            
+
             await SendRegistrationEmailAsync(user.Email!, user.VerificationCode!);
 
             return Result.Ok(new RegisterResultDto
@@ -148,10 +150,11 @@ namespace Eventa.Infrastructure.Services
                 emailConfirmed = false;
             }
 
-            return Result.Ok(new LoginResultDto { 
-                UserId = user.Id, 
-                EmailConfirmed = emailConfirmed, 
-                Role = (await _userManager.GetRolesAsync(user)).First() 
+            return Result.Ok(new LoginResultDto
+            {
+                UserId = user.Id,
+                EmailConfirmed = emailConfirmed,
+                Role = (await _userManager.GetRolesAsync(user)).First()
             });
         }
 
@@ -248,6 +251,84 @@ namespace Eventa.Infrastructure.Services
             user.TicketsExpireAt = null;
             await _userManager.UpdateAsync(user);
 
+            return Result.Ok();
+        }
+
+        public async Task<Result<ExternalLoginResultDto>> HandleUserGoogleLoginAsync(string idToken)
+        {
+            return await HandleGoogleLoginAsync(idToken, DefaultRoles.UserRole);
+        }
+
+        public async Task<Result<ExternalLoginResultDto>> HandleOrganizerGoogleLoginAsync(string idToken)
+        {
+            return await HandleGoogleLoginAsync(idToken, DefaultRoles.OrganizerRole);
+        }
+
+        private async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken, string role)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+
+            var user = await _userManager.FindByLoginAsync("Google", payload.Subject);
+            var isNewUser = false;
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                {
+                    isNewUser = true;
+                    user = new ApplicationUser
+                    {
+                        UserName = payload.Email,
+                        Email = payload.Email,
+                        EmailConfirmed = true,
+                        Name = payload.Name
+                    };
+                    await _userManager.CreateAsync(user);
+                    await _userManager.AddToRoleAsync(user, role);
+                }
+                var info = new UserLoginInfo("Google", payload.Subject, "Google");
+                if (info == null)
+                {
+                    return Result.Fail(new Error("Error loading external login information").WithMetadata("Code", "ExternalLoginInfoError"));
+                }
+                await _userManager.AddLoginAsync(user, info);
+            }
+
+            await _signInManager.SignInAsync(user, true);
+
+            return Result.Ok(new ExternalLoginResultDto
+            {
+                IsLogin = !isNewUser,
+                UserId = user.Id,
+                Name = user.Name,
+                Role = role
+            });
+        }
+
+        public async Task<Result> SetPersonalUserDataAsync(string userId, PersonalUserDataDto dto)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+            var user = getUserResult.Value;
+            user.Name = dto.Name;
+            await _userManager.UpdateAsync(user);
+            return Result.Ok();
+        }
+
+        public async Task<Result> SetOrganizerUserDataAsync(string userId, PersonalOrganizerDataDto dto)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+            var user = getUserResult.Value;
+            user.Name = dto.Name;
+            user.Organization = dto.Organization;
+            await _userManager.UpdateAsync(user);
             return Result.Ok();
         }
 

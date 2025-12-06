@@ -26,6 +26,6 @@ namespace Eventa.Domain
 
         public int PlaceId { get; set; }
 
-        public bool IsApproved {  get; set; }
+        public EventStatus EventStatus {  get; set; }
     }
 }

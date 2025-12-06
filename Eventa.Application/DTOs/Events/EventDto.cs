@@ -1,4 +1,5 @@
-﻿using Eventa.Application.DTOs.Tags;
+﻿using Eventa.Application.DTOs.Comments;
+using Eventa.Application.DTOs.Tags;
 
 namespace Eventa.Application.DTOs.Events
 {
@@ -27,5 +28,9 @@ namespace Eventa.Application.DTOs.Events
         public IEnumerable<EventDateTimeDto> DateTimes { get; set; } = [];
 
         public string? ImageUrl { get; set; }
+
+        public double AverageRating { get; set; }
+
+        public ICollection<CommentDto> Comments { get; set; } = [];
     }
 }

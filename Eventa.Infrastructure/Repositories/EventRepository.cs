@@ -1,4 +1,5 @@
 ﻿using System;
+using Eventa.Application.DTOs.Comments;
 using Eventa.Application.DTOs.Events;
 using Eventa.Application.DTOs.Tags;
 using Eventa.Application.Repositories;
@@ -21,7 +22,8 @@ namespace Eventa.Infrastructure.Repositories
                     .Count(et => tagIds.Contains(et.TagId)) == tagIds.Count() &&
                     (startDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) >= startDate)) &&
                     (endDate == null || e.EventDateTimes.Any(edt => DateOnly.FromDateTime(edt.StartDateTime) <= endDate)) &&
-                    (subName == null || e.Title.Contains(subName))
+                    (subName == null || e.Title.Contains(subName)) &&
+                    e.EventStatus == EventStatus.Approved
                     )
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -47,7 +49,7 @@ namespace Eventa.Infrastructure.Repositories
         {
             return await _dbSet
                 .AsNoTracking()
-                .Where(e => e.OrganizerId == organizerId)
+                .Where(e => e.OrganizerId == organizerId && e.EventStatus == EventStatus.Approved)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto
@@ -107,7 +109,29 @@ namespace Eventa.Infrastructure.Repositories
                         Id = et.TagId,
                         Name = et.Tag.Name
                     }),
-                    
+                    AverageRating = _dbContext.EventDateTimes.Where(edt => edt.Event.OrganizerId == e.OrganizerId)
+                        .SelectMany(edt => edt.Orders
+                            .Where(o => o.IsPurcharsed && o.Comment != null)
+                            .Select(o => (double?)o.Comment!.Rating)
+                        )
+                        .Average() ?? 0,
+                    Comments = e.EventDateTimes
+                        .SelectMany(edt =>
+                            edt.Orders
+                            .Where(o => o.IsPurcharsed && o.Comment != null)
+                            .Select(o => new CommentDto
+                            {
+                                Id = o.Comment!.Id,
+                                UserName = _dbContext.Users
+                                    .Where(u => u.Id == o.UserId)
+                                    .Select(u => u.Name)
+                                    .First(),
+                                Rating = o.Comment.Rating,
+                                Content = o.Comment.Content,
+                                CreationDateTime = o.Comment.CreatedAt
+                            })
+                         )
+                         .ToList()
                 })
                 .FirstOrDefaultAsync();
         }

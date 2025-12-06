@@ -381,7 +381,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[0].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -391,7 +391,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 30, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[1].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -401,7 +401,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[2].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -411,7 +411,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 15, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[3].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -421,7 +421,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(1, 30, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[4].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -431,7 +431,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[5].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -441,7 +441,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 30, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[6].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 },
                 new Event
                 {
@@ -451,7 +451,7 @@ namespace Eventa.Infrastructure
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
                     OrganizerId = applicationUsers[7].Id,
-                    IsApproved = true
+                    EventStatus = EventStatus.Approved
                 }
             };
 

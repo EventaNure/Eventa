@@ -10,9 +10,13 @@ namespace Eventa.Application.Services
         Task<Result> DeleteInformationAboutCartAsync(string userId);
         Task<Result<DateTime>> GetBookingDateTimeExpireAsync(string userId);
         Task<Result<TimeSpan>> GetBookingTimeLeftAsync(string userId);
+        Task<Result<ExternalLoginResultDto>> HandleOrganizerGoogleLoginAsync(string idToken);
+        Task<Result<ExternalLoginResultDto>> HandleUserGoogleLoginAsync(string idToken);
         Task<Result<LoginResultDto>> LoginAsync(LoginUserDto dto);
         Task<Result<RegisterResultDto>> RegisterOrganizerAsync(RegisterOrganizerDto dto);
         Task<Result<RegisterResultDto>> RegisterUserAsync(RegisterUserDto dto);
         Task<Result> ResendRegistrationEmailAsync(string userId);
+        Task<Result> SetOrganizerUserDataAsync(string userId, PersonalOrganizerDataDto dto);
+        Task<Result> SetPersonalUserDataAsync(string userId, PersonalUserDataDto dto);
     }
 }
