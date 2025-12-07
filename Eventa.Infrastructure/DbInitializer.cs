@@ -380,7 +380,7 @@ namespace Eventa.Infrastructure
                     Price = 300,
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[0].Id,
+                    ApplicationUserId = applicationUsers[0].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -390,7 +390,7 @@ namespace Eventa.Infrastructure
                     Price = 550,
                     Duration = new TimeSpan(2, 30, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[1].Id,
+                    ApplicationUserId = applicationUsers[1].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -400,7 +400,7 @@ namespace Eventa.Infrastructure
                     Price = 650,
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[2].Id,
+                    ApplicationUserId = applicationUsers[2].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -410,7 +410,7 @@ namespace Eventa.Infrastructure
                     Price = 600,
                     Duration = new TimeSpan(2, 15, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[3].Id,
+                    ApplicationUserId = applicationUsers[3].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -420,7 +420,7 @@ namespace Eventa.Infrastructure
                     Price = 550,
                     Duration = new TimeSpan(1, 30, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[4].Id,
+                    ApplicationUserId = applicationUsers[4].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -430,7 +430,7 @@ namespace Eventa.Infrastructure
                     Price = 450,
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[5].Id,
+                    ApplicationUserId = applicationUsers[5].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -440,7 +440,7 @@ namespace Eventa.Infrastructure
                     Price = 500,
                     Duration = new TimeSpan(2, 30, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[6].Id,
+                    ApplicationUserId = applicationUsers[6].Id,
                     EventStatus = EventStatus.Approved
                 },
                 new Event
@@ -450,7 +450,7 @@ namespace Eventa.Infrastructure
                     Price = 750,
                     Duration = new TimeSpan(2, 0, 0),
                     Place = places[0],
-                    OrganizerId = applicationUsers[7].Id,
+                    ApplicationUserId = applicationUsers[7].Id,
                     EventStatus = EventStatus.Approved
                 }
             };

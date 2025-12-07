@@ -9,5 +9,6 @@ namespace Eventa.Application.Repositories
         Task<Event?> GetByIdAsync(int id);
         Task<List<EventListItemDto>> GetEventsAsync(int pageNumber, int pageSize, IEnumerable<int> tagIds, DateOnly? startDate, DateOnly? endDate, string? subName);
         Task<List<EventListItemDto>> GetEventsByOrganizerAsync(int pageNumber, int pageSize, string organizerId);
+        Task<List<PendingEventListItem>> GetPendingEventsAsync(int pageNumber, int pageSize);
     }
 }

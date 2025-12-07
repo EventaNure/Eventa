@@ -17,5 +17,7 @@
         public int TicketsSold { get; set; }
 
         public string? ImageUrl { get; set; } = string.Empty;
+
+        public string EventStatus { get; set; } = string.Empty;
     }
 }

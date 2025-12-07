@@ -122,13 +122,57 @@ namespace Eventa.Server.Controllers
 
         [HttpGet("by-organizer")]
         [Authorize(Roles = DefaultRoles.OrganizerRole)]
-        public async Task<IActionResult> GetEventsByOrganizer([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetEventsByOrganizer(int pageNumber = 1, int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var events = await _eventService.GetEventsByOrganizerAsync(pageNumber, pageSize, userId);
 
             return Ok(_mapper.Map<List<EventListItemResponseModel>>(events));
+        }
+
+        [HttpGet("pending")]
+        [Authorize(Roles = DefaultRoles.AdminRole)]
+        public async Task<IActionResult> GetPendingEvents(int pageNumber = 1, int pageSize = 10)
+        {
+            var result = await _eventService.GetPendingEventsAsync(pageNumber, pageSize);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            var events = result.Value;
+
+            return Ok(events);
+        }
+
+        [HttpPut("{eventId}/approve")]
+        [Authorize(Roles = DefaultRoles.AdminRole)]
+        public async Task<IActionResult> ApproveEvent(int eventId)
+        {
+            var result = await _eventService.ApproveEventAsync(eventId);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{eventId}/deny")]
+        [Authorize(Roles = DefaultRoles.AdminRole)]
+        public async Task<IActionResult> DenyEvent(int eventId)
+        {
+            var result = await _eventService.DenyEventAsync(eventId);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
     }
 }

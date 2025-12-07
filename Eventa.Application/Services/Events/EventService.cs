@@ -57,6 +57,7 @@ namespace Eventa.Application.Services.Events
             }
 
             var eventEntity = _mapper.Map<Event>(dto);
+            eventEntity.ApplicationUserId = dto.OrganizerId;
 
             var eventDbSet = _unitOfWork.GetDbSet<Event>();
             eventDbSet.Add(eventEntity);
@@ -131,13 +132,13 @@ namespace Eventa.Application.Services.Events
                 return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
             }
 
-            if (eventEntity.OrganizerId != dto.OrganizerId)
+            if (eventEntity.ApplicationUserId != dto.OrganizerId)
             {
                 return Result.Fail(new Error("Event not owned by organizer").WithMetadata("Code", "EventNotOwnedByOrganizer"));
             }
 
             _mapper.Map(dto, eventEntity);
-
+            eventEntity.ApplicationUserId = dto.OrganizerId;
             await _unitOfWork.CommitAsync();
 
             string fileName = eventEntity.Id + Path.GetExtension(dto.ImageFileName);
@@ -219,7 +220,7 @@ namespace Eventa.Application.Services.Events
                 return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
             }
 
-            if (eventEntity.OrganizerId != organizerId)
+            if (eventEntity.ApplicationUserId != organizerId)
             {
                 return Result.Fail(new Error("Event not owned by organizer").WithMetadata("Code", "EventNotOwnedByOrganizer"));
             }
@@ -272,6 +273,59 @@ namespace Eventa.Application.Services.Events
             }
 
             return events;
+        }
+
+        public async Task<Result<List<PendingEventListItem>>> GetPendingEventsAsync(int pageNumber, int pageSize)
+        {
+            var eventRepository = _unitOfWork.GetEventRepository();
+
+            var events = await eventRepository.GetPendingEventsAsync(pageNumber, pageSize);
+
+            return Result.Ok(events);
+        }
+
+        public async Task<Result> ApproveEventAsync(int eventId)
+        {
+            var eventDbSet = _unitOfWork.GetDbSet<Event>();
+
+            var eventEntity = await eventDbSet.GetAsync(eventId);
+
+            if (eventEntity == null)
+            {
+                return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
+            }
+
+            if (eventEntity.EventStatus != EventStatus.Pending)
+            {
+                return Result.Fail(new Error("Event is not pending").WithMetadata("Code", "EventNotPending"));
+            }
+
+            eventEntity.EventStatus = EventStatus.Approved;
+            await _unitOfWork.CommitAsync();
+
+            return Result.Ok();
+        }
+
+        public async Task<Result> DenyEventAsync(int eventId)
+        {
+            var eventDbSet = _unitOfWork.GetDbSet<Event>();
+
+            var eventEntity = await eventDbSet.GetAsync(eventId);
+
+            if (eventEntity == null)
+            {
+                return Result.Fail(new Error("Event not found").WithMetadata("Code", "EventNotFound"));
+            }
+
+            if (eventEntity.EventStatus != EventStatus.Pending)
+            {
+                return Result.Fail(new Error("Event is not pending").WithMetadata("Code", "EventNotPending"));
+            }
+
+            eventEntity.EventStatus = EventStatus.Denied;
+            await _unitOfWork.CommitAsync();
+
+            return Result.Ok();
         }
 
         private string? AddImageUrl(int id)

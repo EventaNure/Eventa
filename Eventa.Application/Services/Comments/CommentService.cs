@@ -22,15 +22,26 @@ namespace Eventa.Application.Services.Comments
             var order = await orderDbSet.GetOrderWithCommentAsync(dto.OrderId);
             if (order == null)
             {
-                return Result.Fail<CommentDto>("Order not found.");
+                return Result.Fail(new Error("Order not found.")
+                    .WithMetadata("Code", "OrderNotFound"));
             }
+
             if (order.UserId != userId)
             {
-                return Result.Fail<CommentDto>("User not owned this order.");
+                return Result.Fail(new Error("User does not own this order.")
+                    .WithMetadata("Code", "UserNotOwner"));
             }
+
             if (order.Comment != null)
             {
-                return Result.Fail<CommentDto>("Comment for this order already exists.");
+                return Result.Fail(new Error("Comment for this order already exists.")
+                    .WithMetadata("Code", "CommentAlreadyExists"));
+            }
+
+            if (!order.IsQrTokenUsed)
+            {
+                return Result.Fail(new Error("Qr-Token is not used yet.")
+                    .WithMetadata("Code", "QrTokenIsNotUsed"));
             }
 
             var comment = _mapper.Map<Comment>(dto);

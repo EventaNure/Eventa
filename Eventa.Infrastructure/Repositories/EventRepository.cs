@@ -49,7 +49,7 @@ namespace Eventa.Infrastructure.Repositories
         {
             return await _dbSet
                 .AsNoTracking()
-                .Where(e => e.OrganizerId == organizerId && e.EventStatus == EventStatus.Approved)
+                .Where(e => e.ApplicationUserId == organizerId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(e => new EventListItemDto
@@ -66,7 +66,31 @@ namespace Eventa.Infrastructure.Repositories
                         .OrderByDescending(edt => edt.StartDateTime)
                         .Select(edt => edt.StartDateTime)
                         .First(),
-                    TicketsSold = e.EventDateTimes.SelectMany(edt => edt.Orders.Where(o => o.IsPurcharsed).SelectMany(o => o.Tickets)).Count()
+                    TicketsSold = e.EventDateTimes.SelectMany(edt => edt.Orders.Where(o => o.IsPurcharsed).SelectMany(o => o.Tickets)).Count(),
+                    EventStatus = e.EventStatus.ToString()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<PendingEventListItem>> GetPendingEventsAsync(int pageNumber, int pageSize)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => e.EventStatus == EventStatus.Pending)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(e => new PendingEventListItem
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    OrganizerName = _dbContext.Users
+                        .Where(u => u.Id == e.ApplicationUserId)
+                        .Select(u => u.Name)
+                        .First(),
+                    OrganizationName = _dbContext.Users
+                        .Where(u => u.Id == e.ApplicationUserId)
+                        .Select(u => u.Organization)
+                        .First(),
                 })
                 .ToListAsync();
         }
@@ -96,7 +120,7 @@ namespace Eventa.Infrastructure.Repositories
                     PlaceName = e.Place.Name,
                     PlaceAddress = e.Place.Address,
                     OrganizerName = _dbContext.Users
-                        .Where(u => u.Id == e.OrganizerId)
+                        .Where(u => u.Id == e.ApplicationUserId)
                         .Select(u => u.Name)
                         .First(),
                     DateTimes = e.EventDateTimes.Select(e => new EventDateTimeDto
@@ -109,7 +133,7 @@ namespace Eventa.Infrastructure.Repositories
                         Id = et.TagId,
                         Name = et.Tag.Name
                     }),
-                    AverageRating = _dbContext.EventDateTimes.Where(edt => edt.Event.OrganizerId == e.OrganizerId)
+                    AverageRating = _dbContext.EventDateTimes.Where(edt => edt.Event.ApplicationUserId == e.ApplicationUserId)
                         .SelectMany(edt => edt.Orders
                             .Where(o => o.IsPurcharsed && o.Comment != null)
                             .Select(o => (double?)o.Comment!.Rating)

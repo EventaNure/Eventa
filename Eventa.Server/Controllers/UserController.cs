@@ -241,5 +241,19 @@ namespace Eventa.Server.Controllers
 
             return NoContent();
         }
+
+        [Authorize]
+        [HttpGet("personal-data")]
+        public async Task<IActionResult> GetPersonalData()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var result = await _userService.GetPersonalUserDataAsync(userId);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+            var persoanlData = result.Value;
+            return Ok(persoanlData);
+        }
     }
 }

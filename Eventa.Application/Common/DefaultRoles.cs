@@ -5,5 +5,7 @@
         public const string UserRole = "User";
 
         public const string OrganizerRole = "Organizer";
+
+        public const string AdminRole = "Admin";
     }
 }

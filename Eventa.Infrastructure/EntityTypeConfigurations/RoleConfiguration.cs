@@ -19,6 +19,12 @@ namespace Eventa.Infrastructure.EntityTypeConfigurations
                 Id = "2",
                 Name = "Organizer",
                 NormalizedName = "ORGANIZER"
+            },
+            new IdentityRole
+            {
+                Id = "3",
+                Name = "Admin",
+                NormalizedName = "ADMIN"
             });
         }
     }

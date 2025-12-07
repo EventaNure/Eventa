@@ -17,5 +17,7 @@
         public string? ImageUrl { get; set; } = string.Empty;
 
         public int TicketsSold { get; set; }
+
+        public string EventStatus { get; set; } = string.Empty;
     }
 }

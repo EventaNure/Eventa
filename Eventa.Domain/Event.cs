@@ -20,7 +20,7 @@ namespace Eventa.Domain
 
         public ICollection<EventDateTime> EventDateTimes { get; set; } = [];
 
-        public string OrganizerId { get; set; } = string.Empty;
+        public string ApplicationUserId { get; set; } = string.Empty;
 
         public Place Place { get; set; } = default!;
 

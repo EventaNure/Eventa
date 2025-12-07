@@ -21,6 +21,8 @@ namespace Eventa.Infrastructure
 
         public EventDateTime? EventDateTime { get; set; } = default!;
 
+        public ICollection<Event> Events { get; set; } = [];
+
         public ICollection<TicketInCart> TicketsInCart { get; set; } = [];
 
         public ICollection<Order> Orders { get; set; } = [];

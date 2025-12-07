@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventa.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251206120236_AddNullableContent")]
-    partial class AddNullableContent
+    [Migration("20251207135525_AddRelationBetweenEventAndUser")]
+    partial class AddRelationBetweenEventAndUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,10 @@ namespace Eventa.Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(3000)
@@ -75,10 +79,6 @@ namespace Eventa.Infrastructure.Migrations
 
                     b.Property<int>("EventStatus")
                         .HasColumnType("int");
-
-                    b.Property<string>("OrganizerId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<int>("PlaceId")
                         .HasColumnType("int");
@@ -92,6 +92,8 @@ namespace Eventa.Infrastructure.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("PlaceId");
 
@@ -648,6 +650,12 @@ namespace Eventa.Infrastructure.Migrations
 
             modelBuilder.Entity("Eventa.Domain.Event", b =>
                 {
+                    b.HasOne("Eventa.Infrastructure.ApplicationUser", null)
+                        .WithMany("Events")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Eventa.Domain.Place", "Place")
                         .WithMany("Events")
                         .HasForeignKey("PlaceId")
@@ -883,6 +891,8 @@ namespace Eventa.Infrastructure.Migrations
 
             modelBuilder.Entity("Eventa.Infrastructure.ApplicationUser", b =>
                 {
+                    b.Navigation("Events");
+
                     b.Navigation("Orders");
 
                     b.Navigation("TicketsInCart");

@@ -1,24 +1,27 @@
 ﻿using System.Security.Claims;
 using Eventa.Application.Common;
+using Eventa.Application.DTOs.Comments;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using FluentResults;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Eventa.Infrastructure.Services
 {
     public class UserService : IUserService
     {
         private const int bookingTimeInMinutes = 1;
-
+        private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
-        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
         {
+            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -330,6 +333,49 @@ namespace Eventa.Infrastructure.Services
             user.Organization = dto.Organization;
             await _userManager.UpdateAsync(user);
             return Result.Ok();
+        }
+
+        public async Task<Result<UserProfileDataDto>> GetPersonalUserDataAsync(string userId)
+        {
+            var presonalData = await _dbContext.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new UserProfileDataDto
+                {
+                    Name = u.Name,
+                    Email = u.Email!,
+                    Organization = u.Organization,
+                    Rating = u.Events.SelectMany(e => e.EventDateTimes.Where(edt => edt.Event.ApplicationUserId == e.ApplicationUserId)
+                        .SelectMany(edt => edt.Orders
+                            .Where(o => o.IsPurcharsed && o.Comment != null)
+                            .Select(o => (double?)o.Comment!.Rating)
+                        ))
+                        .Average() ?? 0,
+                    Comments = u.Events.SelectMany(e => e.EventDateTimes
+                        .SelectMany(edt =>
+                            edt.Orders
+                            .Where(o => o.IsPurcharsed && o.Comment != null)
+                            .Select(o => new CommentDto
+                            {
+                                Id = o.Comment!.Id,
+                                UserName = _dbContext.Users
+                                    .Where(u => u.Id == o.UserId)
+                                    .Select(u => u.Name)
+                                    .First(),
+                                Rating = o.Comment.Rating,
+                                Content = o.Comment.Content,
+                                CreationDateTime = o.Comment.CreatedAt
+                            })
+                         ))
+                         .ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (presonalData == null)
+            {
+                return Result.Fail(new Error("User not found").WithMetadata("Code", "UserNotFound"));
+            }
+
+            return Result.Ok(presonalData);
         }
 
         private string GenerateVerificationCode()

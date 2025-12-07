@@ -18,6 +18,11 @@ namespace Eventa.Infrastructure
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            builder.Entity<Event>()
+                .HasOne<ApplicationUser>()
+                .WithMany(u => u.Events)
+                .HasForeignKey(e => e.ApplicationUserId);
+
             builder.Entity<EventTag>()
                 .HasOne(et => et.Event)
                 .WithMany(e => e.EventTags)
