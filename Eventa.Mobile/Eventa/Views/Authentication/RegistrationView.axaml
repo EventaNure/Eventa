@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Authentication;assembly=Eventa"
-    d:DesignHeight="750"
+    d:DesignHeight="950"
     d:DesignWidth="800"
     x:CompileBindings="True"
     x:DataType="vm:RegistrationViewModel"
@@ -66,7 +66,7 @@
                     BoxShadow="0 4 20 0 #30000000"
                     CornerRadius="12">
 
-                    <Grid Width="250" RowDefinitions="auto, *, auto, auto, auto">
+                    <Grid Width="250" RowDefinitions="auto, *, auto, auto, auto, auto, auto">
                         <!--  Form Title  -->
                         <Grid
                             Grid.Row="0"
@@ -242,9 +242,78 @@
                             </Button.Content>
                         </Button>
 
-                        <!--  Login Link  -->
+                        <!-- OR Divider -->
                         <Grid
                             Grid.Row="4"
+                            Margin="20,0,20,20"
+                            ColumnDefinitions="*, auto, *">
+                            <Border
+                                Grid.Column="0"
+                                Height="1"
+                                VerticalAlignment="Center"
+                                Background="#E0E0E0" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="10,0"
+                                FontFamily="{StaticResource Kadwa}"
+                                FontSize="12"
+                                Foreground="#999999"
+                                Text="OR" />
+                            <Border
+                                Grid.Column="2"
+                                Height="1"
+                                VerticalAlignment="Center"
+                                Background="#E0E0E0" />
+                        </Grid>
+
+                        <!-- Register with Google Button -->
+                        <Button
+                            Name="GoogleRegisterButton"
+                            Grid.Row="5"
+                            Margin="20,0,20,20"
+                            Padding="12,8"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="White"
+                            Command="{Binding GoogleRegisterCommand}"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Cursor="Hand">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#F8F8F8" />
+                                    <Setter Property="BorderBrush" Value="#D0D0D0" />
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#F0F0F0" />
+                                    <Setter Property="BorderBrush" Value="#C0C0C0" />
+                                </Style>
+                            </Button.Styles>
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <!-- Google Logo SVG -->
+                                    <Viewbox Width="18" Height="18">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" Fill="#4285F4"/>
+                                            <Path Data="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" Fill="#34A853"/>
+                                            <Path Data="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" Fill="#FBBC05"/>
+                                            <Path Data="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" Fill="#EA4335"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock
+                                        FontFamily="{StaticResource Kadwa}"
+                                        FontSize="14"
+                                        Foreground="#3C4043"
+                                        Text="Register with Google" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+
+                        <!--  Login Link  -->
+                        <Grid
+                            Grid.Row="6"
                             Margin="0,0,0,-20"
                             HorizontalAlignment="Center"
                             RowDefinitions="*, *">

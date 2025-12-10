@@ -29,6 +29,7 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Trace'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Duende.IdentityModel.OidcClient" />
     <PackageReference Include="LoadingIndicators.Avalonia" />
     <PackageReference Include="Mapsui.Avalonia" />
     <PackageReference Include="SkiaSharp.QrCode" />
@@ -59,6 +60,9 @@
     </Compile>
     <Compile Update="Views\Authentication\LoginView.axaml.cs">
       <DependentUpon>LoginView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Authentication\CompleteProfileView.axaml.cs">
+      <DependentUpon>CompleteProfileView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Authentication\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
