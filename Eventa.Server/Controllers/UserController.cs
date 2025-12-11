@@ -172,7 +172,7 @@ namespace Eventa.Server.Controllers
         [ProducesResponseType(typeof(GoogleLoginResponseModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> GoogleLogin(GoogleLoginRequest request)
         {
-            var googleLoginResult = await _userService.HandleGoogleLoginAsync(request.IdToken, request.Role);
+            var googleLoginResult = await _userService.HandleGoogleLoginAsync(request.IdToken);
 
             if (!googleLoginResult.IsSuccess)
             {
@@ -181,43 +181,34 @@ namespace Eventa.Server.Controllers
 
             var googleLoginData = googleLoginResult.Value;
 
-            var jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
+            string? jwt = null;
+            if (googleLoginData.Role != null)
+            {
+                jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
+            }
 
             return Ok(new GoogleLoginResponseModel {
                 JwtToken = jwt,
                 Name = googleLoginData.Name,
                 UserId = googleLoginData.UserId,
-                IsLogin = googleLoginData.IsLogin,
                 Role = googleLoginData.Role
             });
         }
 
-        [Authorize]
-        [HttpPut("user")]
-        public async Task<IActionResult> SetPersonalUserData(PersonalUserDataRequestModel requestModel)
+        [HttpPut("complete-external-registration")]
+        public async Task<IActionResult> CompleteExternalRegistration(CompleteExternalRegistrationRequestModel requestModel)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var result = await _userService.SetPersonalUserDataAsync(userId, _mapper.Map<PersonalUserDataDto>(requestModel));
+            var result = await _userService.CompleteExternalRegistrationAsync(requestModel.UserId, _mapper.Map<CompleteExternalRegistrationDto>(requestModel));
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Errors);
             }
-
-            return NoContent();
-        }
-
-        [Authorize]
-        [HttpPut("organizer")]
-        public async Task<IActionResult> SetPersonalOrganizerData(PersonalOrganizerDataRequestModel requestModel)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var result = await _userService.SetOrganizerUserDataAsync(userId, _mapper.Map<PersonalOrganizerDataDto>(requestModel));
-            if (!result.IsSuccess)
+            var jwtToken = _jwtTokenService.GenerateToken(requestModel.UserId, result.Value.Role);
+            return Ok(new CompleteExternalRegistrationResultResponseModel
             {
-                return BadRequest(result.Errors);
-            }
-
-            return NoContent();
+                UserId = requestModel.UserId,
+                JwtToken = jwtToken
+            });
         }
 
         [Authorize]

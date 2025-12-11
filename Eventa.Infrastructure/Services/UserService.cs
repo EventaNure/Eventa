@@ -257,7 +257,7 @@ namespace Eventa.Infrastructure.Services
             return Result.Ok();
         }
 
-        public async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken, string? role)
+        public async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken)
         {
             GoogleJsonWebSignature.Payload payload;
             try
@@ -276,16 +276,6 @@ namespace Eventa.Infrastructure.Services
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    if (role == null)
-                    {
-                        return Result.Fail(new Error("Role must be specified for new users").WithMetadata("Code", "RoleNotSpecified"));
-                    }
-
-                    if (role != DefaultRoles.UserRole && role != DefaultRoles.OrganizerRole)
-                    {
-                        return Result.Fail(new Error("Invalid role specified").WithMetadata("Code", "InvalidRole"));
-                    }
-
                     isNewUser = true;
                     user = new ApplicationUser
                     {
@@ -295,7 +285,6 @@ namespace Eventa.Infrastructure.Services
                         Name = payload.Name
                     };
                     await _userManager.CreateAsync(user);
-                    await _userManager.AddToRoleAsync(user, role);
                 }
                 var info = new UserLoginInfo("Google", payload.Subject, "Google");
                 if (info == null)
@@ -309,14 +298,13 @@ namespace Eventa.Infrastructure.Services
 
             return Result.Ok(new ExternalLoginResultDto
             {
-                IsLogin = !isNewUser,
                 UserId = user.Id,
                 Name = user.Name,
-                Role = role ?? (await _userManager.GetRolesAsync(user)).First()
+                Role = isNewUser ? null : (await _userManager.GetRolesAsync(user)).FirstOrDefault()
             });
         }
 
-        public async Task<Result> SetPersonalUserDataAsync(string userId, PersonalUserDataDto dto)
+        public async Task<Result<ConfirmEmailResultDto>> CompleteExternalRegistrationAsync(string userId, CompleteExternalRegistrationDto dto)
         {
             var getUserResult = await GetUserAsync(userId);
             if (!getUserResult.IsSuccess)
@@ -324,23 +312,30 @@ namespace Eventa.Infrastructure.Services
                 return Result.Fail(getUserResult.Errors[0]);
             }
             var user = getUserResult.Value;
-            user.Name = dto.Name;
-            await _userManager.UpdateAsync(user);
-            return Result.Ok();
-        }
 
-        public async Task<Result> SetOrganizerUserDataAsync(string userId, PersonalOrganizerDataDto dto)
-        {
-            var getUserResult = await GetUserAsync(userId);
-            if (!getUserResult.IsSuccess)
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            if (role != null)
             {
-                return Result.Fail(getUserResult.Errors[0]);
+                return Result.Fail(new Error("User is already registered").WithMetadata("Code", "UserAlreadyRegistered"));
             }
-            var user = getUserResult.Value;
+
             user.Name = dto.Name;
-            user.Organization = dto.Organization;
+            if (dto.Organization != null)
+            {
+                user.Organization = dto.Organization;
+                role = DefaultRoles.OrganizerRole;
+                await _userManager.AddToRoleAsync(user, role);
+            } else
+            {
+                role = DefaultRoles.UserRole;
+                await _userManager.AddToRoleAsync(user, role);
+            }
+
             await _userManager.UpdateAsync(user);
-            return Result.Ok();
+            return Result.Ok(new ConfirmEmailResultDto
+            {
+                Role = role
+            });
         }
 
         public async Task<Result<string>> GetUserNameAsync(string userId)

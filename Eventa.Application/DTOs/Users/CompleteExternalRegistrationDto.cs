@@ -1,7 +1,9 @@
 ﻿namespace Eventa.Application.DTOs.Users
 {
-    public class PersonalUserDataDto
+    public class CompleteExternalRegistrationDto
     {
         public string Name { get; set; } = string.Empty;
+
+        public string? Organization { get; set; }
     }
 }
