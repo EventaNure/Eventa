@@ -168,11 +168,11 @@ namespace Eventa.Server.Controllers
             return Ok(getCartsResult.Value);
         }
 
-        [HttpPost("user-google-login")]
+        [HttpPost("google-login")]
         [ProducesResponseType(typeof(GoogleLoginResponseModel), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UserGoogleLogin(GoogleLoginRequest request)
+        public async Task<IActionResult> GoogleLogin(GoogleLoginRequest request)
         {
-            var googleLoginResult = await _userService.HandleUserGoogleLoginAsync(request.IdToken);
+            var googleLoginResult = await _userService.HandleGoogleLoginAsync(request.IdToken, request.Role);
 
             if (!googleLoginResult.IsSuccess)
             {
@@ -187,30 +187,8 @@ namespace Eventa.Server.Controllers
                 JwtToken = jwt,
                 Name = googleLoginData.Name,
                 UserId = googleLoginData.UserId,
-                IsLogin = googleLoginData.IsLogin
-            });
-        }
-
-        [HttpPost("organizer-google-login")]
-        [ProducesResponseType(typeof(GoogleLoginResponseModel), StatusCodes.Status200OK)]
-        public async Task<IActionResult> OrganizerGoogleLogin(GoogleLoginRequest request)
-        {
-            var googleLoginResult = await _userService.HandleOrganizerGoogleLoginAsync(request.IdToken);
-
-            if (!googleLoginResult.IsSuccess)
-            {
-                return BadRequest(googleLoginResult.Errors);
-            }
-
-            var googleLoginData = googleLoginResult.Value;
-
-            var jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
-
-            return Ok(new GoogleLoginResponseModel
-            {
-                JwtToken = jwt,
-                Name = googleLoginData.Name,
-                UserId = googleLoginData.UserId
+                IsLogin = googleLoginData.IsLogin,
+                Role = googleLoginData.Role
             });
         }
 

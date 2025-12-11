@@ -257,19 +257,17 @@ namespace Eventa.Infrastructure.Services
             return Result.Ok();
         }
 
-        public async Task<Result<ExternalLoginResultDto>> HandleUserGoogleLoginAsync(string idToken)
+        public async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken, string? role)
         {
-            return await HandleGoogleLoginAsync(idToken, DefaultRoles.UserRole);
-        }
-
-        public async Task<Result<ExternalLoginResultDto>> HandleOrganizerGoogleLoginAsync(string idToken)
-        {
-            return await HandleGoogleLoginAsync(idToken, DefaultRoles.OrganizerRole);
-        }
-
-        private async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken, string role)
-        {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            }
+            catch (InvalidJwtException)
+            {
+                return Result.Fail(new Error("Invalid or expired Google token").WithMetadata("Code", "InvalidToken"));
+            }
 
             var user = await _userManager.FindByLoginAsync("Google", payload.Subject);
             var isNewUser = false;
@@ -278,6 +276,16 @@ namespace Eventa.Infrastructure.Services
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
+                    if (role == null)
+                    {
+                        return Result.Fail(new Error("Role must be specified for new users").WithMetadata("Code", "RoleNotSpecified"));
+                    }
+
+                    if (role != DefaultRoles.UserRole && role != DefaultRoles.OrganizerRole)
+                    {
+                        return Result.Fail(new Error("Invalid role specified").WithMetadata("Code", "InvalidRole"));
+                    }
+
                     isNewUser = true;
                     user = new ApplicationUser
                     {
@@ -304,7 +312,7 @@ namespace Eventa.Infrastructure.Services
                 IsLogin = !isNewUser,
                 UserId = user.Id,
                 Name = user.Name,
-                Role = role
+                Role = role ?? (await _userManager.GetRolesAsync(user)).First()
             });
         }
 
@@ -335,6 +343,18 @@ namespace Eventa.Infrastructure.Services
             return Result.Ok();
         }
 
+        public async Task<Result<string>> GetUserNameAsync(string userId)
+        {
+            var getUserResult = await GetUserAsync(userId);
+            if (!getUserResult.IsSuccess)
+            {
+                return Result.Fail(getUserResult.Errors[0]);
+            }
+            var user = getUserResult.Value;
+
+            return Result.Ok(user.Name);
+        }
+
         public async Task<Result<UserProfileDataDto>> GetPersonalUserDataAsync(string userId)
         {
             var presonalData = await _dbContext.Users
@@ -350,7 +370,7 @@ namespace Eventa.Infrastructure.Services
                             .Select(o => (double?)o.Comment!.Rating)
                         ))
                         .Average() ?? 0,
-                    Comments = u.Events.SelectMany(e => e.EventDateTimes
+                    CommentsAboutMe = u.Events.SelectMany(e => e.EventDateTimes
                         .SelectMany(edt =>
                             edt.Orders
                             .Where(o => o.IsPurcharsed && o.Comment != null)
@@ -366,7 +386,21 @@ namespace Eventa.Infrastructure.Services
                                 CreationDateTime = o.Comment.CreatedAt
                             })
                          ))
-                         .ToList()
+                         .ToList(),
+                    MyComments = _dbContext.Comments
+                        .Where(c => c.UserId == u.Id)
+                        .Select(c => new CommentDto
+                        {
+                            Id = c.Id,
+                            UserName = _dbContext.Users
+                                .Where(user => user.Id == c.Order.EventDateTime.Event.ApplicationUserId)
+                                .Select(user => user.Name)
+                                .First(),
+                            Rating = c.Rating,
+                            Content = c.Content,
+                            CreationDateTime = c.CreatedAt
+                        })
+                        .ToList()
                 })
                 .FirstOrDefaultAsync();
 

@@ -76,5 +76,7 @@ namespace Eventa.Infrastructure
         public DbSet<TicketInCart> TicketsInCart { get; set; }
 
         public DbSet<TicketInOrder> TicketsInOrder { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
     }
 }

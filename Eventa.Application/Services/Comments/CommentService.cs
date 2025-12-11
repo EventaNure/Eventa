@@ -10,10 +10,12 @@ namespace Eventa.Application.Services.Comments
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public CommentService(IUnitOfWork unitOfWork, IMapper mapper) {
+        public CommentService(IUnitOfWork unitOfWork, IMapper mapper, IUserService userService) {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<Result<CommentDto>> CreateCommentAsync(string userId, CreateCommentDto dto)
@@ -46,10 +48,21 @@ namespace Eventa.Application.Services.Comments
 
             var comment = _mapper.Map<Comment>(dto);
             comment.CreatedAt = DateTime.UtcNow;
+            comment.UserId = userId;
+
             var commentDbSet = _unitOfWork.GetDbSet<Comment>();
             commentDbSet.Add(comment);
             await _unitOfWork.CommitAsync();
+
             var commentDto = _mapper.Map<CommentDto>(comment);
+
+            var getUserNameResult = await _userService.GetUserNameAsync(userId);
+            if (!getUserNameResult.IsSuccess)
+            {
+                return Result.Fail(getUserNameResult.Errors);
+            }
+            commentDto.UserName = getUserNameResult.Value;
+
             return Result.Ok(commentDto);
         }
     }

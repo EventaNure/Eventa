@@ -8,6 +8,8 @@ namespace Eventa.Application.DTOs.Users
         public string Email { get; set; } = string.Empty;
         public double? Rating { get; set; }
         public string? Organization { get; set; }
-        public IEnumerable<CommentDto> Comments { get; set; } = [];
+        public IEnumerable<CommentDto> MyComments { get; set; } = [];
+
+        public IEnumerable<CommentDto> CommentsAboutMe { get; set; } = [];
     }
 }
