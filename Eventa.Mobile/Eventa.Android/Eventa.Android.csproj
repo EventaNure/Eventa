@@ -25,4 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Eventa\Eventa.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
 </Project>

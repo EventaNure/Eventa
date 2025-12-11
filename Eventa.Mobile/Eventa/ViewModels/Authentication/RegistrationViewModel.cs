@@ -38,9 +38,13 @@ public partial class RegistrationViewModel : ObservableObject
     [ObservableProperty]
     private AsyncRelayCommand? _registerCommand;
 
+    [ObservableProperty]
+    private AsyncRelayCommand? _googleRegisterCommand;
+
     public RegistrationViewModel()
     {
         _registerCommand = new AsyncRelayCommand(RegisterAsync);
+        _googleRegisterCommand = new AsyncRelayCommand(GoogleRegisterAsync);
     }
 
     private async Task RegisterAsync()
@@ -65,6 +69,87 @@ public partial class RegistrationViewModel : ObservableObject
         {
             ErrorMessage = $"An error occurred: {ex.Message}";
         }
+    }
+
+    private async Task GoogleRegisterAsync()
+    {
+        ErrorMessage = string.Empty;
+
+        try
+        {
+            // Initialize Google Auth Service
+            var googleAuthService = new GoogleAuthService();
+            
+            // Authenticate with Google and get ID token
+            string? idToken = await googleAuthService.AuthenticateAsync();
+
+            if (string.IsNullOrEmpty(idToken))
+            {
+                ErrorMessage = "Failed to authenticate with Google. Please try again.";
+                return;
+            }
+
+            var googleRequest = new GoogleLoginRequestModel
+            {
+                IdToken = idToken
+            };
+
+            // Get user info from Google
+            var (success, message, data) = await _apiService.GoogleUserLoginAsync(googleRequest);
+
+            if (success && data != null)
+            {
+                // Show complete profile view with ID token to decide later whether user or organizer
+                await HandleGoogleRegistrationResponseAsync(data, idToken);
+            }
+            else
+            {
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private async Task HandleGoogleRegistrationResponseAsync(GoogleLoginResponseModel response, string idToken)
+    {
+        if (response.IsLogin)
+        {
+            // User already exists with complete profile, log them in
+            var loginResponse = new LoginResponseModel
+            {
+                UserId = response.UserId,
+                JwtToken = response.JwtToken,
+                EmailConfirmed = true
+            };
+
+            await SaveGoogleCredentialsAsync(loginResponse);
+            ResetAllAuthenticationViews();
+            MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
+            MainView.Instance.ChangePage(MainPageView.Instance);
+        }
+        else
+        {
+            // New user or incomplete profile - show complete profile view
+            // Pass ID token so we can decide later based on organization name
+            CompleteProfileView.Instance.completeProfileViewModel.InsertFormDataFromGoogle(
+                response.Name,
+                response.UserId,
+                response.JwtToken,
+                idToken
+            );
+            MainView.Instance.ChangePage(CompleteProfileView.Instance);
+        }
+    }
+
+    private async Task SaveGoogleCredentialsAsync(LoginResponseModel loginResponse)
+    {
+        var settings = await _settingsService.LoadAsync();
+        settings.JwtToken = loginResponse.JwtToken;
+        settings.UserId = loginResponse.UserId;
+        await _settingsService.SaveAsync(settings);
     }
 
     private async Task HandleEmailChangeAsync()
@@ -129,6 +214,14 @@ public partial class RegistrationViewModel : ObservableObject
     {
         EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, userId);
         MainView.Instance.ChangePage(EmailVerifyView.Instance);
+    }
+
+    private static void ResetAllAuthenticationViews()
+    {
+        EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
+        RegistrationView.Instance.registrationViewModel.ResetForm();
+        LoginView.Instance.loginViewModel.ResetForm();
+        CompleteProfileView.Instance.completeProfileViewModel.ResetForm();
     }
 
     private bool ValidateInput()

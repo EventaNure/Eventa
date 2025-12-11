@@ -21,6 +21,9 @@ public partial class LoginViewModel : ObservableObject
     private AsyncRelayCommand? _loginCommand;
 
     [ObservableProperty]
+    private AsyncRelayCommand? _googleLoginCommand;
+
+    [ObservableProperty]
     private string _email = string.Empty;
 
     [ObservableProperty]
@@ -32,6 +35,7 @@ public partial class LoginViewModel : ObservableObject
     public LoginViewModel()
     {
         _loginCommand = new AsyncRelayCommand(LoginAsync);
+        _googleLoginCommand = new AsyncRelayCommand(GoogleLoginAsync);
     }
 
     private async Task LoginAsync()
@@ -63,6 +67,79 @@ public partial class LoginViewModel : ObservableObject
         catch (Exception ex)
         {
             ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private async Task GoogleLoginAsync()
+    {
+        ErrorMessage = string.Empty;
+
+        try
+        {
+            // Initialize Google Auth Service
+            var googleAuthService = new GoogleAuthService();
+            
+            // Authenticate with Google and get ID token
+            string? idToken = await googleAuthService.AuthenticateAsync();
+
+            if (string.IsNullOrEmpty(idToken))
+            {
+                ErrorMessage = "Failed to authenticate with Google. Please try again.";
+                return;
+            }
+
+            // Send token to backend for verification and get user info
+            var googleRequest = new GoogleLoginRequestModel
+            {
+                IdToken = idToken
+            };
+
+            var (success, message, data) = await _apiService.GoogleUserLoginAsync(googleRequest);
+
+            if (success && data != null)
+            {
+                // Show CompleteProfileView with the ID token to decide later whether user or organizer
+                await HandleGoogleLoginResponseAsync(data, idToken);
+            }
+            else
+            {
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private async Task HandleGoogleLoginResponseAsync(GoogleLoginResponseModel response, string idToken)
+    {
+        if (response.IsLogin)
+        {
+            // User already has a complete profile, log them in
+            var loginResponse = new LoginResponseModel
+            {
+                UserId = response.UserId,
+                JwtToken = response.JwtToken,
+                EmailConfirmed = true
+            };
+
+            await SaveCredentialsAsync(loginResponse);
+            ResetAllAuthenticationViews();
+            MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
+            MainView.Instance.ChangePage(MainPageView.Instance);
+        }
+        else
+        {
+            // User's account doesn't have a complete profile yet
+            // Show complete profile view to finish account setup
+            CompleteProfileView.Instance.completeProfileViewModel.InsertFormDataFromGoogle(
+                response.Name,
+                response.UserId,
+                response.JwtToken,
+                idToken
+            );
+            MainView.Instance.ChangePage(CompleteProfileView.Instance);
         }
     }
 
@@ -112,6 +189,7 @@ public partial class LoginViewModel : ObservableObject
         EmailVerifyView.Instance.emailVerifyViewModel.ResetForm();
         RegistrationView.Instance.registrationViewModel.ResetForm();
         LoginView.Instance.loginViewModel.ResetForm();
+        CompleteProfileView.Instance.completeProfileViewModel.ResetForm();
     }
 
     private bool ValidateInput()

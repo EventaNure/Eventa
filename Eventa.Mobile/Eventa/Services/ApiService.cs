@@ -23,11 +23,11 @@ public class ApiService
     private static readonly HttpClient _httpClient;
 
     // LOCAL DEV:
-    // private const string BaseUrlDesktop = "https://localhost:7293";
-    // private const string BaseUrlAndroid = "https://10.0.2.2:7293";
-    //PROD:
-    private const string BaseUrlDesktop = "https://eventa-app.fun:5001";
-    private const string BaseUrlAndroid = "https://eventa-app.fun:5001";
+    private const string BaseUrlDesktop = "https://localhost:7293";
+    private const string BaseUrlAndroid = "https://10.0.2.2:7293";
+    // PROD:
+    // private const string BaseUrlDesktop = "https://eventa-app.fun:5001";
+    // private const string BaseUrlAndroid = "https://eventa-app.fun:5001";
 
     static ApiService()
     {
@@ -803,6 +803,106 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool success, string message, GoogleLoginResponseModel? data)> GoogleOrganizerLoginAsync(GoogleLoginRequestModel googleRequest)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/User/organizer-google-login", googleRequest);
+            if (response.IsSuccessStatusCode)
+            {
+                var loginResult = await response.Content.ReadFromJsonAsync<GoogleLoginResponseModel>();
+                return (true, "Login successful!", loginResult);
+            }
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<(bool success, string message, GoogleLoginResponseModel? data)> GoogleUserLoginAsync(GoogleLoginRequestModel googleRequest)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/User/user-google-login", googleRequest);
+            if (response.IsSuccessStatusCode)
+            {
+                var loginResult = await response.Content.ReadFromJsonAsync<GoogleLoginResponseModel>();
+                return (true, "Login successful!", loginResult);
+            }
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+    }
+
+    public async Task<(bool success, string message)> UpdateUserProfileAsync(PersonalUserDataRequestModel request, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            var response = await _httpClient.PutAsJsonAsync("/api/User/user", request);
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Profile updated successfully!");
+            }
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool success, string message)> UpdateOrganizerProfileAsync(PersonalOrganizerDataRequestModel request, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            var response = await _httpClient.PutAsJsonAsync("/api/User/organizer", request);
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Profile updated successfully!");
+            }
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
         }
         finally
         {

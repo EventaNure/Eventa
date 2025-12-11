@@ -1,5 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="com.eventa.app" android:versionCode="1" android:versionName="1.0.0.0">
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="Eventa" android:icon="@drawable/Icon" />
+	<application android:label="Eventa" android:icon="@drawable/Icon">
+		<activity
+			android:name=".MainActivity"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data
+					android:scheme="com.eventa.app"
+					android:host="oauth2callback" />
+			</intent-filter>
+		</activity>
+	</application>
 </manifest>
