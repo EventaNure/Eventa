@@ -8,11 +8,14 @@ public class GoogleLoginResponseModel
     public string UserId { get; set; } = string.Empty;
 
     [JsonPropertyName("jwtToken")]
-    public string JwtToken { get; set; } = string.Empty;
+    public string? JwtToken { get; set; }
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    [JsonPropertyName("isLogin")]
-    public bool IsLogin { get; set; }
+    [JsonPropertyName("role")]
+    public string? Role { get; set; }
+
+    [JsonIgnore]
+    public bool IsLogin => !string.IsNullOrEmpty(JwtToken) && !string.IsNullOrEmpty(Role);
 }

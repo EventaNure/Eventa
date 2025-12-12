@@ -28,33 +28,20 @@ public partial class CompleteProfileViewModel : ObservableObject
     private AsyncRelayCommand? _completeProfileCommand;
 
     private string _userId = string.Empty;
-    private string _jwtToken = string.Empty;
-    private string _googleIdToken = string.Empty;
-    private bool _isGoogleLogin = false;
+    private bool _isGoogleRegistration = false;
 
     public CompleteProfileViewModel()
     {
         _completeProfileCommand = new AsyncRelayCommand(CompleteProfileAsync);
     }
 
-    public void InsertFormData(string name, string userId, string jwtToken)
+    public void InsertFormDataFromGoogle(string name, string userId)
     {
         Name = name;
         _userId = userId;
-        _jwtToken = jwtToken;
         OrganizationName = string.Empty;
-        _isGoogleLogin = false;
-        _googleIdToken = string.Empty;
-    }
-
-    public void InsertFormDataFromGoogle(string name, string userId, string jwtToken, string googleIdToken)
-    {
-        Name = name;
-        _userId = userId;
-        _jwtToken = jwtToken;
-        _googleIdToken = googleIdToken;
-        _isGoogleLogin = true;
-        OrganizationName = string.Empty;
+        _isGoogleRegistration = true;
+        ErrorMessage = string.Empty;
     }
 
     private async Task CompleteProfileAsync()
@@ -66,17 +53,29 @@ public partial class CompleteProfileViewModel : ObservableObject
 
         try
         {
-            bool isOrganizer = !string.IsNullOrWhiteSpace(OrganizationName);
-
-            if (_isGoogleLogin)
+            if (!_isGoogleRegistration)
             {
-                // For Google login, call the appropriate API based on organization name
-                await HandleGoogleProfileCompletionAsync(isOrganizer);
+                ErrorMessage = "Invalid registration state";
+                return;
+            }
+
+            var request = new CompleteExternalRegistrationRequestModel
+            {
+                Name = Name,
+                Organization = string.IsNullOrWhiteSpace(OrganizationName) ? null : OrganizationName,
+                UserId = _userId
+            };
+
+            var (success, message, data) = await _apiService.CompleteExternalRegistrationAsync(request);
+
+            if (success && data != null)
+            {
+                await SaveProfileDataAsync(data);
+                NavigateToMainPage(data);
             }
             else
             {
-                // For regular registration, update profile using JWT token
-                await HandleRegularProfileCompletionAsync(isOrganizer);
+                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
             }
         }
         catch (Exception ex)
@@ -85,125 +84,14 @@ public partial class CompleteProfileViewModel : ObservableObject
         }
     }
 
-    private async Task HandleGoogleProfileCompletionAsync(bool isOrganizer)
-    {
-        var googleRequest = new GoogleLoginRequestModel
-        {
-            IdToken = _googleIdToken
-        };
-
-        bool success;
-        string message;
-        GoogleLoginResponseModel? data;
-
-        if (isOrganizer)
-        {
-            (success, message, data) = await _apiService.GoogleOrganizerLoginAsync(googleRequest);
-        }
-        else
-        {
-            (success, message, data) = await _apiService.GoogleUserLoginAsync(googleRequest);
-        }
-
-        if (success && data != null)
-        {
-            // Now save the profile data to the database
-            bool profileUpdateSuccess;
-            string profileUpdateMessage;
-
-            if (isOrganizer)
-            {
-                var request = new PersonalOrganizerDataRequestModel
-                {
-                    Name = Name,
-                    Organization = OrganizationName
-                };
-                (profileUpdateSuccess, profileUpdateMessage) = await _apiService.UpdateOrganizerProfileAsync(request, data.JwtToken);
-            }
-            else
-            {
-                var request = new PersonalUserDataRequestModel
-                {
-                    Name = Name
-                };
-                (profileUpdateSuccess, profileUpdateMessage) = await _apiService.UpdateUserProfileAsync(request, data.JwtToken);
-            }
-
-            if (profileUpdateSuccess)
-            {
-                await SaveGoogleProfileDataAsync(data);
-                NavigateToMainPage(data);
-            }
-            else
-            {
-                ErrorMessage = ApiErrorConverter.ExtractErrorMessage(profileUpdateMessage);
-            }
-        }
-        else
-        {
-            ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
-        }
-    }
-
-    private async Task HandleRegularProfileCompletionAsync(bool isOrganizer)
-    {
-        bool success;
-        string message;
-
-        if (isOrganizer)
-        {
-            var request = new PersonalOrganizerDataRequestModel
-            {
-                Name = Name,
-                Organization = OrganizationName
-            };
-            (success, message) = await _apiService.UpdateOrganizerProfileAsync(request, _jwtToken);
-        }
-        else
-        {
-            var request = new PersonalUserDataRequestModel
-            {
-                Name = Name
-            };
-            (success, message) = await _apiService.UpdateUserProfileAsync(request, _jwtToken);
-        }
-
-        if (success)
-        {
-            await SaveProfileDataAsync();
-            NavigateToMainPage();
-        }
-        else
-        {
-            ErrorMessage = ApiErrorConverter.ExtractErrorMessage(message);
-        }
-    }
-
-    private async Task SaveGoogleProfileDataAsync(GoogleLoginResponseModel response)
+    private async Task SaveProfileDataAsync(CompleteExternalRegistrationResponseModel response)
     {
         var settings = await _settingsService.LoadAsync();
         settings.UserId = response.UserId;
         settings.JwtToken = response.JwtToken;
-        settings.UserName = response.Name;
-
-        bool isOrganizer = !string.IsNullOrWhiteSpace(OrganizationName);
-        if (isOrganizer)
-        {
-            settings.OrganizationName = OrganizationName;
-        }
-
-        await _settingsService.SaveAsync(settings);
-    }
-
-    private async Task SaveProfileDataAsync()
-    {
-        var settings = await _settingsService.LoadAsync();
-        settings.UserId = _userId;
-        settings.JwtToken = _jwtToken;
         settings.UserName = Name;
 
-        bool isOrganizer = !string.IsNullOrWhiteSpace(OrganizationName);
-        if (isOrganizer)
+        if (!string.IsNullOrWhiteSpace(OrganizationName))
         {
             settings.OrganizationName = OrganizationName;
         }
@@ -211,28 +99,14 @@ public partial class CompleteProfileViewModel : ObservableObject
         await _settingsService.SaveAsync(settings);
     }
 
-    private void NavigateToMainPage(GoogleLoginResponseModel? response = null)
+    private void NavigateToMainPage(CompleteExternalRegistrationResponseModel response)
     {
-        LoginResponseModel loginResponse;
-
-        if (response != null)
+        var loginResponse = new LoginResponseModel
         {
-            loginResponse = new LoginResponseModel
-            {
-                UserId = response.UserId,
-                JwtToken = response.JwtToken,
-                EmailConfirmed = true
-            };
-        }
-        else
-        {
-            loginResponse = new LoginResponseModel
-            {
-                UserId = _userId,
-                JwtToken = _jwtToken,
-                EmailConfirmed = true
-            };
-        }
+            UserId = response.UserId,
+            JwtToken = response.JwtToken,
+            EmailConfirmed = true
+        };
 
         MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
         MainView.Instance.ChangePage(MainPageView.Instance);
@@ -253,8 +127,7 @@ public partial class CompleteProfileViewModel : ObservableObject
             return false;
         }
 
-        bool isOrganizer = !string.IsNullOrWhiteSpace(OrganizationName);
-        if (isOrganizer)
+        if (!string.IsNullOrWhiteSpace(OrganizationName))
         {
             if (OrganizationName.Length < 3 || OrganizationName.Length > 32)
             {
@@ -272,8 +145,6 @@ public partial class CompleteProfileViewModel : ObservableObject
         OrganizationName = string.Empty;
         ErrorMessage = string.Empty;
         _userId = string.Empty;
-        _jwtToken = string.Empty;
-        _googleIdToken = string.Empty;
-        _isGoogleLogin = false;
+        _isGoogleRegistration = false;
     }
 }

@@ -78,7 +78,7 @@ public partial class LoginViewModel : ObservableObject
         {
             // Initialize Google Auth Service
             var googleAuthService = new GoogleAuthService();
-            
+
             // Authenticate with Google and get ID token
             string? idToken = await googleAuthService.AuthenticateAsync();
 
@@ -88,7 +88,7 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            // Send token to backend for verification and get user info
+            // Send token to backend for verification
             var googleRequest = new GoogleLoginRequestModel
             {
                 IdToken = idToken
@@ -98,8 +98,7 @@ public partial class LoginViewModel : ObservableObject
 
             if (success && data != null)
             {
-                // Show CompleteProfileView with the ID token to decide later whether user or organizer
-                await HandleGoogleLoginResponseAsync(data, idToken);
+                await HandleGoogleLoginResponseAsync(data);
             }
             else
             {
@@ -112,32 +111,30 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    private async Task HandleGoogleLoginResponseAsync(GoogleLoginResponseModel response, string idToken)
+    private async Task HandleGoogleLoginResponseAsync(GoogleLoginResponseModel response)
     {
         if (response.IsLogin)
         {
-            // User already has a complete profile, log them in
+            // User is already registered and has a complete profile
             var loginResponse = new LoginResponseModel
             {
                 UserId = response.UserId,
-                JwtToken = response.JwtToken,
+                JwtToken = response.JwtToken!,
                 EmailConfirmed = true
             };
 
-            await SaveCredentialsAsync(loginResponse);
+            await SaveGoogleCredentialsAsync(loginResponse, response.Name);
             ResetAllAuthenticationViews();
             MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
             MainView.Instance.ChangePage(MainPageView.Instance);
         }
         else
         {
-            // User's account doesn't have a complete profile yet
+            // User needs to complete registration
             // Show complete profile view to finish account setup
             CompleteProfileView.Instance.completeProfileViewModel.InsertFormDataFromGoogle(
                 response.Name,
-                response.UserId,
-                response.JwtToken,
-                idToken
+                response.UserId
             );
             MainView.Instance.ChangePage(CompleteProfileView.Instance);
         }
@@ -175,6 +172,15 @@ public partial class LoginViewModel : ObservableObject
         settings.Password = Password;
         settings.JwtToken = loginResponse.JwtToken;
         settings.UserId = loginResponse.UserId;
+        await _settingsService.SaveAsync(settings);
+    }
+
+    private async Task SaveGoogleCredentialsAsync(LoginResponseModel loginResponse, string userName)
+    {
+        var settings = await _settingsService.LoadAsync();
+        settings.JwtToken = loginResponse.JwtToken;
+        settings.UserId = loginResponse.UserId;
+        settings.UserName = userName;
         await _settingsService.SaveAsync(settings);
     }
 

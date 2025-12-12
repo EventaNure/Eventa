@@ -810,11 +810,11 @@ public class ApiService
         }
     }
 
-    public async Task<(bool success, string message, GoogleLoginResponseModel? data)> GoogleOrganizerLoginAsync(GoogleLoginRequestModel googleRequest)
+    public async Task<(bool success, string message, GoogleLoginResponseModel? data)> GoogleUserLoginAsync(GoogleLoginRequestModel googleRequest)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/User/organizer-google-login", googleRequest);
+            var response = await _httpClient.PostAsJsonAsync("/api/User/google-login", googleRequest);
             if (response.IsSuccessStatusCode)
             {
                 var loginResult = await response.Content.ReadFromJsonAsync<GoogleLoginResponseModel>();
@@ -833,15 +833,15 @@ public class ApiService
         }
     }
 
-    public async Task<(bool success, string message, GoogleLoginResponseModel? data)> GoogleUserLoginAsync(GoogleLoginRequestModel googleRequest)
+    public async Task<(bool success, string message, CompleteExternalRegistrationResponseModel? data)> CompleteExternalRegistrationAsync(CompleteExternalRegistrationRequestModel request)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/User/user-google-login", googleRequest);
+            var response = await _httpClient.PutAsJsonAsync("/api/User/complete-external-registration", request);
             if (response.IsSuccessStatusCode)
             {
-                var loginResult = await response.Content.ReadFromJsonAsync<GoogleLoginResponseModel>();
-                return (true, "Login successful!", loginResult);
+                var result = await response.Content.ReadFromJsonAsync<CompleteExternalRegistrationResponseModel>();
+                return (true, "Registration completed successfully!", result);
             }
             var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
             return (false, errorMessage, null);

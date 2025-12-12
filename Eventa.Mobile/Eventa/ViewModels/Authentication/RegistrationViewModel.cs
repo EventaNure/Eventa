@@ -79,7 +79,7 @@ public partial class RegistrationViewModel : ObservableObject
         {
             // Initialize Google Auth Service
             var googleAuthService = new GoogleAuthService();
-            
+
             // Authenticate with Google and get ID token
             string? idToken = await googleAuthService.AuthenticateAsync();
 
@@ -99,8 +99,7 @@ public partial class RegistrationViewModel : ObservableObject
 
             if (success && data != null)
             {
-                // Show complete profile view with ID token to decide later whether user or organizer
-                await HandleGoogleRegistrationResponseAsync(data, idToken);
+                await HandleGoogleRegistrationResponseAsync(data);
             }
             else
             {
@@ -113,42 +112,38 @@ public partial class RegistrationViewModel : ObservableObject
         }
     }
 
-    private async Task HandleGoogleRegistrationResponseAsync(GoogleLoginResponseModel response, string idToken)
+    private async Task HandleGoogleRegistrationResponseAsync(GoogleLoginResponseModel response)
     {
         if (response.IsLogin)
         {
-            // User already exists with complete profile, log them in
             var loginResponse = new LoginResponseModel
             {
                 UserId = response.UserId,
-                JwtToken = response.JwtToken,
+                JwtToken = response.JwtToken!,
                 EmailConfirmed = true
             };
 
-            await SaveGoogleCredentialsAsync(loginResponse);
+            await SaveGoogleCredentialsAsync(loginResponse, response.Name);
             ResetAllAuthenticationViews();
             MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
             MainView.Instance.ChangePage(MainPageView.Instance);
         }
         else
         {
-            // New user or incomplete profile - show complete profile view
-            // Pass ID token so we can decide later based on organization name
             CompleteProfileView.Instance.completeProfileViewModel.InsertFormDataFromGoogle(
                 response.Name,
-                response.UserId,
-                response.JwtToken,
-                idToken
+                response.UserId
             );
             MainView.Instance.ChangePage(CompleteProfileView.Instance);
         }
     }
 
-    private async Task SaveGoogleCredentialsAsync(LoginResponseModel loginResponse)
+    private async Task SaveGoogleCredentialsAsync(LoginResponseModel loginResponse, string userName)
     {
         var settings = await _settingsService.LoadAsync();
         settings.JwtToken = loginResponse.JwtToken;
         settings.UserId = loginResponse.UserId;
+        settings.UserName = userName;
         await _settingsService.SaveAsync(settings);
     }
 
