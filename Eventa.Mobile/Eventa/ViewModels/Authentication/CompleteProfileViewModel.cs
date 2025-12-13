@@ -90,6 +90,8 @@ public partial class CompleteProfileViewModel : ObservableObject
         settings.UserId = response.UserId;
         settings.JwtToken = response.JwtToken;
         settings.UserName = Name;
+        settings.Email = string.Empty;
+        settings.Password = string.Empty;
 
         if (!string.IsNullOrWhiteSpace(OrganizationName))
         {

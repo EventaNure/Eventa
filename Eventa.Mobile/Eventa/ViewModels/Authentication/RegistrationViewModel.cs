@@ -123,6 +123,7 @@ public partial class RegistrationViewModel : ObservableObject
                 EmailConfirmed = true
             };
 
+            // Save only JWT token and user info (no Google ID token or credentials)
             await SaveGoogleCredentialsAsync(loginResponse, response.Name);
             ResetAllAuthenticationViews();
             MainPageView.Instance.mainPageViewModel.InsertFormData(loginResponse);
@@ -144,6 +145,8 @@ public partial class RegistrationViewModel : ObservableObject
         settings.JwtToken = loginResponse.JwtToken;
         settings.UserId = loginResponse.UserId;
         settings.UserName = userName;
+        settings.Email = string.Empty;
+        settings.Password = string.Empty;
         await _settingsService.SaveAsync(settings);
     }
 

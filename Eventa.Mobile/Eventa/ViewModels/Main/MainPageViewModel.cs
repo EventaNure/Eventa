@@ -176,28 +176,13 @@ public partial class MainPageViewModel : ObservableObject
         {
             var settings = await _settingsService.LoadAsync();
 
-            if (string.IsNullOrEmpty(settings.Email) || string.IsNullOrEmpty(settings.Password))
+            if (!string.IsNullOrEmpty(settings.JwtToken))
             {
-                UserId = string.Empty;
-                return;
-            }
-
-            var loginRequest = new LoginRequestModel
-            {
-                Email = settings.Email,
-                Password = settings.Password
-            };
-
-            var (success, message, data) = await _apiService.LoginAsync(loginRequest);
-
-            if (success && data is JsonElement json)
-            {
-                await HandleSuccessfulLoginAsync(json, settings);
+                await LoginWithJwtTokenAsync(settings);
             }
             else
             {
                 UserId = string.Empty;
-                ErrorMessage = $"Profile load failed: {ApiErrorConverter.ExtractErrorMessage(message)}";
             }
         }
         catch (Exception ex)
@@ -211,34 +196,43 @@ public partial class MainPageViewModel : ObservableObject
         }
     }
 
-    private async Task HandleSuccessfulLoginAsync(JsonElement json, AppSettings settings)
+    private async Task LoginWithJwtTokenAsync(AppSettings settings)
     {
-        var loginResponse = json.Deserialize<LoginResponseModel>()!;
-
-        if (loginResponse.EmailConfirmed)
+        try
         {
-            await SaveAuthenticationDataAsync(settings, loginResponse);
+            var (success, message, userData) = await _apiService.GetPersonalDataAsync(settings.JwtToken);
 
-            ResetAllAuthenticationViews();
-            InsertFormData(loginResponse);
-            MainView.Instance.ChangePage(MainPageView.Instance);
+            if (success && userData != null)
+            {
+                var loginResponse = new LoginResponseModel
+                {
+                    UserId = settings.UserId,
+                    JwtToken = settings.JwtToken,
+                    EmailConfirmed = true
+                };
+
+                if (!string.IsNullOrEmpty(userData.Name))
+                {
+                    settings.UserName = userData.Name;
+                    await _settingsService.SaveAsync(settings);
+                }
+
+                ResetAllAuthenticationViews();
+                InsertFormData(loginResponse);
+                MainView.Instance.ChangePage(MainPageView.Instance);
+            }
+            else
+            {
+                await ClearAuthenticationDataAsync();
+                UserId = string.Empty;
+            }
         }
-        else
+        catch
         {
-            EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(
-                settings.Email,
-                settings.Password,
-                loginResponse.UserId
-            );
-            MainView.Instance.ChangePage(EmailVerifyView.Instance);
+            await ClearAuthenticationDataAsync();
+            UserId = string.Empty;
+            ErrorMessage = $"Session expired. Please log in again.";
         }
-    }
-
-    private async Task SaveAuthenticationDataAsync(AppSettings settings, LoginResponseModel loginResponse)
-    {
-        settings.JwtToken = loginResponse.JwtToken;
-        settings.UserId = loginResponse.UserId;
-        await _settingsService.SaveAsync(settings);
     }
 
     public void InsertFormData(LoginResponseModel model)
@@ -439,7 +433,18 @@ public partial class MainPageViewModel : ObservableObject
 
     private async Task LogoutAsync()
     {
-        await ClearAuthenticationDataAsync();
+        UserId = string.Empty;
+        JwtToken = string.Empty;
+
+        var settings = await _settingsService.LoadAsync();
+        settings.JwtToken = string.Empty;
+        settings.UserId = string.Empty;
+        settings.UserName = string.Empty;
+        settings.OrganizationName = string.Empty;
+        settings.Email = string.Empty;
+        settings.Password = string.Empty;
+        await _settingsService.SaveAsync(settings);
+
         ClearOrganizerState();
         ResetAllAuthenticationViews();
         IsUserBrowsing = false;
@@ -460,11 +465,10 @@ public partial class MainPageViewModel : ObservableObject
 
         var settings = await _settingsService.LoadAsync();
         settings.JwtToken = string.Empty;
-        settings.Email = string.Empty;
-        settings.Password = string.Empty;
+        settings.UserId = string.Empty;
         settings.UserName = string.Empty;
         settings.OrganizationName = string.Empty;
-        settings.UserId = string.Empty;
+        // Note: Email and Password are managed by LoginViewModel
         await _settingsService.SaveAsync(settings);
 
         ResetForm();

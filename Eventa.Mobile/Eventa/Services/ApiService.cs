@@ -856,6 +856,34 @@ public class ApiService
         }
     }
 
+    public async Task<(bool success, string message, UserProfileDataModel? data)> GetPersonalDataAsync(string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            var response = await _httpClient.GetAsync("/api/User/personal-data");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UserProfileDataModel>();
+                return (true, "Got personal data successfully!", result);
+            }
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
     public async Task<(bool success, string message)> UpdateUserProfileAsync(PersonalUserDataRequestModel request, string jwtToken)
     {
         try

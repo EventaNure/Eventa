@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Duende.IdentityModel.OidcClient;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Duende.IdentityModel.OidcClient;
 
 namespace Eventa.Services;
 
 public class GoogleAuthService
 {
     private const string GoogleDiscoveryUrl = "https://accounts.google.com/";
-    
+
     private const string DesktopClientId = "171553413720-hiohepqf2enmrmqvhac66sjtihljb88o.apps.googleusercontent.com";
     private const string DesktopClientSecret = "valuehere";
     private const string DesktopRedirectUrl = "http://127.0.0.1:7890/";
-    
+
     private const string AndroidClientId = "171553413720-85876fh5n4f2hbqlojhcbo4jov878o7g.apps.googleusercontent.com";
     private const string AndroidClientSecret = "valuehere";
     private const string AndroidRedirectUrl = "com.eventa.app://oauth2callback";
-    
+
     private const string BrowserClientId = "171553413720-9serj0ak8bcie7mjt69sq2jsjgs98204.apps.googleusercontent.com";
     private const string BrowserClientSecret = "valuehere";
     private const string BrowserRedirectUrl = "https://localhost:5001/oauth2callback";

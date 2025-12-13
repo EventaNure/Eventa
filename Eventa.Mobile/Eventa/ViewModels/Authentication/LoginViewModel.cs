@@ -76,10 +76,8 @@ public partial class LoginViewModel : ObservableObject
 
         try
         {
-            // Initialize Google Auth Service
             var googleAuthService = new GoogleAuthService();
 
-            // Authenticate with Google and get ID token
             string? idToken = await googleAuthService.AuthenticateAsync();
 
             if (string.IsNullOrEmpty(idToken))
@@ -88,7 +86,6 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            // Send token to backend for verification
             var googleRequest = new GoogleLoginRequestModel
             {
                 IdToken = idToken
@@ -115,7 +112,6 @@ public partial class LoginViewModel : ObservableObject
     {
         if (response.IsLogin)
         {
-            // User is already registered and has a complete profile
             var loginResponse = new LoginResponseModel
             {
                 UserId = response.UserId,
@@ -130,8 +126,6 @@ public partial class LoginViewModel : ObservableObject
         }
         else
         {
-            // User needs to complete registration
-            // Show complete profile view to finish account setup
             CompleteProfileView.Instance.completeProfileViewModel.InsertFormDataFromGoogle(
                 response.Name,
                 response.UserId
@@ -181,6 +175,8 @@ public partial class LoginViewModel : ObservableObject
         settings.JwtToken = loginResponse.JwtToken;
         settings.UserId = loginResponse.UserId;
         settings.UserName = userName;
+        settings.Email = string.Empty;
+        settings.Password = string.Empty;
         await _settingsService.SaveAsync(settings);
     }
 
