@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Eventa.Models.Comments;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,7 @@ public class EventDetailsResponseModel
 
     [JsonPropertyName("minPrice")]
     public double MinPrice { get; set; }
+
     [JsonPropertyName("maxPrice")]
     public double MaxPrice { get; set; }
 
@@ -40,4 +42,10 @@ public class EventDetailsResponseModel
 
     [JsonPropertyName("imageUrl")]
     public string? ImageUrl { get; set; }
+
+    [JsonPropertyName("averageRating")]
+    public double AverageRating { get; set; }
+
+    [JsonPropertyName("comments")]
+    public List<CommentDataModel> Comments { get; set; } = [];
 }

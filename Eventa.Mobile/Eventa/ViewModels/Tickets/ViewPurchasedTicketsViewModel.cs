@@ -4,6 +4,7 @@ using Eventa.Controls;
 using Eventa.Models.Ordering;
 using Eventa.Services;
 using Eventa.Views.Main;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +53,12 @@ public partial class ViewPurchasedTicketsViewModel : ObservableObject
 
             if (success && data != null)
             {
+                Orders.Clear();
                 Orders = new ObservableCollection<OrderListItemResponseModel>(data);
+                foreach (var item in Orders)
+                {
+                    item.CanRate = item.IsQrTokenUsed && item.Comment == null;
+                }
                 NoTickets = !Orders.Any();
             }
             else
@@ -61,7 +67,7 @@ public partial class ViewPurchasedTicketsViewModel : ObservableObject
                 ErrorMessage = message;
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             HasError = true;
             ErrorMessage = $"An error occurred: {ex.Message}";
@@ -85,6 +91,26 @@ public partial class ViewPurchasedTicketsViewModel : ObservableObject
         }
 
         QRCodeDialog.Instance.Show(order, Data);
+    }
+
+    [RelayCommand]
+    private async Task RateEvent(OrderListItemResponseModel order)
+    {
+        var jwtToken = MainPageView.Instance.mainPageViewModel.JwtToken;
+
+        if (string.IsNullOrEmpty(jwtToken))
+        {
+            HasError = true;
+            ErrorMessage = "You must be logged in to rate events.";
+            return;
+        }
+
+        var commentData = await RateEventDialog.Instance.Show(order, jwtToken);
+
+        if (commentData != null)
+        {
+            order.Comment = commentData;
+        }
     }
 
     public void ClearFormData()

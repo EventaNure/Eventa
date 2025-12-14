@@ -320,10 +320,21 @@ public partial class MainPageViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToMyProfile()
+    private async Task NavigateToMyProfile()
     {
-        // TODO: Implement navigation to My Profile page
-        // CurrentPage = new MyProfileView();
+        string jwtToken = MainPageView.Instance.mainPageViewModel.JwtToken;
+
+        if (string.IsNullOrEmpty(jwtToken))
+        {
+            await DialogControl.Instance.Show("Not Logged In", "You must be logged in to view your profile.", "OK");
+            return;
+        }
+
+        await ProfileView.Instance.profileViewModel.LoadProfileAsync(jwtToken);
+
+        MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
+        MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;
+        MainPageView.Instance.mainPageViewModel.CurrentPage = ProfileView.Instance;
     }
 
     [RelayCommand]

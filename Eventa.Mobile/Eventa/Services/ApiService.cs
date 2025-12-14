@@ -2,6 +2,7 @@
 using Eventa.Models.Authentication;
 using Eventa.Models.Booking;
 using Eventa.Models.Carting;
+using Eventa.Models.Comments;
 using Eventa.Models.Events;
 using Eventa.Models.Events.Organizer;
 using Eventa.Models.Ordering;
@@ -931,6 +932,44 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}");
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, CommentDataModel? Data)> CreateCommentAsync(int orderId, int rating, string? content, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var requestModel = new CreateCommentRequestModel
+            {
+                OrderId = orderId,
+                Rating = rating,
+                Content = content
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("/api/Comments", requestModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var comment = await response.Content.ReadFromJsonAsync<CommentDataModel>();
+                return (true, "Comment submitted successfully!", comment);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
         }
         finally
         {
