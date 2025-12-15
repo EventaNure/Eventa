@@ -246,9 +246,7 @@ public partial class BrowseEventsViewModel : ObservableObject
             return;
         }
 
-        var resultData = Data;
-        ViewEventView.Instance.viewEventViewModel.InsertFormData(resultData.Title, resultData.Description, resultData.DateTimes[0].DateTime,
-            resultData.ImageUrl, resultData.PlaceAddress, $"{resultData.MinPrice} - {resultData.MaxPrice}", resultData.DateTimes);
+        ViewEventView.Instance.viewEventViewModel.InsertFormData(Data);
 
         MainPageView.Instance.mainPageViewModel.IsCarouselVisible = false;
         MainPageView.Instance.mainPageViewModel.IsBrowsingEventsAsOrganizer = true;

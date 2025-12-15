@@ -37,6 +37,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\RateEventDialog.axaml.cs">
+      <DependentUpon>RateEventDialog.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\QRCodeDialog.axaml.cs">
       <DependentUpon>QRCodeDialog.axaml</DependentUpon>
     </Compile>
@@ -81,6 +84,9 @@
     </Compile>
     <Compile Update="Views\Events\BrowseEventsView.axaml.cs">
       <DependentUpon>BrowseEventsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Main\ProfileView.axaml.cs">
+      <DependentUpon>ProfileView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Main\MainPageView.axaml.cs">
       <DependentUpon>MainPageView.axaml</DependentUpon>

@@ -1,0 +1,212 @@
+<UserControl
+    x:Class="Eventa.Controls.RateEventDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <!--  Overlay background  -->
+    <Panel
+        Name="DialogOverlay"
+        Background="#80000000"
+        IsVisible="False">
+        <Border
+            Width="360"
+            MaxHeight="500"
+            Padding="30"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="White"
+            BoxShadow="0 4 20 0 #30000000"
+            CornerRadius="12">
+            <ScrollViewer>
+                <StackPanel Spacing="20">
+                    <!--  Close Button  -->
+                    <Button
+                        Name="CloseButton"
+                        Width="30"
+                        Height="30"
+                        Padding="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="OnCloseClick"
+                        CornerRadius="15"
+                        Cursor="Hand">
+                        <PathIcon
+                            Width="16"
+                            Height="16"
+                            Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                            Foreground="#FFB5B5" />
+                    </Button>
+
+                    <!--  Event Name  -->
+                    <TextBlock
+                        Name="EventNameTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="#FFB5B5"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+
+                    <!--  Event Date  -->
+                    <TextBlock
+                        Name="EventDateTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="12"
+                        Foreground="#999999"
+                        TextAlignment="Center" />
+
+                    <!--  Event Place  -->
+                    <TextBlock
+                        Name="EventPlaceTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="12"
+                        Foreground="#999999"
+                        TextAlignment="Center" />
+
+                    <!--  Star Rating  -->
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                        <Button
+                            Name="Star1"
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnStar1Click"
+                            Cursor="Hand">
+                            <PathIcon
+                                Name="Star1Icon"
+                                Width="32"
+                                Height="32"
+                                Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                Foreground="#E0E0E0" />
+                        </Button>
+                        <Button
+                            Name="Star2"
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnStar2Click"
+                            Cursor="Hand">
+                            <PathIcon
+                                Name="Star2Icon"
+                                Width="32"
+                                Height="32"
+                                Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                Foreground="#E0E0E0" />
+                        </Button>
+                        <Button
+                            Name="Star3"
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnStar3Click"
+                            Cursor="Hand">
+                            <PathIcon
+                                Name="Star3Icon"
+                                Width="32"
+                                Height="32"
+                                Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                Foreground="#E0E0E0" />
+                        </Button>
+                        <Button
+                            Name="Star4"
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnStar4Click"
+                            Cursor="Hand">
+                            <PathIcon
+                                Name="Star4Icon"
+                                Width="32"
+                                Height="32"
+                                Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                Foreground="#E0E0E0" />
+                        </Button>
+                        <Button
+                            Name="Star5"
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnStar5Click"
+                            Cursor="Hand">
+                            <PathIcon
+                                Name="Star5Icon"
+                                Width="32"
+                                Height="32"
+                                Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                Foreground="#E0E0E0" />
+                        </Button>
+                    </StackPanel>
+
+                    <!--  Comment TextBox  -->
+                    <TextBox
+                        Name="CommentTextBox"
+                        MinHeight="100"
+                        Padding="12"
+                        AcceptsReturn="True"
+                        Background="#F5F5F5"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="12"
+                        Foreground="#666666"
+                        TextWrapping="Wrap"
+                        Watermark="Leave a comment (optional)..." />
+
+                    <!--  Error Message  -->
+                    <TextBlock
+                        Name="ErrorTextBlock"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="12"
+                        Foreground="#FF8181"
+                        IsVisible="False"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+
+                    <!--  Confirm Button  -->
+                    <Button
+                        Name="ConfirmButton"
+                        Padding="0,12"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#FFB5B5"
+                        BorderThickness="0"
+                        Click="OnConfirmClick"
+                        CornerRadius="8"
+                        Cursor="Hand"
+                        FontFamily="{StaticResource Kadwa}"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Foreground="White">
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#FF9999" />
+                            </Style>
+                        </Button.Styles>
+                        Confirm
+                    </Button>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Panel>
+</UserControl>

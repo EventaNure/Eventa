@@ -59,8 +59,8 @@ public partial class TicketOrderViewModel : ObservableObject
     public TicketOrderViewModel()
     {
         _stripeService = new StripePaymentService(
-          "",
-          ""
+               "",
+               ""
         );
     }
 

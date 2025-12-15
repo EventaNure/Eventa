@@ -6,6 +6,7 @@
     xmlns:li="using:LoadingIndicators.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Eventa.ViewModels.Tickets;assembly=Eventa"
+    xmlns:models="using:Eventa.Models.Ordering"
     d:DesignHeight="750"
     d:DesignWidth="800"
     x:DataType="vm:ViewPurchasedTicketsViewModel"
@@ -30,6 +31,23 @@
         </Style>
 
         <Style Selector="Button.ViewQRButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9999" />
+        </Style>
+
+        <Style Selector="Button.RateButton">
+            <Setter Property="Background" Value="#FFB5B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="140" />
+        </Style>
+
+        <Style Selector="Button.RateButton:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#FF9999" />
         </Style>
     </UserControl.Styles>
@@ -61,7 +79,7 @@
                 <!--  Tickets List  -->
                 <ItemsControl ItemsSource="{Binding Orders}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="models:OrderListItemResponseModel">
                             <Border
                                 Margin="0,0,0,16"
                                 Padding="20"
@@ -113,15 +131,30 @@
                                         </StackPanel>
                                     </Border>
 
-                                    <!--  View QR Code Button  -->
-                                    <Button
-                                        Classes="ViewQRButton"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Command="{Binding $parent[UserControl].((vm:ViewPurchasedTicketsViewModel)DataContext).ViewQRCodeCommand}"
-                                        CommandParameter="{Binding}">
-                                        <TextBlock FontWeight="SemiBold" Text="View QR code" />
-                                    </Button>
+                                    <!--  Action Buttons  -->
+                                    <StackPanel Spacing="8">
+                                        <!--  View QR Code Button  -->
+                                        <Button
+                                            Classes="ViewQRButton"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Command="{Binding $parent[UserControl].((vm:ViewPurchasedTicketsViewModel)DataContext).ViewQRCodeCommand}"
+                                            CommandParameter="{Binding}">
+                                            <TextBlock FontWeight="SemiBold" Text="View QR code" />
+                                        </Button>
+
+                                        <!--  Rate Event Button (shows when can rate)  -->
+                                        <Button
+                                            Classes="RateButton"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Command="{Binding $parent[UserControl].((vm:ViewPurchasedTicketsViewModel)DataContext).RateEventCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsEnabled="{Binding CanRate}">
+                                            <TextBlock FontWeight="SemiBold" Text="Rate event" />
+                                        </Button>
+
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

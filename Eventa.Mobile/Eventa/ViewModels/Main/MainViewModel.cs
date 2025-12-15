@@ -25,4 +25,9 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentDialog = QRCodeDialog.Instance;
     }
+
+    public void ShowRatingDialog()
+    {
+        CurrentDialog = RateEventDialog.Instance;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Models.Comments;
 using Eventa.Models.Events.Organizer;
 using Eventa.Services;
 using Eventa.Views.Main;
@@ -17,36 +18,77 @@ public partial class ViewEventViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _title;
+
     [ObservableProperty]
     private string? _description;
+
     [ObservableProperty]
     private DateTime? _date;
+
     [ObservableProperty]
     private string? _image;
+
     [ObservableProperty]
     private string? _address;
+
     [ObservableProperty]
-    private string? prices;
+    private string? _prices;
+
     [ObservableProperty]
     private string? _errorMessage;
+
     [ObservableProperty]
     private bool _nothingFound;
+
+    [ObservableProperty]
+    private string? _organizerName;
+
+    [ObservableProperty]
+    private double _averageRating;
+
     [ObservableProperty]
     private ObservableCollection<EventDateTimes> _dateTimes = [];
 
-    public void InsertFormData(string title, string description, DateTime date, string? image, string address, string prices, List<EventDateTimes> dateTimes)
+    [ObservableProperty]
+    private ObservableCollection<CommentDataModel> _comments = [];
+
+    // Rounded rating for star display
+    public int RoundedAverageRating => (int)Math.Round(AverageRating);
+
+    public void InsertFormData(EventDetailsResponseModel eventDetails)
     {
-        Title = title;
-        Description = description;
-        Date = date;
-        Image = image;
-        Address = address;
-        Prices = prices;
+        Title = eventDetails.Title;
+        Description = eventDetails.Description;
+        Date = eventDetails.DateTimes.Count > 0 ? eventDetails.DateTimes[0].DateTime : null;
+        Image = eventDetails.ImageUrl;
+        Address = eventDetails.PlaceAddress;
+
+        if (eventDetails.MinPrice == eventDetails.MaxPrice)
+        {
+            Prices = $"₴{eventDetails.MinPrice}";
+        }
+        else
+        {
+            Prices = $"₴{eventDetails.MinPrice} - ₴{eventDetails.MaxPrice}";
+        }
+
+        OrganizerName = eventDetails.OrganizerName;
+        AverageRating = eventDetails.AverageRating;
+
         DateTimes.Clear();
-        foreach (var dateTime in dateTimes)
+        foreach (var dateTime in eventDetails.DateTimes)
         {
             DateTimes.Add(dateTime);
         }
+
+        Comments.Clear();
+        foreach (var comment in eventDetails.Comments)
+        {
+            Comments.Add(comment);
+        }
+
+        // Notify that RoundedAverageRating may have changed
+        OnPropertyChanged(nameof(RoundedAverageRating));
     }
 
     public void ClearFormData()
@@ -57,9 +99,13 @@ public partial class ViewEventViewModel : ObservableObject
         Image = null;
         Address = null;
         Prices = null;
+        OrganizerName = null;
+        AverageRating = 0.0;
         DateTimes.Clear();
+        Comments.Clear();
         ErrorMessage = null;
         NothingFound = false;
+        OnPropertyChanged(nameof(RoundedAverageRating));
     }
 
     [RelayCommand]
