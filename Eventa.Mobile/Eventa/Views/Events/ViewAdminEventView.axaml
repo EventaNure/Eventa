@@ -1,0 +1,285 @@
+<UserControl
+    x:Class="Eventa.Views.Events.ViewAdminEventView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:converters="clr-namespace:Eventa.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Eventa.ViewModels.Events;assembly=Eventa"
+    d:DesignHeight="750"
+    d:DesignWidth="800"
+    x:DataType="vm:ViewAdminEventViewModel"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmpty" />
+        <converters:RatingToStarConverter x:Key="RatingToStarConverter"/>
+        <StreamGeometry x:Key="CalendarIcon">M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19Z</StreamGeometry>
+        <StreamGeometry x:Key="LocationIcon">M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z</StreamGeometry>
+        <StreamGeometry x:Key="DollarSign">M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z</StreamGeometry>
+        <StreamGeometry x:Key="BackIcon">M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z</StreamGeometry>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+        </Style>
+
+        <Style Selector="Button.BackButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#FF666666" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,8" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Button.BackButton:pointerover">
+            <Setter Property="Foreground" Value="#FFB5C5" />
+        </Style>
+
+        <Style Selector="Button.DenyButton">
+            <Setter Property="Background" Value="#E0E0E0" />
+            <Setter Property="Foreground" Value="#666666" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="32,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Button.DenyButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#C0C0C0" />
+        </Style>
+
+        <Style Selector="Button.ApproveButton">
+            <Setter Property="Background" Value="#FFB5C5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="32,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource Kadwa}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Button.ApproveButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF99AA" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="16" Spacing="16">
+            <!--  Back Button  -->
+            <Button
+                Classes="BackButton"
+                HorizontalAlignment="Left"
+                Command="{Binding GoBackCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <PathIcon
+                        Width="14"
+                        Height="14"
+                        Data="{StaticResource BackIcon}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Margin="20,0,0,0"
+                        FontSize="14"
+                        Text="Back to requests">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="2" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+
+            <!--  Event Card  -->
+            <Border
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                ClipToBounds="True"
+                CornerRadius="12">
+                <Grid RowDefinitions="220, Auto">
+                    <!--  Event Image  -->
+                    <Border
+                        Grid.Row="0"
+                        Background="#F5F5F5"
+                        ClipToBounds="True"
+                        CornerRadius="12,12,0,0">
+                        <asyncImageLoader:AdvancedImage 
+                            Source="{Binding Image}" 
+                            Stretch="UniformToFill" />
+                    </Border>
+
+                    <!--  Event Info  -->
+                    <StackPanel Grid.Row="1" Spacing="12">
+                        <!--  Event Name  -->
+                        <TextBlock
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="#FF333333"
+                            Text="{Binding Title}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+
+                        <!--  Event Date  -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource CalendarIcon}"
+                                Foreground="#FF999999" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                Foreground="#FF666666"
+                                Text="{Binding DateRange}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!--  Price  -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource DollarSign}"
+                                Foreground="#FF999999" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                Foreground="#FF666666"
+                                Text="{Binding Prices, StringFormat='Prices: {0}'}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!--  Location  -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource LocationIcon}"
+                                Foreground="#FF999999" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                Foreground="#FF666666"
+                                Text="{Binding Address}"
+                                TextWrapping="Wrap">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!--  About Event Card  -->
+            <Border
+                Padding="16"
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                CornerRadius="12">
+                <StackPanel Spacing="12">
+                    <TextBlock
+                        FontSize="15"
+                        FontWeight="Bold"
+                        Foreground="#FF333333"
+                        Text="About event" />
+                    <TextBlock
+                        FontSize="13"
+                        Foreground="#FF666666"
+                        LineHeight="20"
+                        Text="{Binding Description}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!--  Organizer Info Card  -->
+            <Border
+                Padding="16"
+                Background="White"
+                BoxShadow="0 2 8 0 #20000000"
+                CornerRadius="12">
+                <StackPanel Spacing="12">
+                    <TextBlock
+                        FontSize="15"
+                        FontWeight="Bold"
+                        Foreground="#FF333333"
+                        Text="Organizer" />
+                    
+                    <StackPanel Spacing="8">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#FFFFB5C5"
+                            Text="{Binding OrganizerName}" />
+                        
+                        <!--  Rating Display  -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock
+                                Text="{Binding AverageRating, StringFormat='{}{0:0.0}'}"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="#FFFFB5C5"
+                                VerticalAlignment="Center"/>
+                            
+                            <StackPanel Orientation="Horizontal" Spacing="2">
+                                <PathIcon Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                          Width="16" Height="16"
+                                          Foreground="{Binding RoundedAverageRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=1}"/>
+                                <PathIcon Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                          Width="16" Height="16"
+                                          Foreground="{Binding RoundedAverageRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=2}"/>
+                                <PathIcon Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                          Width="16" Height="16"
+                                          Foreground="{Binding RoundedAverageRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=3}"/>
+                                <PathIcon Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                          Width="16" Height="16"
+                                          Foreground="{Binding RoundedAverageRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=4}"/>
+                                <PathIcon Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                                          Width="16" Height="16"
+                                          Foreground="{Binding RoundedAverageRating, Converter={StaticResource RatingToStarConverter}, ConverterParameter=5}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="#FF666666"
+                            IsVisible="{Binding OrganizationName, Converter={StaticResource StringNotEmpty}}">
+                            <Run Text="Organization: " />
+                            <Run FontWeight="SemiBold" Text="{Binding OrganizationName}" />
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!--  Admin Action Buttons  -->
+            <Grid ColumnDefinitions="*,16,*" Margin="0,8,0,0">
+                <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    Classes="DenyButton"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding DenyEventCommand}"
+                    Content="Deny" />
+
+                <Button
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Classes="ApproveButton"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding ApproveEventCommand}"
+                    Content="Approve" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

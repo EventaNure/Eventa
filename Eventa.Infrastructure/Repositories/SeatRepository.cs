@@ -1,6 +1,5 @@
 ﻿using Eventa.Application.DTOs.Seats;
 using Eventa.Application.DTOs.Sections;
-using Eventa.Application.DTOs.TicketInCarts;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
 using Microsoft.EntityFrameworkCore;

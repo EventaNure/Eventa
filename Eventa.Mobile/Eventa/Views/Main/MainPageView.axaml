@@ -94,8 +94,7 @@
         <!--  Header with Navigation  -->
         <Border
             Grid.Row="0"
-            Padding="16,12"
-            Background="White">
+            Padding="16,12">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
                     <GradientStop Offset="0" Color="#FCE487" />
@@ -121,8 +120,6 @@
                         </TextBlock.RenderTransform>
                     </TextBlock>
                 </Button>
-
-                <!--  Browse Dropdown  -->
                 <Button
                     Name="BrowseButton"
                     Grid.Column="1"
@@ -250,18 +247,46 @@
                                             <Button
                                                 Classes="DropdownItem"
                                                 Command="{Binding NavigateToMyProfileCommand}"
-                                                Content="My Profile" />
-                                            <Separator Background="#E0E0E0" />
+                                                Content="My Profile"
+                                                IsVisible="{Binding !IsAdmin}" />
+                                            <Separator Background="#E0E0E0" IsVisible="{Binding !IsAdmin}" />
                                             <Button
                                                 Classes="DropdownItem"
                                                 Command="{Binding NavigateToMyTicketsCommand}"
-                                                Content="My Tickets" />
-                                            <Separator Background="#E0E0E0" />
+                                                Content="My Tickets"
+                                                IsVisible="{Binding !IsAdmin}" />
+                                            <Separator Background="#E0E0E0" IsVisible="{Binding !IsAdmin}" />
                                             <Button
                                                 Classes="DropdownItem"
                                                 Command="{Binding NavigateToMyCartCommand}"
-                                                Content="My Cart" />
-                                            <Separator Background="#E0E0E0" />
+                                                Content="My Cart"
+                                                IsVisible="{Binding !IsAdmin}" />
+                                            <TextBlock
+                                                Margin="0,4"
+                                                FontFamily="{StaticResource Kadwa}"
+                                                FontSize="12"
+                                                Foreground="#999999"
+                                                HorizontalAlignment="Center"
+                                                IsVisible="{Binding IsAdmin}"
+                                                Text="Profile - Admin" />
+                                            <Button
+                                                Name="AdminButton"
+                                                Grid.Column="1"
+                                                Padding="12,6"
+                                                Classes="DropdownItem"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Command="{Binding NavigateToViewRequestsCommand}"
+                                                Cursor="Hand"
+                                                FontFamily="{StaticResource Kadwa}"
+                                                FontSize="14"
+                                                Foreground="#666666"
+                                                IsVisible="{Binding IsAdmin}">
+                                                <TextBlock Text="View Requests" />
+                                            </Button>
+                                            <Separator Background="#E0E0E0"/>
                                             <Button
                                                 Classes="DropdownItem"
                                                 Command="{Binding LogoutCommand}"

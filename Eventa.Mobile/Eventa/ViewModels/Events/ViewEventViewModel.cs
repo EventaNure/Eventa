@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Eventa.Controls;
 using Eventa.Models.Comments;
 using Eventa.Models.Events.Organizer;
 using Eventa.Services;
 using Eventa.Views.Main;
 using Eventa.Views.Ordering;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -111,6 +111,12 @@ public partial class ViewEventViewModel : ObservableObject
     [RelayCommand]
     public async Task SelectDateTime(EventDateTimes? selectedDateTime)
     {
+        if (MainPageView.Instance.mainPageViewModel.IsAdmin)
+        {
+            await DialogControl.Instance.Show("Action not allowed", "Administrators cannot order tickets.", "OK");
+            return;
+        }
+
         if (selectedDateTime == null)
             return;
 

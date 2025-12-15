@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace Eventa.Infrastructure.Options
+﻿namespace Eventa.Infrastructure.Options
 {
     public class SendGridEmailOptions
     {

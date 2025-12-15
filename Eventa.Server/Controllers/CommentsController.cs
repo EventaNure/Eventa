@@ -3,9 +3,7 @@ using AutoMapper;
 using Eventa.Application.DTOs.Comments;
 using Eventa.Application.Services.Comments;
 using Eventa.Server.RequestModels;
-using Eventa.Server.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventa.Server.Controllers

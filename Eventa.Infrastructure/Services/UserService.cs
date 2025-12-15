@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Eventa.Application.Common;
+﻿using Eventa.Application.Common;
 using Eventa.Application.DTOs.Comments;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;

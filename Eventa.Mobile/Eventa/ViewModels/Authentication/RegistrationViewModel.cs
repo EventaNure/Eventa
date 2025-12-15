@@ -158,8 +158,8 @@ public partial class RegistrationViewModel : ObservableObject
             Password = Password
         };
 
-        var (success, message, data) = await _apiService.LoginAsync(loginRequest);
-        if (success && data is JsonElement)
+        var (success, message, _) = await _apiService.LoginAsync(loginRequest);
+        if (success)
         {
             var settings = await _settingsService.LoadAsync();
             EmailVerifyView.Instance.emailVerifyViewModel.InsertFormData(Email, Password, settings.UserId);

@@ -37,4 +37,8 @@ public partial class OrganizerEventResponseModel : ObservableObject
     [ObservableProperty]
     [property: JsonPropertyName("ticketsSold")]
     private int _ticketsSold;
+
+    [ObservableProperty]
+    [property: JsonPropertyName("eventStatus")]
+    private string _eventStatus = string.Empty;
 }

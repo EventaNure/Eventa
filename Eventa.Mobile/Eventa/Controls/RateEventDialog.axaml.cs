@@ -116,6 +116,7 @@ public partial class RateEventDialog : UserControl
             {
                 DialogOverlay.IsVisible = false;
                 _taskCompletionSource?.SetResult(data);
+                MainPageView.Instance.mainPageViewModel.NavigateToMyTicketsCommand.Execute(null);
             }
             else
             {
@@ -138,5 +139,6 @@ public partial class RateEventDialog : UserControl
     {
         DialogOverlay.IsVisible = false;
         _taskCompletionSource?.SetResult(null);
+        MainPageView.Instance.mainPageViewModel.NavigateToMyTicketsCommand.Execute(null);
     }
 }

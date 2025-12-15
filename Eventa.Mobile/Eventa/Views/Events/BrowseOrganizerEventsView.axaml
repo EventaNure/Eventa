@@ -168,7 +168,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border
-                                Height="161"
+                                Height="201"
                                 Margin="30,5,30,0"
                                 Classes="EventCard">
                                 <Grid ColumnDefinitions="Auto,*">
@@ -176,7 +176,7 @@
                                     <Border
                                         Grid.Column="0"
                                         Width="115"
-                                        Height="97"
+                                        Height="127"
                                         Background="#D9D9D9"
                                         ClipToBounds="True"
                                         CornerRadius="8">
@@ -194,6 +194,12 @@
                                             FontSize="24"
                                             FontWeight="Normal"
                                             Text="{Binding Title}" />
+                                        <TextBlock 
+                                            Classes="EventDetails"
+                                            FontWeight="SemiBold">
+                                            <Run Text="Status:"/>
+                                            <Run Text="{Binding EventStatus}" />
+                                        </TextBlock>
                                         <TextBlock Classes="EventDetails">
                                             <Run Text="{Binding FirstDateTime, StringFormat='{}{0:dd MMM yyyy, HH:mm}'}" />
                                             <Run Text=" - " />

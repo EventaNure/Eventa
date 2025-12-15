@@ -1,5 +1,4 @@
 ﻿using Eventa.Application.DTOs.Seats;
-using Eventa.Application.DTOs.Sections;
 using Eventa.Application.Repositories;
 using FluentResults;
 

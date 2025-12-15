@@ -20,6 +20,8 @@ public class CommentDataModel
     [JsonPropertyName("userName")]
     public string UserName { get; set; } = string.Empty;
 
+    public string EventName { get; set; } = string.Empty;
+
     // Helper property for UI
     public string UserInitial => string.IsNullOrEmpty(UserName) ? "?" : UserName[0].ToString().ToUpper();
 }

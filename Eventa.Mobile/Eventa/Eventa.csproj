@@ -70,6 +70,12 @@
     <Compile Update="Views\Authentication\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Events\ViewAdminEventView.axaml.cs">
+      <DependentUpon>ViewAdminEventView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Events\BrowseAdminEventsView.axaml.cs">
+      <DependentUpon>BrowseAdminEventsView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Events\SelectPlacesEventView.axaml.cs">
       <DependentUpon>SelectPlacesEventView.axaml</DependentUpon>
     </Compile>

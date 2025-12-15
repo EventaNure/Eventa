@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Eventa.ViewModels.Events;
-using Mapsui.Extensions;
 using Mapsui.UI.Avalonia;
 using Mapsui.Widgets.InfoWidgets;
 

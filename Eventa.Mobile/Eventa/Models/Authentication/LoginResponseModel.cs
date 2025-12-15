@@ -12,4 +12,7 @@ public class LoginResponseModel
 
     [JsonPropertyName("emailConfirmed")]
     public bool EmailConfirmed { get; set; }
+
+    [JsonPropertyName("role")]
+    public string? Role { get; set; } = string.Empty;
 }
