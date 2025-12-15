@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11304.174 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Server", "Eventa.Server\Eventa.Server.csproj", "{9B51F9AF-B94B-476A-948F-81FBEB20E262}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Domain", "Eventa.Domain\Eventa.Domain.csproj", "{30D98096-9BA2-4543-A595-78E631AE0F5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Infrastructure", "Eventa.Infrastructure\Eventa.Infrastructure.csproj", "{D0130B74-732B-4241-A510-D610283910BA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Application", "Eventa.Application\Eventa.Application.csproj", "{2B66FD50-CC37-4D27-8288-0EF0B3163E72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventa.Infrastructure", "Eventa.Infrastructure\Eventa.Infrastructure.csproj", "{4A61729D-44A3-0FD2-2C54-24DA4FC7F71E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,12 +24,13 @@ Global
 		{30D98096-9BA2-4543-A595-78E631AE0F5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{30D98096-9BA2-4543-A595-78E631AE0F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30D98096-9BA2-4543-A595-78E631AE0F5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0130B74-732B-4241-A510-D610283910BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0130B74-732B-4241-A510-D610283910BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0130B74-732B-4241-A510-D610283910BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B66FD50-CC37-4D27-8288-0EF0B3163E72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B66FD50-CC37-4D27-8288-0EF0B3163E72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B66FD50-CC37-4D27-8288-0EF0B3163E72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A61729D-44A3-0FD2-2C54-24DA4FC7F71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A61729D-44A3-0FD2-2C54-24DA4FC7F71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A61729D-44A3-0FD2-2C54-24DA4FC7F71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A61729D-44A3-0FD2-2C54-24DA4FC7F71E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

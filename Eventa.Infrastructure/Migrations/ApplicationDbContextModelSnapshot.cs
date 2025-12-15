@@ -496,7 +496,7 @@ namespace Eventa.Infrastructure.Migrations
                             Name = "Mykyta",
                             NormalizedEmail = "TITARENKONIK3@GMAIL.COM",
                             NormalizedUserName = "TITARENKONIK3@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELoXW63IxkcpEFdKf/Sx+nPK3jiaqOUQVlvd42AXSaee4gif7itFgKwVmFUn2wnRhA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENDEN6HQ5Fam9YfJlSphPslWO0rt7rMVzNOVlhPK8b9Wp8wYHbbTyvRoc4xsY7P3Gw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a1b2c3d4e5f6g7h8i9j0",
                             TwoFactorEnabled = false,

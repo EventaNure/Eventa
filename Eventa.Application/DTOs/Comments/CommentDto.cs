@@ -7,5 +7,6 @@
         public string? Content { get; set; }
         public DateTime CreationDateTime { get; set; }
         public string UserName { get; set; } = string.Empty;
+        public string EventName { get; set; } = string.Empty;
     }
 }

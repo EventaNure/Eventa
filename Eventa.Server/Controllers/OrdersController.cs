@@ -1,14 +1,12 @@
-﻿using System.Security.Claims;
+﻿using Eventa.Application.DTOs.Orders;
 using Eventa.Application.Services.Orders;
 using Eventa.Infrastructure.Options;
 using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.IO;
+using System.Security.Claims;
 using System.Text;
-using Eventa.Application.DTOs.Orders;
 
 namespace Eventa.Server.Controllers
 {
@@ -93,7 +91,7 @@ namespace Eventa.Server.Controllers
                 CheckQrTokenUrl = Url.Action(
                     nameof(CheckQRToken),
                     nameof(OrdersController).Replace("Controller", ""),
-                    new { qrToken = result.Value.QrToken},
+                    new { qrToken = result.Value.QrToken },
                     Request.Scheme),
                 IsQrTokenUsed = result.Value.IsQrTokenUsed,
                 QrCodeUsingDateTime = result.Value.QrCodeUsingDateTime

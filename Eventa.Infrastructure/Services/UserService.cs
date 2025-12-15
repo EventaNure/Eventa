@@ -378,7 +378,8 @@ namespace Eventa.Infrastructure.Services
                                     .First(),
                                 Rating = o.Comment.Rating,
                                 Content = o.Comment.Content,
-                                CreationDateTime = o.Comment.CreatedAt
+                                CreationDateTime = o.Comment.CreatedAt,
+                                EventName = edt.Event.Title
                             })
                          ))
                          .ToList(),
@@ -393,7 +394,8 @@ namespace Eventa.Infrastructure.Services
                                 .First(),
                             Rating = c.Rating,
                             Content = c.Content,
-                            CreationDateTime = c.CreatedAt
+                            CreationDateTime = c.CreatedAt,
+                            EventName = c.Order.EventDateTime.Event.Title
                         })
                         .ToList()
                 })

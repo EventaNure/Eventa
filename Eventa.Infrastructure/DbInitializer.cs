@@ -105,7 +105,6 @@ namespace Eventa.Infrastructure
 
             if (applicationUsers.Count() > await context.Users.CountAsync())
             {
-                await context.Users.ExecuteDeleteAsync();
                 context.Users.AddRange(applicationUsers);
                 await context.SaveChangesAsync();
             }
@@ -120,7 +119,6 @@ namespace Eventa.Infrastructure
 
             if (userRoles.Count() > await context.UserRoles.CountAsync())
             {
-                await context.UserRoles.ExecuteDeleteAsync();
                 context.UserRoles.AddRange(userRoles);
                 await context.SaveChangesAsync();
             }
@@ -159,7 +157,6 @@ namespace Eventa.Infrastructure
 
             if (await context.Places.CountAsync() == 0)
             {
-                await context.Places.ExecuteDeleteAsync();
                 context.Places.AddRange(places);
                 await context.SaveChangesAsync();
             }
@@ -457,7 +454,6 @@ namespace Eventa.Infrastructure
 
             if (events.Count() > await context.Events.CountAsync())
             {
-                await context.Events.ExecuteDeleteAsync();
                 context.Events.AddRange(events);
                 await context.SaveChangesAsync();
             }
@@ -481,7 +477,6 @@ namespace Eventa.Infrastructure
 
             if (eventTags.Count() > await context.EventTags.CountAsync())
             {
-                await context.EventTags.ExecuteDeleteAsync();
                 context.EventTags.AddRange(eventTags);
                 await context.SaveChangesAsync();
             }
@@ -559,7 +554,6 @@ namespace Eventa.Infrastructure
 
             if (eventDateTimes.Count() > await context.EventDateTimes.CountAsync())
             {
-                await context.EventDateTimes.ExecuteDeleteAsync();
                 context.EventDateTimes.AddRange(eventDateTimes);
                 await context.SaveChangesAsync();
             }

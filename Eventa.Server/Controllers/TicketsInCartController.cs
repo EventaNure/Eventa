@@ -1,12 +1,8 @@
-﻿using System.Security.Claims;
-using Eventa.Application.Common;
-using Eventa.Application.Services.TicketsInCart;
+﻿using Eventa.Application.Services.TicketsInCart;
 using Eventa.Server.RequestModels;
-using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Eventa.Server.Controllers
 {
@@ -16,7 +12,8 @@ namespace Eventa.Server.Controllers
     {
         private readonly ITicketInCartService _ticketInCartService;
 
-        public TicketsInCartController(ITicketInCartService ticketInCartService) {
+        public TicketsInCartController(ITicketInCartService ticketInCartService)
+        {
             _ticketInCartService = ticketInCartService;
         }
 

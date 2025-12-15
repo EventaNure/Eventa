@@ -17,7 +17,7 @@ namespace Eventa.Infrastructure.EntityTypeConfigurations
                 Name = "Mykyta",
                 ConcurrencyStamp = "b1f6f6a5-6dcb-4f3c-8f2d-5e3e5c6e4f7a",
                 SecurityStamp = "a1b2c3d4e5f6g7h8i9j0",
-                PasswordHash = "AQAAAAIAAYagAAAAELoXW63IxkcpEFdKf/Sx+nPK3jiaqOUQVlvd42AXSaee4gif7itFgKwVmFUn2wnRhA==",
+                PasswordHash = "AQAAAAIAAYagAAAAENDEN6HQ5Fam9YfJlSphPslWO0rt7rMVzNOVlhPK8b9Wp8wYHbbTyvRoc4xsY7P3Gw==",
                 EmailConfirmed = true
             });
         }

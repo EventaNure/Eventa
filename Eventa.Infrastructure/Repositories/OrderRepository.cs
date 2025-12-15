@@ -1,4 +1,5 @@
-﻿using Eventa.Application.DTOs.Orders;
+﻿using Eventa.Application.DTOs.Comments;
+using Eventa.Application.DTOs.Orders;
 using Eventa.Application.DTOs.TicketInCarts;
 using Eventa.Application.Repositories;
 using Eventa.Domain;
@@ -31,7 +32,21 @@ namespace Eventa.Infrastructure.Repositories
                         SeatNumber = t.Seat.SeatNumber,
                         SeatId = t.SeatId
                     }),
-                    TotalCost = o.Tickets.Sum(t => t.Price)
+                    TotalCost = o.Tickets.Sum(t => t.Price),
+                    Comment = o.Comment != null
+                        ? new CommentDto
+                        {
+                            Id = o.Comment.Id,
+                            Content = o.Comment.Content,
+                            CreationDateTime = o.Comment.CreatedAt,
+                            Rating = o.Comment.Rating,
+                            UserName = _dbContext.Users
+                                .Where(u => u.Id == o.Comment.UserId)
+                                .Select(u => u.Name)
+                                .FirstOrDefault()!,
+                            EventName = o.EventDateTime.Event.Title
+                        }
+                        : null
                 })
                 .ToListAsync();
         }

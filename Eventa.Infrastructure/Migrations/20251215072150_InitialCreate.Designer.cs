@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eventa.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251207135525_AddRelationBetweenEventAndUser")]
-    partial class AddRelationBetweenEventAndUser
+    [Migration("20251215072150_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace Eventa.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Eventa.Domain.Event", b =>
@@ -485,6 +485,27 @@ namespace Eventa.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1ed1ffc6-ab52-4bca-99e4-b9d8ee6b3816",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b1f6f6a5-6dcb-4f3c-8f2d-5e3e5c6e4f7a",
+                            Email = "titarenkonik3@gmail.com",
+                            EmailConfirmed = true,
+                            GoogleId = "",
+                            LockoutEnabled = false,
+                            Name = "Mykyta",
+                            NormalizedEmail = "TITARENKONIK3@GMAIL.COM",
+                            NormalizedUserName = "TITARENKONIK3@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENDEN6HQ5Fam9YfJlSphPslWO0rt7rMVzNOVlhPK8b9Wp8wYHbbTyvRoc4xsY7P3Gw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a1b2c3d4e5f6g7h8i9j0",
+                            TwoFactorEnabled = false,
+                            UserName = "titarenkonik3@gmail.com",
+                            VerificationCode = ""
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -524,6 +545,12 @@ namespace Eventa.Infrastructure.Migrations
                             Id = "2",
                             Name = "Organizer",
                             NormalizedName = "ORGANIZER"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -614,6 +641,13 @@ namespace Eventa.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1ed1ffc6-ab52-4bca-99e4-b9d8ee6b3816",
+                            RoleId = "3"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

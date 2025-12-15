@@ -1,15 +1,11 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Eventa.Server.Controllers
 {
@@ -94,11 +90,12 @@ namespace Eventa.Server.Controllers
                 return BadRequest(confirmEmailResult.Errors[0]);
             }
 
-            return Ok(new SignInResponseModel { 
+            return Ok(new SignInResponseModel
+            {
                 JwtToken = _jwtTokenService.GenerateToken(
-                    request.UserId, 
+                    request.UserId,
                     confirmEmailResult.Value.Role
-                ), 
+                ),
                 EmailConfirmed = true,
                 UserId = request.UserId
             });
@@ -187,7 +184,8 @@ namespace Eventa.Server.Controllers
                 jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
             }
 
-            return Ok(new GoogleLoginResponseModel {
+            return Ok(new GoogleLoginResponseModel
+            {
                 JwtToken = jwt,
                 Name = googleLoginData.Name,
                 UserId = googleLoginData.UserId,
