@@ -352,7 +352,13 @@ namespace Eventa.Infrastructure.Services
 
         public async Task<Result<UserProfileDataDto>> GetPersonalUserDataAsync(string userId)
         {
-            var presonalData = await _dbContext.Users
+            var users = await _dbContext.Users
+                .Include(u => u.Events)
+                .ThenInclude(e => e.EventDateTimes)
+                .ThenInclude(e => e.Orders)
+                .ThenInclude(o => o.Comment)
+                .ToListAsync();
+            var presonalData = users
                 .Where(u => u.Id == userId)
                 .Select(u => new UserProfileDataDto
                 {
@@ -399,7 +405,7 @@ namespace Eventa.Infrastructure.Services
                         })
                         .ToList()
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             if (presonalData == null)
             {
