@@ -97,7 +97,8 @@ namespace Eventa.Server.Controllers
                     confirmEmailResult.Value.Role
                 ),
                 EmailConfirmed = true,
-                UserId = request.UserId
+                UserId = request.UserId,
+                Role = confirmEmailResult.Value.Role
             });
         }
 
@@ -148,7 +149,13 @@ namespace Eventa.Server.Controllers
                 );
             }
 
-            return Ok(new SignInResponseModel { JwtToken = jwtToken, EmailConfirmed = loginResult.Value.EmailConfirmed, UserId = loginResult.Value.UserId });
+            return Ok(
+                new SignInResponseModel { 
+                    JwtToken = jwtToken, 
+                    EmailConfirmed = loginResult.Value.EmailConfirmed, 
+                    UserId = loginResult.Value.UserId,
+                    Role = loginResult.Value.Role
+                });
         }
 
         [HttpGet("tickets-in-cart/time-left")]
