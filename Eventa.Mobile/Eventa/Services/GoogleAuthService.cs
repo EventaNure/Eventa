@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityModel.OidcClient;
+using Eventa.Config;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -14,14 +15,6 @@ public class GoogleAuthService
     private const string DesktopClientId = "171553413720-hiohepqf2enmrmqvhac66sjtihljb88o.apps.googleusercontent.com";
     private const string DesktopClientSecret = "valuehere";
     private const string DesktopRedirectUrl = "http://127.0.0.1:7890/";
-
-    private const string AndroidClientId = "171553413720-85876fh5n4f2hbqlojhcbo4jov878o7g.apps.googleusercontent.com";
-    private const string AndroidClientSecret = "valuehere";
-    private const string AndroidRedirectUrl = "com.eventa.app://oauth2callback";
-
-    private const string BrowserClientId = "171553413720-9serj0ak8bcie7mjt69sq2jsjgs98204.apps.googleusercontent.com";
-    private const string BrowserClientSecret = "valuehere";
-    private const string BrowserRedirectUrl = "https://localhost:7169/oauth2callback";
 
     public async Task<string?> AuthenticateAsync()
     {
@@ -94,96 +87,27 @@ public class GoogleAuthService
 
     private async Task<string?> AuthenticateAndroidAsync()
     {
-        try
-        {
-            var options = new OidcClientOptions
-            {
-                Authority = GoogleDiscoveryUrl,
-                ClientId = AndroidClientId,
-                RedirectUri = AndroidRedirectUrl,
-                ClientSecret = AndroidClientSecret,
-                Scope = "openid profile email",
-                LoadProfile = true,
-            };
-
-            options.Policy.Discovery.ValidateEndpoints = false;
-
-            var client = new OidcClient(options);
-            var state = await client.PrepareLoginAsync();
-
-            // Open browser with OAuth URL
-            // On Android, this opens the system browser or Chrome Custom Tabs
-            OpenBrowserAndroid(state.StartUrl);
-
-            Debug.WriteLine("Android OAuth initiated. Waiting for callback from MainActivity...");
-            
-            // Get task that completes when OAuth callback is received
-            var oauthTask = PlatformOAuthService.Instance.GetOAuthCallbackTask();
-            
-            // Wait for callback with 5-minute timeout
-            var timeoutTask = Task.Delay(TimeSpan.FromMinutes(5));
-            var completedTask = await Task.WhenAny(oauthTask, timeoutTask);
-
-            if (completedTask == timeoutTask)
-            {
-                Debug.WriteLine("Android OAuth timeout - user did not complete authentication");
-                return null;
-            }
-
-            var idToken = await oauthTask;
-            PlatformOAuthService.Instance.Clear();
-            
-            return idToken;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Android Google Authentication Exception: {ex.Message}");
-            return null;
-        }
+        // TODO: Implement Android authentication
+        await Task.CompletedTask;
+        return null;
     }
 
     private async Task<string?> AuthenticateBrowserAsync()
     {
+        // For browser, we navigate to the google-auth.html page
+        // The page handles authentication and stores JWT in cookies
+        // Then redirects back to index.html
         try
         {
-            var options = new OidcClientOptions
-            {
-                Authority = GoogleDiscoveryUrl,
-                ClientId = BrowserClientId,
-                RedirectUri = BrowserRedirectUrl,
-                ClientSecret = BrowserClientSecret,
-                Scope = "openid profile email",
-                LoadProfile = true,
-            };
+            // Use JS interop to navigate to the Google auth page
+            GoogleAuthHelper.NavigateToGoogleAuth();
 
-            options.Policy.Discovery.ValidateEndpoints = false;
-
-            var client = new OidcClient(options);
-            var state = await client.PrepareLoginAsync();
-
-            var oauthTask = PlatformOAuthService.Instance.GetOAuthCallbackTask();
-            
-            OpenBrowserWeb(state.StartUrl);
-
-            Debug.WriteLine("Browser OAuth initiated. Waiting for server callback...");
-            
-            var timeoutTask = Task.Delay(TimeSpan.FromMinutes(10));
-            var completedTask = await Task.WhenAny(oauthTask, timeoutTask);
-
-            if (completedTask == timeoutTask)
-            {
-                Debug.WriteLine("Browser OAuth timeout - user did not complete authentication");
-                return null;
-            }
-
-            var idToken = await oauthTask;
-            PlatformOAuthService.Instance.Clear();
-            
-            return idToken;
+            await Task.CompletedTask;
+            return null;
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Browser Google Authentication Exception: {ex.Message}");
+            Debug.WriteLine($"Browser auth error: {ex.Message}");
             return null;
         }
     }
@@ -202,30 +126,6 @@ public class GoogleAuthService
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to open browser: {ex.Message}");
-        }
-    }
-
-    private static void OpenBrowserAndroid(string url)
-    {
-        try
-        {
-            Debug.WriteLine($"Opening Android browser with OAuth URL");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed to open Android browser: {ex.Message}");
-        }
-    }
-
-    private static void OpenBrowserWeb(string url)
-    {
-        try
-        {
-            Debug.WriteLine($"Opening browser OAuth URL");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed to open web browser: {ex.Message}");
         }
     }
 

@@ -3,13 +3,10 @@ using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
-using static Org.BouncyCastle.Math.EC.ECCurve;
-using static System.Net.WebRequestMethods;
 
 namespace Eventa.Server.Controllers
 {

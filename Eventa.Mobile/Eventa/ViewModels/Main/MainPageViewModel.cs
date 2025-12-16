@@ -16,7 +16,6 @@ using Eventa.Views.Tickets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
@@ -526,6 +525,8 @@ public partial class MainPageViewModel : ObservableObject
         settings.UserId = string.Empty;
         settings.UserName = string.Empty;
         settings.OrganizationName = string.Empty;
+        settings.Email = string.Empty;
+        settings.Password = string.Empty;
         await _settingsService.SaveAsync(settings);
 
         ResetForm();
