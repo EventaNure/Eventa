@@ -9,5 +9,7 @@
         public string OrganizerName { get; set; } = string.Empty;
 
         public string? OrganizationName { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

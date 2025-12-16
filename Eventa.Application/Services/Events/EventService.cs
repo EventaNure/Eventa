@@ -281,6 +281,11 @@ namespace Eventa.Application.Services.Events
 
             var events = await eventRepository.GetPendingEventsAsync(pageNumber, pageSize);
 
+            foreach (var eventDto in events)
+            {
+                eventDto.ImageUrl = AddImageUrl(eventDto.Id);
+            }
+
             return Result.Ok(events);
         }
 
