@@ -2,11 +2,16 @@
 using Eventa.Application.DTOs.Comments;
 using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
+using Eventa.Infrastructure.Options;
+using Eventa.Infrastructure.Responses;
 using FluentResults;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace Eventa.Infrastructure.Services
 {
@@ -16,14 +21,18 @@ namespace Eventa.Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly HttpClient _http;
         private readonly IEmailSender _emailSender;
+        private readonly GoogleOptions _googleOptions;
 
-        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        public UserService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, HttpClient http, IOptions<GoogleOptions> googleOptions)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _http = http;
+            _googleOptions = googleOptions.Value;
         }
 
         public async Task<Result<RegisterResultDto>> RegisterUserAsync(RegisterUserDto dto)
@@ -254,6 +263,41 @@ namespace Eventa.Infrastructure.Services
             await _userManager.UpdateAsync(user);
 
             return Result.Ok();
+        }
+
+        public async Task<Result<ExternalLoginResultDto>> LoginWithGoogleAsync(string code)
+        {
+            var tokenResponse = await _http.PostAsync(
+                "https://oauth2.googleapis.com/token",
+                new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["client_id"] = _googleOptions.ClientId,
+                    ["client_secret"] = _googleOptions.ClientSecret,
+                    ["code"] = code,
+                    ["redirect_uri"] = _googleOptions.RedirectUri,
+                    ["grant_type"] = "authorization_code"
+                })
+            );
+            
+            var tokenResponseContent = await tokenResponse.Content.ReadAsStringAsync();
+            if (tokenResponseContent == null)
+            {
+                return Result.Fail(new Error("Failed to retrieve Google token").WithMetadata("Code", "GoogleTokenError"));
+            }
+
+            var googleResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(
+                tokenResponseContent, 
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                });
+
+            if (googleResponse == null)
+            {
+                return Result.Fail(new Error("Invalid Google token response").WithMetadata("Code", "InvalidGoogleTokenResponse"));
+            }
+
+            return await HandleGoogleLoginAsync(googleResponse.IdToken);
         }
 
         public async Task<Result<ExternalLoginResultDto>> HandleGoogleLoginAsync(string idToken)

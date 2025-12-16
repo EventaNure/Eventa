@@ -18,5 +18,6 @@ namespace Eventa.Application.Services
         Task<Result<RegisterResultDto>> RegisterUserAsync(RegisterUserDto dto);
         Task<Result> ResendRegistrationEmailAsync(string userId);
         Task<Result<ConfirmEmailResultDto>> CompleteExternalRegistrationAsync(string userId, CompleteExternalRegistrationDto dto);
+        Task<Result<ExternalLoginResultDto>> LoginWithGoogleAsync(string code);
     }
 }

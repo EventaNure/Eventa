@@ -3,9 +3,13 @@ using Eventa.Application.DTOs.Users;
 using Eventa.Application.Services;
 using Eventa.Server.RequestModels;
 using Eventa.Server.ResponseModels;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using static System.Net.WebRequestMethods;
 
 namespace Eventa.Server.Controllers
 {
@@ -199,6 +203,41 @@ namespace Eventa.Server.Controllers
                 Role = googleLoginData.Role
             });
         }
+
+        [HttpGet("google-login-callback")]
+        public async Task<IActionResult> GoogleCallback(string code)
+        {
+            var result = await _userService.LoginWithGoogleAsync(code);
+            var googleLoginData = result.Value;
+            string? jwt = null;
+            if (googleLoginData.Role != null)
+            {
+                jwt = _jwtTokenService.GenerateToken(googleLoginData.UserId, googleLoginData.Role);
+            }
+            var googleLoginResponseModel = new GoogleLoginResponseModel
+            {
+                JwtToken = jwt,
+                Name = googleLoginData.Name,
+                UserId = googleLoginData.UserId,
+                Role = googleLoginData.Role
+            };
+            var jsonData = JsonSerializer.Serialize(googleLoginResponseModel);
+
+            var html = $@"
+                <html>
+                <body>
+                    <form id='postForm' method='post' action='https://eventa-app.fun'>
+                        <input type='hidden' name='data' value='{System.Net.WebUtility.HtmlEncode(jsonData)}' />
+                    </form>
+                    <script type='text/javascript'>
+                        document.getElementById('postForm').submit();
+                    </script>
+                </body>
+                </html>";
+
+            return Content(html, "text/html");
+        }
+
 
         [HttpPut("complete-external-registration")]
         public async Task<IActionResult> CompleteExternalRegistration(CompleteExternalRegistrationRequestModel requestModel)

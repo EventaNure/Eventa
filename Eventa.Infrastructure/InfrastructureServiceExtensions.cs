@@ -55,10 +55,13 @@ namespace Eventa.Infrastructure
             services.Configure<SendGridEmailOptions>(configuration.GetSection("SendGrid"));
             services.Configure<JwtTokenOptions>(configuration.GetSection("Jwt"));
             services.Configure<PaymentOptions>(configuration.GetSection("Stripe"));
+            services.Configure<GoogleOptions>(configuration.GetSection("OAuth"));
 
             services.AddHostedService<DeleteTempImageService>();
             services.AddHostedService<DeleteExpireTicketsInCartService>();
             services.AddHostedService<DeleteExpireOrdersService>();
+
+            services.AddHttpClient();
 
             var stripeSettings = configuration.GetSection("Stripe");
             StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
