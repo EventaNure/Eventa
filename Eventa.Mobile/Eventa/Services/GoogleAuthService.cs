@@ -21,7 +21,7 @@ public class GoogleAuthService
 
     private const string BrowserClientId = "171553413720-9serj0ak8bcie7mjt69sq2jsjgs98204.apps.googleusercontent.com";
     private const string BrowserClientSecret = "valuehere";
-    private const string BrowserRedirectUrl = "https://localhost:5001/oauth2callback";
+    private const string BrowserRedirectUrl = "https://localhost:7169/oauth2callback";
 
     public async Task<string?> AuthenticateAsync()
     {

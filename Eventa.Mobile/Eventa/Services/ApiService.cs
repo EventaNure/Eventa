@@ -4,6 +4,7 @@ using Eventa.Models.Booking;
 using Eventa.Models.Carting;
 using Eventa.Models.Comments;
 using Eventa.Models.Events;
+using Eventa.Models.Events.Admin;
 using Eventa.Models.Events.Organizer;
 using Eventa.Models.Ordering;
 using Eventa.Models.Seats;
@@ -135,7 +136,7 @@ public class ApiService
         }
     }
 
-    public async Task<(bool Success, string Message, object? Data)> LoginAsync(LoginRequestModel model)
+    public async Task<(bool Success, string Message, LoginResponseModel? Data)> LoginAsync(LoginRequestModel model)
     {
         try
         {
@@ -143,7 +144,7 @@ public class ApiService
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                var result = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
                 return (true, "Login successful!", result);
             }
 
@@ -885,60 +886,6 @@ public class ApiService
         }
     }
 
-    public async Task<(bool success, string message)> UpdateUserProfileAsync(PersonalUserDataRequestModel request, string jwtToken)
-    {
-        try
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-            var response = await _httpClient.PutAsJsonAsync("/api/User/user", request);
-            if (response.IsSuccessStatusCode)
-            {
-                return (true, "Profile updated successfully!");
-            }
-            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
-            return (false, errorMessage);
-        }
-        catch (HttpRequestException ex)
-        {
-            return (false, $"Network error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            return (false, $"Error: {ex.Message}");
-        }
-        finally
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = null;
-        }
-    }
-
-    public async Task<(bool success, string message)> UpdateOrganizerProfileAsync(PersonalOrganizerDataRequestModel request, string jwtToken)
-    {
-        try
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-            var response = await _httpClient.PutAsJsonAsync("/api/User/organizer", request);
-            if (response.IsSuccessStatusCode)
-            {
-                return (true, "Profile updated successfully!");
-            }
-            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
-            return (false, errorMessage);
-        }
-        catch (HttpRequestException ex)
-        {
-            return (false, $"Network error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            return (false, $"Error: {ex.Message}");
-        }
-        finally
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = null;
-        }
-    }
-
     public async Task<(bool Success, string Message, CommentDataModel? Data)> CreateCommentAsync(int orderId, int rating, string? content, string jwtToken)
     {
         try
@@ -970,6 +917,97 @@ public class ApiService
         catch (Exception ex)
         {
             return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message, List<PendingEventListItem>? Data)> GetPendingEventsAsync(string jwtToken, int pageNumber = 1, int pageSize = 10)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.GetAsync($"/api/Events/pending?pageNumber={pageNumber}&pageSize={pageSize}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var events = await response.Content.ReadFromJsonAsync<List<PendingEventListItem>>();
+                return (true, "Pending events fetched successfully!", events);
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage, null);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}", null);
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}", null);
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message)> ApproveEventAsync(int eventId, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.PutAsync($"/api/Events/{eventId}/approve", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Event approved successfully!");
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
+        }
+        finally
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
+
+    public async Task<(bool Success, string Message)> DenyEventAsync(int eventId, string jwtToken)
+    {
+        try
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            var response = await _httpClient.PutAsync($"/api/Events/{eventId}/deny", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Event denied successfully!");
+            }
+
+            var errorMessage = await ApiErrorConverter.ExtractErrorMessageAsync(response);
+            return (false, errorMessage);
+        }
+        catch (HttpRequestException ex)
+        {
+            return (false, $"Network error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error: {ex.Message}");
         }
         finally
         {

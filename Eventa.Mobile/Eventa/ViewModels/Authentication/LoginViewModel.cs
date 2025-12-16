@@ -55,9 +55,9 @@ public partial class LoginViewModel : ObservableObject
 
             var (success, message, data) = await _apiService.LoginAsync(loginRequest);
 
-            if (success && data is JsonElement json)
+            if (success && data != null)
             {
-                await HandleSuccessfulLoginAsync(json);
+                await HandleSuccessfulLoginAsync(data);
             }
             else
             {
@@ -134,10 +134,8 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    private async Task HandleSuccessfulLoginAsync(JsonElement json)
+    private async Task HandleSuccessfulLoginAsync(LoginResponseModel loginResponse)
     {
-        var loginResponse = json.Deserialize<LoginResponseModel>()!;
-
         if (loginResponse.EmailConfirmed)
         {
             await HandleConfirmedEmailAsync(loginResponse);

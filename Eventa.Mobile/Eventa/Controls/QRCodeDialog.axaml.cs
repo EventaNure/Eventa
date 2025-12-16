@@ -3,8 +3,6 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Eventa.Models.Ordering;
 using Eventa.Views.Main;
-using SkiaSharp;
-using SkiaSharp.QrCode;
 using SkiaSharp.QrCode.Image;
 using System;
 using System.IO;
@@ -182,5 +180,6 @@ public partial class QRCodeDialog : UserControl
     private void OnCloseClick(object? sender, RoutedEventArgs e)
     {
         DialogOverlay.IsVisible = false;
+        MainPageView.Instance.mainPageViewModel.NavigateToMyTicketsCommand.Execute(null);
     }
 }

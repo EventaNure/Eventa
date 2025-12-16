@@ -1,5 +1,4 @@
-﻿using System;
-using Eventa.Application.DTOs.Comments;
+﻿using Eventa.Application.DTOs.Comments;
 using Eventa.Application.DTOs.Events;
 using Eventa.Application.DTOs.Tags;
 using Eventa.Application.Repositories;

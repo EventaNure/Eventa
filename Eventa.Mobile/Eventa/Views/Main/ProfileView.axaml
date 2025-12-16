@@ -137,10 +137,34 @@
                     Background="White">
               <StackPanel Spacing="8">
                 <!-- Event Name -->
-                <TextBlock Text="[Event name]"
+                <TextBlock Text="{Binding EventName}"
                            FontWeight="SemiBold"
                            FontSize="13"
                            Foreground="#FF666666"/>
+                
+                <!-- Organizer Info with Avatar -->
+                <Grid ColumnDefinitions="Auto,*">
+                  <Border Grid.Column="0"
+                          Width="32" Height="32"
+                          CornerRadius="16"
+                          Background="#FFFFB5C5"
+                          VerticalAlignment="Top"
+                          Margin="0,0,8,0">
+                    <TextBlock Text="{Binding UserInitial}"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                  </Border>
+                  
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding UserName}"
+                             FontWeight="SemiBold"
+                             FontSize="13"
+                             Foreground="#FF333333"
+                             VerticalAlignment="Center"/>
+                </Grid>
                 
                 <!-- Comment with Stars -->
                 <Grid ColumnDefinitions="*,Auto">
@@ -192,6 +216,12 @@
                     Margin="0,0,0,10"
                     Background="White">
               <StackPanel Spacing="8">
+                <!-- Event Name -->
+                <TextBlock Text="{Binding EventName}"
+                           FontWeight="SemiBold"
+                           FontSize="13"
+                           Foreground="#FF666666"/>
+                
                 <!-- User Info with Avatar and Stars -->
                 <Grid ColumnDefinitions="Auto,*,Auto">
                   <Border Grid.Column="0"
@@ -262,6 +292,12 @@
                     Margin="0,0,0,10"
                     Background="White">
               <StackPanel Spacing="8">
+                <!-- Event Name -->
+                <TextBlock Text="{Binding EventName}"
+                           FontWeight="SemiBold"
+                           FontSize="13"
+                           Foreground="#FF666666"/>
+                
                 <!-- User Info with Avatar and Stars -->
                 <Grid ColumnDefinitions="Auto,*,Auto">
                   <Border Grid.Column="0"

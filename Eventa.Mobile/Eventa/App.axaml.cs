@@ -3,7 +3,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Eventa.Views.Main;
-using System.Globalization;
 using System.Linq;
 
 namespace Eventa;

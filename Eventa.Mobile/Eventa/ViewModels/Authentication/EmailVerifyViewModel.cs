@@ -139,9 +139,9 @@ public partial class EmailVerifyViewModel : ObservableObject
 
             var (success, message, data) = await _apiService.LoginAsync(loginRequest);
 
-            if (success && data is JsonElement json)
+            if (success && data != null)
             {
-                await HandleLoginResponseAsync(json);
+                await HandleLoginResponseAsync(data);
             }
             else
             {
@@ -154,10 +154,8 @@ public partial class EmailVerifyViewModel : ObservableObject
         }
     }
 
-    private async Task HandleLoginResponseAsync(JsonElement json)
+    private async Task HandleLoginResponseAsync(LoginResponseModel loginResponse)
     {
-        var loginResponse = json.Deserialize<LoginResponseModel>();
-
         if (loginResponse == null)
         {
             ErrorMessage = "Failed to process login response.";
