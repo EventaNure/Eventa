@@ -3,69 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Authentication</title>
+    <title>Eventa - Sign In</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(180deg, #FCE487 0%, #F9AAA9 100%);
         }
 
-        .auth-container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
+        .container {
+            width: 100%;
             max-width: 400px;
-            width: 90%;
+            padding: 20px;
         }
 
-        h1 {
-            color: #333;
-            margin: 0 0 10px 0;
-            font-size: 28px;
+        .logo {
+            text-align: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #FF9999;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            font-family: 'Brush Script MT', cursive;
         }
 
-        p {
-            color: #666;
-            margin: 0 0 30px 0;
+        .card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
+
+        .card-title {
+            color: #FF9999;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+            input:focus {
+                outline: none;
+                border-color: #FFB5B5;
+            }
+
+            input::placeholder {
+                color: #999;
+            }
+
+        .required-mark {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            color: #FF9999;
+            font-size: 16px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: transparent;
+            border: 2px solid #FFB5B5;
+            border-radius: 8px;
+            color: #FF8181;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+            .button:hover {
+                background: #FCE0E0;
+            }
+
+            .button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
 
         .google-btn-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin: 25px 0;
         }
 
-        .status {
-            margin-top: 20px;
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            position: relative;
+        }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                width: 40%;
+                height: 1px;
+                background: #E0E0E0;
+            }
+
+            .divider::before {
+                left: 0;
+            }
+
+            .divider::after {
+                right: 0;
+            }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
             padding: 12px;
             border-radius: 6px;
+            margin-bottom: 20px;
             font-size: 14px;
+            text-align: center;
             display: none;
         }
 
-            .status.success {
-                background: #d4edda;
-                color: #155724;
+            .error-message.show {
                 display: block;
             }
 
-            .status.error {
-                background: #f8d7da;
-                color: #721c24;
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+            .success-message.show {
                 display: block;
             }
 
         .spinner {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border-top: 3px solid #FF9999;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -73,6 +177,10 @@
             margin: 20px auto;
             display: none;
         }
+
+            .spinner.show {
+                display: block;
+            }
 
         @keyframes spin {
             0% {
@@ -83,37 +191,107 @@
                 transform: rotate(360deg);
             }
         }
+
+        .hidden {
+            display: none;
+        }
+
+        .optional-label {
+            color: #999;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .info-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 48px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <h1>Sign in with Google</h1>
-        <p>Continue to your Eventa account</p>
+    <div class="container">
+        <div class="logo">EVENTA</div>
 
-        <div id="g_id_onload"
-             data-client_id="171553413720-9serj0ak8bcie7mjt69sq2jsjgs98204.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
+        <!-- Google Sign In View -->
+        <div id="google-signin-view" class="card">
+            <h2 class="card-title">Sign in with Google</h2>
+            <p class="info-text" style="margin-bottom: 20px;">Continue to your Eventa account</p>
 
-        <div class="google-btn-container">
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="outline"
-                 data-text="sign_in_with"
-                 data-shape="rectangular"
-                 data-logo_alignment="left">
+            <div id="g_id_onload"
+                 data-client_id="171553413720-9serj0ak8bcie7mjt69sq2jsjgs98204.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
             </div>
+
+            <div class="google-btn-container">
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="sign_in_with"
+                     data-shape="rectangular"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+
+            <div class="spinner" id="signin-spinner"></div>
+            <div class="error-message" id="signin-error"></div>
+            <div class="success-message" id="signin-success"></div>
         </div>
 
-        <div class="spinner" id="spinner"></div>
-        <div class="status" id="status"></div>
+        <!-- Complete Profile View -->
+        <div id="complete-profile-view" class="card hidden">
+            <h2 class="card-title">Complete Your Profile</h2>
+
+            <div class="error-message" id="profile-error"></div>
+            <div class="success-message" id="profile-success"></div>
+
+            <form id="profile-form">
+                <div class="form-group">
+                    <input type="text"
+                           id="name-input"
+                           placeholder="Name"
+                           required
+                           minlength="3"
+                           maxlength="32">
+                    <span class="required-mark">*</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="text"
+                           id="organization-input"
+                           placeholder="Organization name"
+                           minlength="3"
+                           maxlength="32">
+                    <span class="optional-label">(optional)</span>
+                </div>
+
+                <div class="spinner" id="profile-spinner"></div>
+
+                <button type="submit" class="button" id="complete-profile-btn">
+                    Complete Profile
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
-        const API_BASE_URL = 'https://localhost:7293'; // Change to production URL when deployed
+        const API_BASE_URL = 'https://eventa-app.fun:5001';
+        let currentUserData = null;
 
+        // Cookie helpers
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -125,31 +303,70 @@
             document.cookie = name + "=" + encodeURIComponent(value) + expires + maxAge + "; path=/; SameSite=Lax";
         }
 
-        function showStatus(message, isError = false) {
-            const statusEl = document.getElementById('status');
-            const spinnerEl = document.getElementById('spinner');
-
-            spinnerEl.style.display = 'none';
-            statusEl.textContent = message;
-            statusEl.className = 'status ' + (isError ? 'error' : 'success');
+        function showElement(id) {
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        function showSpinner() {
-            const spinnerEl = document.getElementById('spinner');
-            const statusEl = document.getElementById('status');
+        function hideElement(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
 
-            spinnerEl.style.display = 'block';
-            statusEl.style.display = 'none';
+        function showSpinner(spinnerId) {
+            document.getElementById(spinnerId).classList.add('show');
+        }
+
+        function hideSpinner(spinnerId) {
+            document.getElementById(spinnerId).classList.remove('show');
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).classList.remove('show');
+        }
+
+        function hideSuccess(elementId) {
+            document.getElementById(elementId).classList.remove('show');
+        }
+
+        function showGoogleSignInView() {
+            hideElement('complete-profile-view');
+            showElement('google-signin-view');
+        }
+
+        function showCompleteProfileView(userData) {
+            hideElement('google-signin-view');
+            showElement('complete-profile-view');
+
+            document.getElementById('name-input').value = userData.name || '';
+            currentUserData = userData;
+        }
+
+        function isUserLoggedIn(data) {
+            return !!(data.jwtToken && data.jwtToken.trim() !== '' &&
+                data.role && data.role.trim() !== '');
         }
 
         async function handleCredentialResponse(response) {
-            showSpinner();
+            showSpinner('signin-spinner');
+            hideError('signin-error');
+            hideSuccess('signin-success');
 
             try {
                 const idToken = response.credential;
 
-                // Call your API to exchange the Google token for your JWT
-                const apiResponse = await fetch(`${API_BASE_URL}/api/User/google-login-callback`, {
+                const apiResponse = await fetch(`${API_BASE_URL}/api/User/google-login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -168,45 +385,122 @@
 
                 const data = await apiResponse.json();
 
-                // Check if registration needs to be completed
-                if (data.requiresCompletion) {
-                    // Store temporary token and redirect to complete registration
-                    setCookie('temp_google_token', idToken, 1);
-                    setCookie('requires_completion', 'true', 1);
-                    showStatus('Redirecting to complete registration...', false);
-                    setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 1000);
-                    return;
+                if (isUserLoggedIn(data)) {
+                    await handleSuccessfulLogin(data);
+                } else {
+                    hideSpinner('signin-spinner');
+                    showCompleteProfileView({
+                        name: data.name,
+                        userId: data.userId
+                    });
                 }
 
-                // Store the JWT token and user data in cookies
+            } catch (error) {
+                console.error('Authentication error:', error);
+                hideSpinner('signin-spinner');
+                showError('signin-error', error.message || 'Authentication failed. Please try again.');
+            }
+        }
+
+        // Handle successful login (user already exists)
+        async function handleSuccessfulLogin(data) {
+            const settings = {
+                JwtToken: data.jwtToken,
+                UserId: data.userId,
+                UserName: data.name || '',
+                Email: data.email || '',
+                Password: '',
+                OrganizationName: data.organizationName || '',
+                CartDateTime: ''
+            };
+
+            setCookie('settings', JSON.stringify(settings), 365);
+
+            hideSpinner('signin-spinner');
+            showSuccess('signin-success', 'Authentication successful! Redirecting...');
+
+            setTimeout(() => {
+                window.location.href = '/index.html';
+            }, 1000);
+        }
+
+        // Complete profile form handler
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('name-input');
+            const organizationInput = document.getElementById('organization-input');
+
+            const name = nameInput.value.trim();
+            const organization = organizationInput.value.trim();
+
+            if (!name) {
+                showError('profile-error', 'Name is required!');
+                return;
+            }
+
+            if (name.length < 3 || name.length > 32) {
+                showError('profile-error', 'Name must be between 3 and 32 characters!');
+                return;
+            }
+
+            if (organization && (organization.length < 3 || organization.length > 32)) {
+                showError('profile-error', 'Organization name must be between 3 and 32 characters!');
+                return;
+            }
+
+            showSpinner('profile-spinner');
+            hideError('profile-error');
+            hideSuccess('profile-success');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/User/complete-external-registration`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Name: name,
+                        Organization: organization || null,
+                        UserId: currentUserData.userId
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => null);
+                    const errorMessage = errorData?.message || errorData?.title || 'Registration failed';
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+
                 const settings = {
-                    JwtToken: data.token,
+                    JwtToken: data.jwtToken,
                     UserId: data.userId,
-                    UserName: data.userName || '',
-                    Email: data.email || '',
+                    UserName: name,
+                    Email: '',
                     Password: '',
-                    OrganizationName: data.organizationName || '',
+                    OrganizationName: organization || '',
                     CartDateTime: ''
                 };
 
                 setCookie('settings', JSON.stringify(settings), 365);
 
-                showStatus('Authentication successful! Redirecting...', false);
+                hideSpinner('profile-spinner');
+                showSuccess('profile-success', 'Registration completed successfully! Redirecting...');
 
-                // Redirect back to main page after 1 second
                 setTimeout(() => {
                     window.location.href = '/index.html';
-                }, 1000);
+                }, 1500);
 
             } catch (error) {
-                console.error('Authentication error:', error);
-                showStatus(error.message || 'Authentication failed. Please try again.', true);
+                console.error('Profile completion error:', error);
+                hideSpinner('profile-spinner');
+                showError('profile-error', error.message || 'Failed to complete profile. Please try again.');
             }
-        }
+        });
 
-        // Make function globally available
         window.handleCredentialResponse = handleCredentialResponse;
     </script>
 </body>

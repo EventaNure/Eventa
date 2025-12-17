@@ -59,8 +59,8 @@ public partial class TicketOrderViewModel : ObservableObject
     public TicketOrderViewModel()
     {
         _stripeService = new StripePaymentService(
-            "valuehere",
-            "valuehere"
+           "pk_test_valuehere",
+           "sk_test_valuehere"
         );
     }
 

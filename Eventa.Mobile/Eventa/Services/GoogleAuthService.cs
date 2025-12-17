@@ -87,21 +87,15 @@ public class GoogleAuthService
 
     private async Task<string?> AuthenticateAndroidAsync()
     {
-        // TODO: Implement Android authentication
         await Task.CompletedTask;
         return null;
     }
 
     private async Task<string?> AuthenticateBrowserAsync()
     {
-        // For browser, we navigate to the google-auth.html page
-        // The page handles authentication and stores JWT in cookies
-        // Then redirects back to index.html
         try
         {
-            // Use JS interop to navigate to the Google auth page
             GoogleAuthHelper.NavigateToGoogleAuth();
-
             await Task.CompletedTask;
             return null;
         }

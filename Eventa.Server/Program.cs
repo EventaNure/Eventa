@@ -46,13 +46,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// CRITICAL: UseCors must come BEFORE UseStaticFiles for static file CORS to work
 app.UseCors("Access-Control-Allow-Origin");
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
